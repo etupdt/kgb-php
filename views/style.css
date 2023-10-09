@@ -1,0 +1,11 @@
+
+body {
+  height: 100vh;
+  background-color: red;
+}
+
+footer {
+  height: 200px;
+  margin-top: auto;
+  position: relative;
+}
