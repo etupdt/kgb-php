@@ -1,18 +1,10 @@
-<html>
-    <head>
-        <title>KGB</title>
-    </head>
-    <body>
-        <main>            
-            <h1>Dashboard KGB</h1>
-            <div class="sidemenu">
-                <ul>
-                    <li>Planques</li>
-                    <li>Type Mission</li>
-                    <li>Statut Mission</li>
-                </ul>
-            </div>
-        </main>
-
-    </body>
-</html>
+<main class="container col">         
+  <div class="row title">
+    <h1>Dashboard KGB</h1>
+  </div>
+  <div class="row">
+    <?php require_once 'sidemenu.php' ?>
+    <form action="submit" class="col-9 form">
+    </form>
+  </div>
+</main>

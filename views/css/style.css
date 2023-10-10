@@ -1,0 +1,56 @@
+
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display:flex;
+  flex-direction: column;
+}
+
+main > div {
+  margin: 0;
+}
+
+.title {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: 10%;
+  padding: auto;
+  background-color: blanchedalmond;
+}
+
+main > div {
+  height: 90%;
+  width: 100%;
+}
+
+.sidemenu {
+  list-style: inside;
+  height: 100%;
+  padding: 30px;
+  background-color: lightgray;
+}  
+
+.sidemenu > li {
+  height: 40px;
+  background-color: lightsalmon;
+  font-size: 1.5em;
+}  
+
+main form {
+  height: 100%;
+  width: 100%;
+  background-color: lightblue;
+}  
+
+.fields-div {
+  width: 90%;
+}
+
+footer {
+  position: relative;
+  width: 100%;
+  margin-top: auto;
+  display: block;
+}
