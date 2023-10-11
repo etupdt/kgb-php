@@ -27,9 +27,8 @@ main > div {
 
 .sidemenu {
   list-style: inside;
-  height: 100%;
-  padding: 30px;
   background-color: lightgray;
+  margin: 0;
 }  
 
 .sidemenu > li {
@@ -38,7 +37,7 @@ main > div {
   font-size: 1.5em;
 }  
 
-main form {
+.form {
   height: 100%;
   width: 100%;
   background-color: lightblue;
@@ -53,4 +52,17 @@ footer {
   width: 100%;
   margin-top: auto;
   display: block;
+}
+
+/*------------------------------*/
+
+.micro-btn {
+  --bs-btn-padding-y: 0 !important; 
+  --bs-btn-padding-x: 0 !important; 
+  --bs-btn-font-size: .75rem;
+}
+
+.micro-th {
+  width: 40px;
+  padding: 0.2rem !important;
 }

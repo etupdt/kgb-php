@@ -3,7 +3,7 @@
   <meta charset="utf-8">
   <meta name="docsearch:language" content="fr">
   <title>KGB</title>
-  <link href="views/css/style.css" rel="stylesheet">
+  <link href="/views/css/style.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
@@ -20,20 +20,28 @@ require_once 'models/Router.php';
 // require_once 'controllers/ProfileController.php';
 // require_once 'controllers/LogoutController.php';
 require_once 'controllers/admin/DashboardController.php';
+require_once 'controllers/admin/CountryController.php';
 require_once 'controllers/admin/HideoutController.php';
+
+require_once 'models/Database.php';
 
 $router = new Router();
 
 $router->addRoute('GET',BASE_URL.'/', 'DashboardController', 'index');
-$router->addRoute('GET',BASE_URL.'/planques', 'HideoutController', 'index');
-//$router->addRoute('GET', BASE_URL.'/', 'HomeController', 'index');
+
+$router->addRoute('GET',BASE_URL.'/pays', 'CountryController', 'index');
+$router->addRoute('POST',BASE_URL.'/pays', 'CountryController', 'index');
+
+$router->addRoute('GET',BASE_URL.'/planque', 'HideoutController', 'index');
+$router->addRoute('POST',BASE_URL.'/planque', 'HideoutController', 'index');
+
 $router->addRoute('POST',BASE_URL.'/profile', 'ProfileController', 'index');
 $router->addRoute('GET',BASE_URL.'/logout', 'LogoutController', 'index');
 
 $method = $_SERVER['REQUEST_METHOD'];
-$uri = $_SERVER['REQUEST_URI'];
+$uri = explode('/', explode('?', $_SERVER['REQUEST_URI'])[0])[1];
 
-$handler = $router->gethandler($method, $uri);
+$handler = $router->gethandler($method, '/'.$uri);
 
 if ($handler == null ) { 
 

@@ -1,4 +1,12 @@
 
 <label class="form-label me-2" for="<?php echo $field['name'] ?>"><?php echo $field['label'] ?></label>
 
-<input class="form-control me-2" type="<?php echo $field['type'] ?>" name="<?php echo $field['name'] ?>" value="<?php echo $field['value'] ?>"/>
+<?php 
+  if ($field['name'] === "id") {
+    ?>
+      <input class="form-control me-2" disabled type="<?php echo $field['type'] ?>" name="<?php echo $field['name'] ?>" value="<?php echo $field['value'] ?>"/>
+    <?php
+  }
+?>
+
+<input class="form-control me-2" <?php if ($field['name'] === "id") echo 'hidden'; ?> type="<?php echo $field['type'] ?>" name="<?php echo $field['name'] ?>" value="<?php echo $field['value'] ?>"/>
