@@ -1,36 +1,13 @@
 <?php
 
-class Country {
-
-  static $fields = [
-    'id' => [
-      'label' => 'Id',
-      'name' => 'id',
-      'type' => 'text',
-      'pdo' => PDO::PARAM_STR
-    ],
-    'name' => [
-      'label' => 'Nom',
-      'name' => 'name',
-      'type' => 'text',
-      'pdo' => PDO::PARAM_STR
-    ],
-    'nationality' => [
-      'label' => 'Nationalité',
-      'name' => 'nationality',
-      'type' => 'text',
-      'pdo' => PDO::PARAM_STR
-    ]
-  ];
+class Statut {
 
   private $id;
-  private $name;
-  private $nationality;
+  private $statut;
 
-  public function __construct(string $id = null, string $name = null, string $nationality = null) {
+  public function __construct(string $id = null, string $statut = null) {
     $this->id = $id;
-    $this->name = $name;
-    $this->nationality = $nationality;
+    $this->statut = $statut;
   }
 
   public function __set($name, $value)
@@ -42,27 +19,19 @@ class Country {
       return $this->id;
   }
 
-  public function getName()  : string{
-      return $this->name;
+  public function getStatut()  : string{
+      return $this->statut;
   }
 
-  public function getNationality()  : string {
-    return $this->nationality;
-  }
-
-  public function setName(string  $name) {
-        $this->name = $name;
-  }
-
-  public function setNationality(string  $nationality) {
-    $this->nationality = $nationality;
+  public function setStatut(string  $statut) {
+        $this->statut = $statut;
   }
 
   public static function find(string $id) { 
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $find = 'SELECT * FROM country WHERE id = ?';
+    $find = 'SELECT * FROM statut WHERE id = ?';
     
     $pdoStatement = $pdo->prepare($find);
 
@@ -81,22 +50,22 @@ class Country {
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $findAll = 'SELECT id, name, nationality FROM country';
+    $findAll = 'SELECT id, statut FROM statut';
     
     $pdoStatement = $pdo->prepare($findAll);
 
-    $countries = [];
+    $specialities = [];
 
     if ($pdoStatement->execute()) {  
       $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, __CLASS__);
-      while($country = $pdoStatement->fetch()) {
-        $countries[] = $country;
+      while($statut = $pdoStatement->fetch()) {
+        $specialities[] = $statut;
       }
     } else {
       print_r($pdoStatement->errorInfo());  // sensible à modifier
     }  
 
-    return $countries;
+    return $specialities;
     
   }  
 
@@ -104,12 +73,11 @@ class Country {
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $insert = 'INSERT INTO country (name, nationality) VALUE (?, ?)';
+    $insert = 'INSERT INTO statut (statut) VALUE (?)';
     
     $pdoStatement = $pdo->prepare($insert);
 
-    $pdoStatement->bindValue(1, $this->name, PDO::PARAM_STR);
-    $pdoStatement->bindValue(2, $this->nationality, PDO::PARAM_STR);
+    $pdoStatement->bindValue(1, $this->statut, PDO::PARAM_STR);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -121,13 +89,12 @@ class Country {
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $update = 'UPDATE country SET name = ?, nationality = ? WHERE id = ?; ';
+    $update = 'UPDATE statut SET statut = ? WHERE id = ?; ';
     
     $pdoStatement = $pdo->prepare($update);
 
-    $pdoStatement->bindValue(1, $this->name, PDO::PARAM_STR);
-    $pdoStatement->bindValue(2, $this->nationality, PDO::PARAM_STR);
-    $pdoStatement->bindValue(3, $this->id, PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $this->statut, PDO::PARAM_STR);
+    $pdoStatement->bindValue(2, $this->id, PDO::PARAM_INT);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -139,7 +106,7 @@ class Country {
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $delete = 'DELETE FROM country WHERE id = ?; ';
+    $delete = 'DELETE FROM statut WHERE id = ?; ';
     
     $pdoStatement = $pdo->prepare($delete);
 

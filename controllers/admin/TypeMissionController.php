@@ -1,14 +1,14 @@
 <?php
 
-require_once 'models/Country.php';
+require_once 'models/TypeMission.php';
 
-class CountryController {
+class TypeMissionController {
 
     public function index() { 
 
-        $nameEntity = "pays";
+        $nameEntity = "typemission";
 
-        $fields = $this->getFields(new Country("0", "", ""));
+        $fields = $this->getFields(new TypeMission("0", ""));
 
         require_once 'views/header.php';
 
@@ -16,20 +16,20 @@ class CountryController {
 
         if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
-            if ($_SERVER['REQUEST_URI'] === '/pays') {
+            if ($_SERVER['REQUEST_URI'] === '/typemission') {
 
                 $rows = $this->getRows();
                 require_once 'views/admin/entityList.php';
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/d/")) {
 
-                Country::deleteDatabase($explode[count($explode) - 1]);
+                TypeMission::deleteDatabase($explode[count($explode) - 1]);
                 $rows = $this->getRows();
                 require_once 'views/admin/entityList.php';
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/u/")) {
             
-                $fields = $this->getFields(Country::find($explode[count($explode) - 1]));
+                $fields = $this->getFields(TypeMission::find($explode[count($explode) - 1]));
                 require_once 'views/admin/entityForm.php';
 
             } else {
@@ -44,12 +44,12 @@ class CountryController {
                 
                 if ($_POST['id'] !== "0") {
 
-                    $row = new Country ($_POST['id'], $_POST['name'], $_POST['nationality']);
+                    $row = new TypeMission ($_POST['id'], $_POST['typeMission']);
                     $row->updateDatabase();
 
                 } else {
 
-                    $row = new Country (0, $_POST['name'], $_POST['nationality']);
+                    $row = new TypeMission (0, $_POST['typeMission']);
                     $row->insertDatabase();
                 }    
 
@@ -64,7 +64,7 @@ class CountryController {
 
     }
 
-    private function getFields (Country $row): array
+    private function getFields (TypeMission $row): array
     {
 
         $fields[] = [
@@ -75,15 +75,9 @@ class CountryController {
         ];
         $fields[] = [
             'label' => 'Nom',
-            'name' => 'name',
+            'name' => 'typeMission',
             'type' => 'text',
-            'value' => $row->getName()
-        ];
-        $fields[] = [
-            'label' => 'Nationalité',
-            'name' => 'nationality',
-            'type' => 'text',
-            'value' => $row->getNationality()
+            'value' => $row->getTypeMission()
         ];
 
         return $fields;
@@ -95,11 +89,10 @@ class CountryController {
 
         $rows = [];
         
-        foreach (Country::findAll() as $row) {
+        foreach (TypeMission::findAll() as $row) {
             $rows[] = [
                 'id' => $row->getId(),
-                'name' => $row->getName(),
-                'nationality' => $row->getNationality()
+                'typeMission' => $row->getTypeMission()
             ];
         } 
         

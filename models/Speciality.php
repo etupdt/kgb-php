@@ -1,36 +1,13 @@
 <?php
 
-class Country {
-
-  static $fields = [
-    'id' => [
-      'label' => 'Id',
-      'name' => 'id',
-      'type' => 'text',
-      'pdo' => PDO::PARAM_STR
-    ],
-    'name' => [
-      'label' => 'Nom',
-      'name' => 'name',
-      'type' => 'text',
-      'pdo' => PDO::PARAM_STR
-    ],
-    'nationality' => [
-      'label' => 'Nationalité',
-      'name' => 'nationality',
-      'type' => 'text',
-      'pdo' => PDO::PARAM_STR
-    ]
-  ];
+class Speciality {
 
   private $id;
   private $name;
-  private $nationality;
 
-  public function __construct(string $id = null, string $name = null, string $nationality = null) {
+  public function __construct(string $id = null, string $name = null) {
     $this->id = $id;
     $this->name = $name;
-    $this->nationality = $nationality;
   }
 
   public function __set($name, $value)
@@ -46,23 +23,15 @@ class Country {
       return $this->name;
   }
 
-  public function getNationality()  : string {
-    return $this->nationality;
-  }
-
   public function setName(string  $name) {
         $this->name = $name;
-  }
-
-  public function setNationality(string  $nationality) {
-    $this->nationality = $nationality;
   }
 
   public static function find(string $id) { 
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $find = 'SELECT * FROM country WHERE id = ?';
+    $find = 'SELECT * FROM speciality WHERE id = ?';
     
     $pdoStatement = $pdo->prepare($find);
 
@@ -77,26 +46,53 @@ class Country {
 
   }  
 
+  public static function findBy(array $conditions) { 
+
+    $pdo = new PDO(Database::$host, Database::$username, Database::$password);
+
+    $find = 'SELECT * FROM speciality WHERE id = ?';
+
+    foreach ($conditions as $condition) {
+      $findBy = $findBy.' '.$condition->boolOp.' '.$condition->field.' '.$condition>op.' ?';
+    }
+
+    $pdoStatement = $pdo->prepare($findBy);
+
+    $pdoStatement->bindValue(1, $id, PDO::PARAM_INT);
+
+    foreach ($conditions as $index=>$condition) {
+      $pdoStatement->bindValue(2 + $index, $condition.value, $condition.type);
+    }
+
+    if ($pdoStatement->execute()) {  
+      $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, __CLASS__);
+      return $pdoStatement->fetch();
+    } else {
+      print_r($pdoStatement->errorInfo());  // sensible à modifier
+    }  
+
+  }  
+
   public static function findAll() { 
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $findAll = 'SELECT id, name, nationality FROM country';
+    $findAll = 'SELECT id, name FROM speciality';
     
     $pdoStatement = $pdo->prepare($findAll);
 
-    $countries = [];
+    $specialities = [];
 
     if ($pdoStatement->execute()) {  
       $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, __CLASS__);
-      while($country = $pdoStatement->fetch()) {
-        $countries[] = $country;
+      while($speciality = $pdoStatement->fetch()) {
+        $specialities[] = $speciality;
       }
     } else {
       print_r($pdoStatement->errorInfo());  // sensible à modifier
     }  
 
-    return $countries;
+    return $specialities;
     
   }  
 
@@ -104,12 +100,11 @@ class Country {
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $insert = 'INSERT INTO country (name, nationality) VALUE (?, ?)';
+    $insert = 'INSERT INTO speciality (name) VALUE (?)';
     
     $pdoStatement = $pdo->prepare($insert);
 
     $pdoStatement->bindValue(1, $this->name, PDO::PARAM_STR);
-    $pdoStatement->bindValue(2, $this->nationality, PDO::PARAM_STR);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -121,13 +116,12 @@ class Country {
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $update = 'UPDATE country SET name = ?, nationality = ? WHERE id = ?; ';
+    $update = 'UPDATE speciality SET name = ? WHERE id = ?; ';
     
     $pdoStatement = $pdo->prepare($update);
 
     $pdoStatement->bindValue(1, $this->name, PDO::PARAM_STR);
-    $pdoStatement->bindValue(2, $this->nationality, PDO::PARAM_STR);
-    $pdoStatement->bindValue(3, $this->id, PDO::PARAM_INT);
+    $pdoStatement->bindValue(2, $this->id, PDO::PARAM_INT);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -139,7 +133,7 @@ class Country {
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $delete = 'DELETE FROM country WHERE id = ?; ';
+    $delete = 'DELETE FROM speciality WHERE id = ?; ';
     
     $pdoStatement = $pdo->prepare($delete);
 

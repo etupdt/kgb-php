@@ -8,7 +8,7 @@
 >
   <?php
     foreach ($field['value'] as $option) {
-      echo '<option value="'.$option['id'].'">'.$option['name'].'</option>';
+      echo '<option'.($option['id'] === $field['selected'] ? ' selected ' : ' ').'value="'.$option['id'].'">'.$option['name'].'</option>';
     }
   ?>
 </select>

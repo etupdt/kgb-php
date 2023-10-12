@@ -6,12 +6,14 @@ class Hideout {
   private $code;
   private $address;
   private $type;
+  private $id_country;
 
-  public function __construct(string  $id, string  $code, string $address, string $type) {
+  public function __construct(string  $id = null, string  $code = null, string $address = null, string $type = null, string $id_country = null) {
       $this->id = $id;
       $this->code = $code;
       $this->address = $address;
       $this->type = $type;
+      $this->id_country = $id_country;
   }
 
   public function getId()  : string {
@@ -30,6 +32,10 @@ class Hideout {
     return $this->type;
   }
 
+  public function getId_country()  : string {
+    return $this->id_country;
+  }
+
   public function setCode(string  $code) {
         $this->code = $code;
   }
@@ -42,6 +48,10 @@ class Hideout {
     $this->type = $type;
   }
 
+  public function setId_country(string  $id_country) {
+    $this->id_country = $id_country;
+  }
+
   public static function expose() : array
   {
       return get_class_vars(__CLASS__);
@@ -49,69 +59,98 @@ class Hideout {
 
   public static function find(string $id) { 
 
-    include_once 'Database.php';
-  
-    $conn = mysqli_connect(Database::$host, Database::$username, Database::$password, Database::$dbname);
-    $stmt = $conn->prepare("SELECT * FROM hideout WHERE id = ?;");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    if ($result->num_rows > 0) {
-      $row = $result->fetch_assoc();
-      $hideout = new Hideout ($row['id'], $row['code'], $row['address'], $row['type']);
-    }
-
-    return $hideout;
+    $find = 'SELECT * FROM hideout WHERE id = ?';
     
+    $pdoStatement = $pdo->prepare($find);
+
+    $pdoStatement->bindValue(1, $id, PDO::PARAM_INT);
+
+    if ($pdoStatement->execute()) {  
+      $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, __CLASS__);
+      return $pdoStatement->fetch();
+    } else {
+      print_r($pdoStatement->errorInfo());  // sensible à modifier
+    }  
+
   }  
 
   public static function findAll() { 
 
-    $conn = mysqli_connect(Database::$host, Database::$username, Database::$password, Database::$dbname);
-    $stmt = $conn->prepare("SELECT * FROM hideout;");
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $hideouts = [];
+    $findAll = 'SELECT * FROM hideout';
+    
+    $pdoStatement = $pdo->prepare($findAll);
 
-    if ($result->num_rows > 0) {
-      while($row = $result->fetch_assoc()) {
-        $hideouts[] = new Hideout ($row['id'], $row['code'], $row['address'], $row['type']);
+    $countries = [];
+
+    if ($pdoStatement->execute()) {  
+      $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, __CLASS__);
+      while($hideout = $pdoStatement->fetch()) {
+        $countries[] = $hideout;
       }
-    }
+    } else {
+      print_r($pdoStatement->errorInfo());  // sensible à modifier
+    }  
 
-    return $hideouts;
+    return $countries;
     
   }  
 
   public function insertDatabase() { 
 
-    $conn = mysqli_connect(Database::$host, Database::$username, Database::$password, Database::$dbname);
-    $stmt=$conn->prepare("INSERT INTO hideout ( code , address, type) VALUES (?, ?, ?) ");
-    $stmt->bind_param("sss", $this->code, $this->address, $this->type);
-    $stmt->execute();
-    $stmt->close();
+    $pdo = new PDO(Database::$host, Database::$username, Database::$password);
+
+    $insert = 'INSERT INTO hideout (code, address, type, id_country) VALUE (?, ?, ?, ?)';
+    
+    $pdoStatement = $pdo->prepare($insert);
+
+    $pdoStatement->bindValue(1, $this->code, PDO::PARAM_STR);
+    $pdoStatement->bindValue(2, $this->address, PDO::PARAM_STR);
+    $pdoStatement->bindValue(3, $this->type, PDO::PARAM_STR);
+    $pdoStatement->bindValue(4, $this->id_country, PDO::PARAM_INT);
+
+    if (!$pdoStatement->execute()) {  
+      print_r($pdoStatement->errorInfo());  // sensible à modifier
+    }  
 
   }  
 
   public function updateDatabase() { 
 
-    $conn = mysqli_connect(Database::$host, Database::$username, Database::$password, Database::$dbname);
-    $stmt = $conn->prepare('UPDATE hideout SET code = ?, address = ?, type = ? WHERE id = ? ');
-    $stmt->bind_param("sssi", $this->code, $this->address, $this->type, $this->id);
-    $stmt->execute();
-    $stmt->close();
+    $pdo = new PDO(Database::$host, Database::$username, Database::$password);
+
+    $update = 'UPDATE hideout SET code = ?, address = ?, type = ?, id_country = ? WHERE id = ?; ';
+    
+    $pdoStatement = $pdo->prepare($update);
+
+    $pdoStatement->bindValue(1, $this->code, PDO::PARAM_STR);
+    $pdoStatement->bindValue(2, $this->address, PDO::PARAM_STR);
+    $pdoStatement->bindValue(3, $this->type, PDO::PARAM_STR);
+    $pdoStatement->bindValue(4, $this->id_country, PDO::PARAM_INT);
+    $pdoStatement->bindValue(5, $this->id, PDO::PARAM_INT);
+
+    if (!$pdoStatement->execute()) {  
+      print_r($pdoStatement->errorInfo());  // sensible à modifier
+    }  
 
   }
 
   public static function deleteDatabase(int $id) { 
 
-    $conn = mysqli_connect(Database::$host, Database::$username, Database::$password, Database::$dbname);
-    $stmt = $conn->prepare('DELETE FROM hideout WHERE id = ?; ');
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $stmt->close();
+    $pdo = new PDO(Database::$host, Database::$username, Database::$password);
+
+    $delete = 'DELETE FROM hideout WHERE id = ?; ';
+    
+    $pdoStatement = $pdo->prepare($delete);
+
+    $pdoStatement->bindValue(1, $id, PDO::PARAM_INT);
+
+    if (!$pdoStatement->execute()) {  
+      print_r($pdoStatement->errorInfo());  // sensible à modifier
+    }  
 
   }
 

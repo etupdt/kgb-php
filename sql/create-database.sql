@@ -34,10 +34,8 @@ CREATE TABLE IF NOT EXISTS actor(
   id int NOT NULL,
   birthdate date NOT NULL,
   identificationCode int,
-  firstname varchar (100) NOT NULL,
-  lastname varchar (100) NOT NULL,
   id_country int NOT NULL,
-	CONSTRAINT actor_PK PRIMARY KEY (id_person,id),
+	CONSTRAINT actor_PK PRIMARY KEY (id),
   CONSTRAINT actor_person_FK FOREIGN KEY (id_person) REFERENCES person(id),
 	CONSTRAINT actor_country_FK FOREIGN KEY (id_country) REFERENCES country(id)
 );
@@ -97,19 +95,17 @@ CREATE TABLE IF NOT EXISTS mission_hideout(
 );
 
 CREATE TABLE IF NOT EXISTS actor_mission(
-  id_person int NOT NULL,
   id_actor int NOT NULL,
   id_mission int NOT NULL ,
-	CONSTRAINT actor_mission_PK PRIMARY KEY (id_person, id_actor, id_mission),
-	CONSTRAINT actor_mission_actor_FK FOREIGN KEY (id_person, id_actor) REFERENCES actor(id_person, id),
+	CONSTRAINT actor_mission_PK PRIMARY KEY (id_actor, id_mission),
+	CONSTRAINT actor_mission_actor_FK FOREIGN KEY (id_actor) REFERENCES actor(id),
   CONSTRAINT actor_mission_mission_FK FOREIGN KEY (id_mission) REFERENCES mission(id)
 );
 
 CREATE TABLE IF NOT EXISTS actor_speciality(
-  id_person int NOT NULL,
   id_actor int NOT NULL,
   id_speciality int NOT NULL ,
-	CONSTRAINT actor_speciality_PK PRIMARY KEY (id_person, id_actor, id_speciality),
-	CONSTRAINT actor_speciality_actor_FK FOREIGN KEY (id_person, id_speciality) REFERENCES actor(id_person, id),
+	CONSTRAINT actor_speciality_PK PRIMARY KEY (id_actor, id_speciality),
+	CONSTRAINT actor_speciality_actor_FK FOREIGN KEY (id_actor) REFERENCES actor(id),
   CONSTRAINT actor_speciality_speciality_FK FOREIGN KEY (id_speciality) REFERENCES speciality(id)
 );

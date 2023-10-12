@@ -39,7 +39,20 @@
                     echo '</th>';
                   } else {
                     echo '<td>';
-                      echo $row[$field['name']];
+                    switch ($field['type']) {
+                      case "text" : {
+                        echo $row[$field['name']];
+                        break;
+                      }
+                      case "select" : {
+                        echo $row[$field['name']];
+                        break;
+                      }
+                      case "multiSelect" : {
+                        echo count($row[$field['name']]);
+                        break;
+                      }
+                    }
                     echo '</td>';
                   }
                 }

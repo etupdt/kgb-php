@@ -8,7 +8,7 @@ class HideoutController {
 
         $nameEntity = "planque";
 
-        $fields = $this->getFields(new Hideout("0", "", "", ""));
+        $fields = $this->getFields(new Hideout("0", "", "", "", ""));
 
         require_once 'views/header.php';
 
@@ -44,12 +44,12 @@ class HideoutController {
                 
                 if ($_POST['id'] !== "0") {
 
-                    $row = new Hideout ($_POST['id'], $_POST['code'], $_POST['address'], $_POST['type']);
+                    $row = new Hideout ($_POST['id'], $_POST['code'], $_POST['address'], $_POST['type'], $_POST['id_country']);
                     $row->updateDatabase();
 
                 } else {
 
-                    $row = new Hideout (0, $_POST['code'], $_POST['address'], $_POST['type']);
+                    $row = new Hideout (0, $_POST['code'], $_POST['address'], $_POST['type'], $_POST['id_country']);
                     $row->insertDatabase();
                 }    
 
@@ -103,9 +103,10 @@ class HideoutController {
 
         $fields[] = [
             'label' => 'Pays',
-            'name' => 'name',
+            'name' => 'id_country',
             'type' => 'select',
-            'value' => $rows
+            'value' => $rows,
+            'selected' => [$row->getId_country()]
         ];
 
         return $fields;
@@ -118,11 +119,15 @@ class HideoutController {
         $rows = [];
 
         foreach (Hideout::findAll() as $row) {
+
+            $country = Country::find($row->getId_country());
+
             $rows[] = [
                 'id' => $row->getId(),
                 'code' => $row->getCode(),
                 'address' => $row->getAddress(),
-                'type' => $row->getType()
+                'type' => $row->getType(),
+                'id_country' => $country->getName()
             ];
         } 
         

@@ -12,7 +12,7 @@
         </div>
         <?php
           foreach ($fields as $field) {
-            echo '<div class="m-5">';
+            echo '<div class="m-3">';
             switch ($field['type']) {
               case "text" : {
                 require 'textField.php';
@@ -20,6 +20,10 @@
               }
               case "select" : {
                 require 'selectField.php';
+                break;
+              }
+              case "multiSelect" : {
+                require 'multiSelectField.php';
                 break;
               }
             }

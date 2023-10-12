@@ -22,6 +22,10 @@ require_once 'models/Router.php';
 require_once 'controllers/admin/DashboardController.php';
 require_once 'controllers/admin/CountryController.php';
 require_once 'controllers/admin/HideoutController.php';
+require_once 'controllers/admin/ActorController.php';
+require_once 'controllers/admin/SpecialityController.php';
+require_once 'controllers/admin/TypeMissionController.php';
+require_once 'controllers/admin/StatutController.php';
 
 require_once 'models/Database.php';
 
@@ -35,8 +39,17 @@ $router->addRoute('POST',BASE_URL.'/pays', 'CountryController', 'index');
 $router->addRoute('GET',BASE_URL.'/planque', 'HideoutController', 'index');
 $router->addRoute('POST',BASE_URL.'/planque', 'HideoutController', 'index');
 
-$router->addRoute('POST',BASE_URL.'/profile', 'ProfileController', 'index');
-$router->addRoute('GET',BASE_URL.'/logout', 'LogoutController', 'index');
+$router->addRoute('GET',BASE_URL.'/actor', 'ActorController', 'index');
+$router->addRoute('POST',BASE_URL.'/actor', 'ActorController', 'index');
+
+$router->addRoute('GET',BASE_URL.'/specialite', 'SpecialityController', 'index');
+$router->addRoute('POST',BASE_URL.'/specialite', 'SpecialityController', 'index');
+
+$router->addRoute('GET',BASE_URL.'/typemission', 'TypeMissionController', 'index');
+$router->addRoute('POST',BASE_URL.'/typemission', 'TypeMissionController', 'index');
+
+$router->addRoute('GET',BASE_URL.'/statut', 'StatutController', 'index');
+$router->addRoute('POST',BASE_URL.'/statut', 'StatutController', 'index');
 
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = explode('/', explode('?', $_SERVER['REQUEST_URI'])[0])[1];
