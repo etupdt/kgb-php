@@ -68,6 +68,12 @@ CREATE TABLE IF NOT EXISTS hideout(
   CONSTRAINT hideout_country_FK FOREIGN KEY (id_country) REFERENCES country(id)
 );
 
+CREATE TABLE IF NOT EXISTS role(
+  id int auto_increment NOT NULL,
+  role varchar (20) NOT NULL,
+	CONSTRAINT role_PK PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS mission(
   id int auto_increment NOT NULL,
   title date NOT NULL,
@@ -108,4 +114,14 @@ CREATE TABLE IF NOT EXISTS actor_speciality(
 	CONSTRAINT actor_speciality_PK PRIMARY KEY (id_actor, id_speciality),
 	CONSTRAINT actor_speciality_actor_FK FOREIGN KEY (id_actor) REFERENCES actor(id),
   CONSTRAINT actor_speciality_speciality_FK FOREIGN KEY (id_speciality) REFERENCES speciality(id)
+);
+
+CREATE TABLE IF NOT EXISTS mission_actor_role(
+  id_mission int NOT NULL,
+  id_actor int NOT NULL,
+  id_role int NOT NULL ,
+	CONSTRAINT mission_actor_role_PK PRIMARY KEY (id_mission, id_actor, id_role),
+	CONSTRAINT mission_actor_role_mission_FK FOREIGN KEY (id_mission) REFERENCES mission(id),
+	CONSTRAINT mission_actor_role_actor_FK FOREIGN KEY (id_actor) REFERENCES actor(id),
+  CONSTRAINT mission_actor_role_role_FK FOREIGN KEY (id_role) REFERENCES role(id)
 );
