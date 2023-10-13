@@ -2,7 +2,7 @@
 
 class Actor {
 
-  private static $isUpdated = false;
+  private $isUpdated = false;
   private $isDeleted = false;
 
   private $id_person;
@@ -32,7 +32,6 @@ class Actor {
       $this->id_country = $id_country;
 
       $this->specialities = $specialities;
-      $isUpdated = true;
   }
 
   public function getId()  : string {
@@ -64,60 +63,52 @@ class Actor {
   }  
 
   public function setFirstname(string  $firstname) {
-    $isUpdated = true;
     $this->firstname = $firstname;
   }
 
   public function setLastname(string  $lastname) {
-    $isUpdated = true;
     $this->lastname = $lastname;
   }
 
   public function setBirthdate(string  $birthdate) {
-    $isUpdated = true;
     $this->birthdate = $birthdate;
   }
 
   public function setIdentificationCode(string  $identificationCode) {
-    $isUpdated = true;
+    $this->isUpdated = true;
     $this->identificationCode = $identificationCode;
   }
 
   public function setId_country(string  $id_country) {
-    $isUpdated = true;
     $this->id_country = $id_country;
   }
 
   public function setSpecialities(array $specialities) {
-    $isUpdated = true;
     $this->specialities = $specialities;
   }
 
   public function addSpeciality(Speciality $speciality) { 
-    $isUpdated = true;
     $this->specialities[] = $speciality;
   }  
 
   public function removeSpecialities() { 
-    $isUpdated = true;
     $this->specialities = [];
-
   }  
 
   public function persist() {
 
-    if (Actor::$isUpdated) {
+    if ($this->isUpdated) {
       if ($this->isDeleted) {
         $this->deleteDatabase();
-      } elseif ($this->getId() === 0) {
+      } elseif ($this->id === "0") {
         $this->insertDatabase();
       } else {
         $this->updateDatabase();
       }
     }
 
-    $isUpdated = false;
-    $isDeleted = false;
+    $this->isUpdated = false;
+    $this->isDeleted = false;
 
   }
 
@@ -174,6 +165,19 @@ class Actor {
     
   }  
 
+  public function update () {
+    $this->isUpdated = true;
+  }
+
+  public function insert () {
+    $this->isUpdated = true;
+  }
+
+  public function delete () {
+    $this->isUpdated = true;
+    $this->isDeleted = true;
+  }
+
   public function insertDatabase() { 
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
@@ -189,13 +193,14 @@ class Actor {
       print_r($pdoStatement->errorInfo());  // sensible à modifier
     }  
     $this->id_person = $pdo->lastInsertId();
+    $this->id = $this->id_person;
 
     $insert = 'INSERT INTO actor (id_person, id, birthdate, identificationCode, id_country) VALUES (?, ?, ?, ?, ?);';
     
     $pdoStatement = $pdo->prepare($insert);
 
     $pdoStatement->bindValue(1, $this->id_person, PDO::PARAM_INT);
-    $pdoStatement->bindValue(2, $this->id_person, PDO::PARAM_INT);
+    $pdoStatement->bindValue(2, $this->id, PDO::PARAM_INT);
     $pdoStatement->bindValue(3, $this->birthdate, PDO::PARAM_STR);
     $pdoStatement->bindValue(4, $this->identificationCode, PDO::PARAM_INT);
     $pdoStatement->bindValue(5, $this->id_country, PDO::PARAM_INT);
@@ -204,21 +209,8 @@ class Actor {
       print_r($pdoStatement->errorInfo());  // sensible à modifier
     }  
 
-    foreach ($this->specialities as $speciality) {
+    $this->insertSpecialitiesDatabase($pdo);
 
-      $insert = 'INSERT actor_speciality (id_actor, id_speciality) VALUE (?, ?)';
-
-      $pdoStatement = $pdo->prepare($insert);
-
-      $pdoStatement->bindValue(1, $this->id, PDO::PARAM_INT);
-      $pdoStatement->bindValue(2, $speciality, PDO::PARAM_INT);
-
-      if (!$pdoStatement->execute()) {  
-        print_r($pdoStatement->errorInfo());  // sensible à modifier
-      }  
-
-    }
-    
   }  
 
   public function updateDatabase() { 
@@ -251,53 +243,23 @@ class Actor {
       print_r($pdoStatement->errorInfo());  // sensible à modifier
     }  
 
-    $delete = 'DELETE FROM actor_speciality 
-      WHERE id_actor = ? ';
+    $this->deleteSpecialitiesDatabase($pdo);
 
-    $pdoStatement = $pdo->prepare($delete);
-
-    $pdoStatement->bindValue(1, $this->id, PDO::PARAM_INT);
-
-    if (!$pdoStatement->execute()) {  
-      print_r($pdoStatement->errorInfo());  // sensible à modifier
-    }  
-
-    foreach ($this->specialities as $speciality) {
-
-      $insert = 'INSERT actor_speciality (id_actor, id_speciality) VALUE (?, ?)';
-
-      $pdoStatement = $pdo->prepare($insert);
-
-      $pdoStatement->bindValue(1, $this->id, PDO::PARAM_INT);
-      $pdoStatement->bindValue(2, $speciality, PDO::PARAM_INT);
-
-      if (!$pdoStatement->execute()) {  
-        print_r($pdoStatement->errorInfo());  // sensible à modifier
-      }  
-
-    }
+    $this->insertSpecialitiesDatabase($pdo);
     
   }
 
-  public static function deleteDatabase() { 
+  public function deleteDatabase() { 
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $delete = 'DELETE FROM actor_speciality WHERE id_actor = ? ';
-
-    $pdoStatement = $pdo->prepare($delete);
-
-    $pdoStatement->bindValue(1, $actor->getId(), PDO::PARAM_INT);
-
-    if (!$pdoStatement->execute()) {  
-      print_r($pdoStatement->errorInfo());  // sensible à modifier
-    }  
+    $this->deleteSpecialitiesDatabase($pdo);
 
     $delete = 'DELETE FROM actor WHERE id = ?; ';
     
     $pdoStatement = $pdo->prepare($delete);
 
-    $pdoStatement->bindValue(1, $id, PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $this->id, PDO::PARAM_INT);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -307,7 +269,7 @@ class Actor {
     
     $pdoStatement = $pdo->prepare($delete);
 
-    $pdoStatement->bindValue(1, $id, PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $this->id, PDO::PARAM_INT);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -338,5 +300,38 @@ class Actor {
     return $specialities;
   
   }  
+
+  private function deleteSpecialitiesDatabase($pdo) {
+
+    $delete = 'DELETE FROM actor_speciality WHERE id_actor = ? ';
+
+    $pdoStatement = $pdo->prepare($delete);
+
+    $pdoStatement->bindValue(1, $this->id, PDO::PARAM_INT);
+
+    if (!$pdoStatement->execute()) {  
+      print_r($pdoStatement->errorInfo());  // sensible à modifier
+    }  
+
+  }
+
+  private function insertSpecialitiesDatabase($pdo) {
+
+    foreach ($this->specialities as $speciality) {
+
+      $insert = 'INSERT actor_speciality (id_actor, id_speciality) VALUE (?, ?)';
+
+      $pdoStatement = $pdo->prepare($insert);
+
+      $pdoStatement->bindValue(1, $this->id, PDO::PARAM_INT);
+      $pdoStatement->bindValue(2, $speciality, PDO::PARAM_INT);
+
+      if (!$pdoStatement->execute()) {  
+        print_r($pdoStatement->errorInfo());  // sensible à modifier
+      }  
+
+    }
+
+  }
 
 }

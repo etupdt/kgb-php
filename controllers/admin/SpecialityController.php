@@ -8,7 +8,7 @@ class SpecialityController {
 
         $nameEntity = "specialite";
 
-        $fields = $this->getFields(new Speciality("0", ""));
+        $fields = $this->getFields();
 
         require_once 'views/header.php';
 
@@ -23,17 +23,21 @@ class SpecialityController {
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/d/")) {
 
-                Speciality::deleteDatabase($explode[count($explode) - 1]);
+                $row = Speciality::find($explode[count($explode) - 1]);
+                $row->delete();
+                $row->persist();
+
                 $rows = $this->getRows();
                 require_once 'views/admin/entityList.php';
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/u/")) {
             
-                $fields = $this->getFields(Speciality::find($explode[count($explode) - 1]));
+                $row = $this->getRow(Speciality::find($explode[count($explode) - 1]));
                 require_once 'views/admin/entityForm.php';
 
             } else {
 
+                $row = $this->getRow(new Speciality("0", "", []));
                 require_once 'views/admin/entityForm.php';
 
             }    
@@ -45,12 +49,15 @@ class SpecialityController {
                 if ($_POST['id'] !== "0") {
 
                     $row = new Speciality ($_POST['id'], $_POST['name']);
-                    $row->updateDatabase();
+                    $row->update();
+                    $row->persist();
 
                 } else {
 
-                    $row = new Speciality (0, $_POST['name']);
-                    $row->insertDatabase();
+                    $row = new Speciality (0, $_POST['name'], []);
+                    $row->insert();
+                    $row->persist();
+
                 }    
 
             }
@@ -64,20 +71,18 @@ class SpecialityController {
 
     }
 
-    private function getFields (Speciality $row): array
+    private function getFields (): array
     {
 
         $fields[] = [
             'label' => 'Id',
             'name' => 'id',
-            'type' => 'text',
-            'value' => $row->getId()
+            'type' => 'text'
         ];
         $fields[] = [
             'label' => 'Nom',
             'name' => 'name',
-            'type' => 'text',
-            'value' => $row->getName()
+            'type' => 'text'
         ];
 
         return $fields;
@@ -87,16 +92,25 @@ class SpecialityController {
     private function getRows (): array
     {
 
-        $rows = [];
-        
-        foreach (Speciality::findAll() as $row) {
-            $rows[] = [
-                'id' => $row->getId(),
-                'name' => $row->getName()
-            ];
+        $specialities = [];
+
+        foreach (Speciality::findAll() as $speciality) {
+
+            $specialities[] = $this->getRow($speciality);
+
         } 
-        
-        return $rows;
+
+        return $specialities;
+
+    }
+
+    private function getRow (Speciality $speciality): array 
+    {
+
+        return  [
+            'id' => $speciality->getId(),
+            'name' => $speciality->getName(),
+        ];
 
     }
 

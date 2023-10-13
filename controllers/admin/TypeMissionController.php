@@ -8,7 +8,7 @@ class TypeMissionController {
 
         $nameEntity = "typemission";
 
-        $fields = $this->getFields(new TypeMission("0", ""));
+        $fields = $this->getFields();
 
         require_once 'views/header.php';
 
@@ -23,17 +23,21 @@ class TypeMissionController {
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/d/")) {
 
-                TypeMission::deleteDatabase($explode[count($explode) - 1]);
+                $row = TypeMission::find($explode[count($explode) - 1]);
+                $row->delete();
+                $row->persist();
+
                 $rows = $this->getRows();
                 require_once 'views/admin/entityList.php';
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/u/")) {
             
-                $fields = $this->getFields(TypeMission::find($explode[count($explode) - 1]));
+                $row = $this->getRow(TypeMission::find($explode[count($explode) - 1]));
                 require_once 'views/admin/entityForm.php';
 
             } else {
 
+                $row = $this->getRow(new TypeMission("0", "", ""));
                 require_once 'views/admin/entityForm.php';
 
             }    
@@ -45,12 +49,15 @@ class TypeMissionController {
                 if ($_POST['id'] !== "0") {
 
                     $row = new TypeMission ($_POST['id'], $_POST['typeMission']);
-                    $row->updateDatabase();
+                    $row->update();
+                    $row->persist();
 
                 } else {
 
                     $row = new TypeMission (0, $_POST['typeMission']);
-                    $row->insertDatabase();
+                    $row->insert();
+                    $row->persist();
+
                 }    
 
             }
@@ -58,26 +65,24 @@ class TypeMissionController {
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
 
-    }
+        }
 
         require_once 'views/footer.php';
 
     }
 
-    private function getFields (TypeMission $row): array
+    private function getFields (): array
     {
 
         $fields[] = [
             'label' => 'Id',
             'name' => 'id',
-            'type' => 'text',
-            'value' => $row->getId()
+            'type' => 'text'
         ];
         $fields[] = [
             'label' => 'Nom',
             'name' => 'typeMission',
-            'type' => 'text',
-            'value' => $row->getTypeMission()
+            'type' => 'text'
         ];
 
         return $fields;
@@ -87,17 +92,25 @@ class TypeMissionController {
     private function getRows (): array
     {
 
-        $rows = [];
-        
-        foreach (TypeMission::findAll() as $row) {
-            $rows[] = [
-                'id' => $row->getId(),
-                'typeMission' => $row->getTypeMission()
-            ];
+        $typeMissions = [];
+
+        foreach (TypeMission::findAll() as $typeMission) {
+
+            $typeMissions[] = $this->getRow($typeMission);
         } 
-        
-        return $rows;
+
+        return $typeMissions;
 
     }
 
+    private function getRow (TypeMission $typeMission): array 
+    {
+
+        return  [
+            'id' => $typeMission->getId(),
+            'typeMission' => $typeMission->getTypeMission()
+];
+
+    }
+    
 }

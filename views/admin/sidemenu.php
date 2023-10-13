@@ -6,4 +6,5 @@
       <li><a href="/specialite">Spécialités</a></li>
       <li><a href="/typemission">Types Mission</a></li>
       <li><a href="/statut">Statuts Mission</a></li>
+      <li><a href="/mission">Missions</a></li>
     </ul>

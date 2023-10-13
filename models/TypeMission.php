@@ -2,6 +2,9 @@
 
 class TypeMission {
 
+  private $isUpdated = false;
+  private $isDeleted = false;
+
   private $id;
   private $typeMission;
 
@@ -27,6 +30,23 @@ class TypeMission {
         $this->typeMission = $typeMission;
   }
 
+  public function persist() {
+
+    if ($this->isUpdated) {
+      if ($this->isDeleted) {
+        $this->deleteDatabase();
+      } elseif ($this->id === "0") {
+        $this->insertDatabase();
+      } else {
+        $this->updateDatabase();
+      }
+    }
+
+    $this->isUpdated = false;
+    $this->isDeleted = false;
+
+  }
+
   public static function find(string $id) { 
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
@@ -39,10 +59,12 @@ class TypeMission {
 
     if ($pdoStatement->execute()) {  
       $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, __CLASS__);
-      return $pdoStatement->fetch();
+      $typemission = $pdoStatement->fetch();
     } else {
       print_r($pdoStatement->errorInfo());  // sensible à modifier
     }  
+
+    return $typemission;
 
   }  
 
@@ -54,20 +76,36 @@ class TypeMission {
     
     $pdoStatement = $pdo->prepare($findAll);
 
-    $specialities = [];
+    $typemissions = [];
 
     if ($pdoStatement->execute()) {  
       $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, __CLASS__);
       while($typeMission = $pdoStatement->fetch()) {
-        $specialities[] = $typeMission;
+
+        $typemissions[] = $typeMission;
+
       }
     } else {
       print_r($pdoStatement->errorInfo());  // sensible à modifier
     }  
 
-    return $specialities;
+    return $typemissions;
     
   }  
+
+
+  public function update () {
+    $this->isUpdated = true;
+  }
+
+  public function insert () {
+    $this->isUpdated = true;
+  }
+
+  public function delete () {
+    $this->isUpdated = true;
+    $this->isDeleted = true;
+  }
 
   public function insertDatabase() { 
 
@@ -102,7 +140,7 @@ class TypeMission {
 
   }
 
-  public static function deleteDatabase(int $id) { 
+  public function deleteDatabase() { 
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
@@ -110,7 +148,7 @@ class TypeMission {
     
     $pdoStatement = $pdo->prepare($delete);
 
-    $pdoStatement->bindValue(1, $id, PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $this->id, PDO::PARAM_INT);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier

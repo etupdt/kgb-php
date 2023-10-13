@@ -16,9 +16,7 @@
 define("BASE_URL", '');
 
 require_once 'models/Router.php';
-// require_once 'controllers/HomeController.php';
-// require_once 'controllers/ProfileController.php';
-// require_once 'controllers/LogoutController.php';
+
 require_once 'controllers/admin/DashboardController.php';
 require_once 'controllers/admin/CountryController.php';
 require_once 'controllers/admin/HideoutController.php';
@@ -26,6 +24,7 @@ require_once 'controllers/admin/ActorController.php';
 require_once 'controllers/admin/SpecialityController.php';
 require_once 'controllers/admin/TypeMissionController.php';
 require_once 'controllers/admin/StatutController.php';
+require_once 'controllers/admin/MissionController.php';
 
 require_once 'models/Database.php';
 
@@ -50,6 +49,9 @@ $router->addRoute('POST',BASE_URL.'/typemission', 'TypeMissionController', 'inde
 
 $router->addRoute('GET',BASE_URL.'/statut', 'StatutController', 'index');
 $router->addRoute('POST',BASE_URL.'/statut', 'StatutController', 'index');
+
+$router->addRoute('GET',BASE_URL.'/mission', 'MissionController', 'index');
+$router->addRoute('POST',BASE_URL.'/mission', 'MissionController', 'index');
 
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = explode('/', explode('?', $_SERVER['REQUEST_URI'])[0])[1];

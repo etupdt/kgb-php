@@ -45,7 +45,9 @@
                         break;
                       }
                       case "select" : {
-                        echo $row[$field['name']];
+                        // echo '<pre>';
+                        // print_r($field['value']);
+                        echo $field['value'][$row[$field['name']]];
                         break;
                       }
                       case "multiSelect" : {

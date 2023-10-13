@@ -2,6 +2,9 @@
 
 class Hideout {
 
+  private $isUpdated = false;
+  private $isDeleted = false;
+
   private $id;
   private $code;
   private $address;
@@ -52,9 +55,21 @@ class Hideout {
     $this->id_country = $id_country;
   }
 
-  public static function expose() : array
-  {
-      return get_class_vars(__CLASS__);
+  public function persist() {
+
+    if ($this->isUpdated) {
+      if ($this->isDeleted) {
+        $this->deleteDatabase();
+      } elseif ($this->id === "0") {
+        $this->insertDatabase();
+      } else {
+        $this->updateDatabase();
+      }
+    }
+
+    $this->isUpdated = false;
+    $this->isDeleted = false;
+
   }
 
   public static function find(string $id) { 
@@ -69,10 +84,12 @@ class Hideout {
 
     if ($pdoStatement->execute()) {  
       $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, __CLASS__);
-      return $pdoStatement->fetch();
+      $hideout =  $pdoStatement->fetch();
     } else {
       print_r($pdoStatement->errorInfo());  // sensible à modifier
     }  
+
+    return $hideout;
 
   }  
 
@@ -89,7 +106,9 @@ class Hideout {
     if ($pdoStatement->execute()) {  
       $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, __CLASS__);
       while($hideout = $pdoStatement->fetch()) {
+
         $countries[] = $hideout;
+
       }
     } else {
       print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -98,6 +117,19 @@ class Hideout {
     return $countries;
     
   }  
+
+  public function update () {
+    $this->isUpdated = true;
+  }
+
+  public function insert () {
+    $this->isUpdated = true;
+  }
+
+  public function delete () {
+    $this->isUpdated = true;
+    $this->isDeleted = true;
+  }
 
   public function insertDatabase() { 
 
@@ -138,7 +170,7 @@ class Hideout {
 
   }
 
-  public static function deleteDatabase(int $id) { 
+  public function deleteDatabase() { 
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
@@ -146,7 +178,7 @@ class Hideout {
     
     $pdoStatement = $pdo->prepare($delete);
 
-    $pdoStatement->bindValue(1, $id, PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $this->id, PDO::PARAM_INT);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier

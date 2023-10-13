@@ -8,7 +8,7 @@ class HideoutController {
 
         $nameEntity = "planque";
 
-        $fields = $this->getFields(new Hideout("0", "", "", "", ""));
+        $fields = $this->getFields();
 
         require_once 'views/header.php';
 
@@ -23,17 +23,21 @@ class HideoutController {
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/d/")) {
 
-                Hideout::deleteDatabase($explode[count($explode) - 1]);
+                $row = Hideout::find($explode[count($explode) - 1]);
+                $row->delete();
+                $row->persist();
+
                 $rows = $this->getRows();
                 require_once 'views/admin/entityList.php';
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/u/")) {
             
-                $fields = $this->getFields(Hideout::find($explode[count($explode) - 1]));
+                $row = $this->getRow(Hideout::find($explode[count($explode) - 1]));
                 require_once 'views/admin/entityForm.php';
 
             } else {
 
+                $row = $this->getRow(new Hideout("0", "", "", "", 1));
                 require_once 'views/admin/entityForm.php';
 
             }    
@@ -45,12 +49,15 @@ class HideoutController {
                 if ($_POST['id'] !== "0") {
 
                     $row = new Hideout ($_POST['id'], $_POST['code'], $_POST['address'], $_POST['type'], $_POST['id_country']);
-                    $row->updateDatabase();
+                    $row->update();
+                    $row->persist();
 
                 } else {
 
                     $row = new Hideout (0, $_POST['code'], $_POST['address'], $_POST['type'], $_POST['id_country']);
-                    $row->insertDatabase();
+                    $row->insert();
+                    $row->persist();
+
                 }    
 
             }
@@ -58,55 +65,49 @@ class HideoutController {
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
 
-    }
+        }
 
         require_once 'views/footer.php';
 
     }
 
-    private function getFields (Hideout $row): array
+    private function getFields (): array
     {
 
         $fields[] = [
             'label' => 'Id',
             'name' => 'id',
-            'type' => 'text',
-            'value' => $row->getId()
+            'type' => 'text'
         ];
         $fields[] = [
             'label' => 'Code',
             'name' => 'code',
-            'type' => 'text',
-            'value' => $row->getCode()
+            'type' => 'text'
         ];
         $fields[] = [
             'label' => 'Adresse',
             'name' => 'address',
-            'type' => 'text',
-            'value' => $row->getAddress()
+            'type' => 'text'
         ];
         $fields[] = [
             'label' => 'Type',
             'name' => 'type',
-            'type' => 'text',
-            'value' => $row->getType()
+            'type' => 'text'
         ];
 
         $rows = [];
 
+        $countries = [];
+
         foreach (Country::findAll() as $country) {
-            $rows[] = [
-                'id' => $country->getId(),
-                'name' => $country->getName()
-            ];
+            $countries[$country->getId()] = $country->getName();
         }
 
         $fields[] = [
             'label' => 'Pays',
             'name' => 'id_country',
             'type' => 'select',
-            'value' => $rows,
-            'selected' => [$row->getId_country()]
+            'value' => $countries
         ];
 
         return $fields;
@@ -116,22 +117,28 @@ class HideoutController {
     private function getRows (): array
     {
 
-        $rows = [];
+        $actors = [];
 
-        foreach (Hideout::findAll() as $row) {
+        foreach (Hideout::findAll() as $hideout) {
 
-            $country = Country::find($row->getId_country());
-
-            $rows[] = [
-                'id' => $row->getId(),
-                'code' => $row->getCode(),
-                'address' => $row->getAddress(),
-                'type' => $row->getType(),
-                'id_country' => $country->getName()
-            ];
+            $hideouts[] = $this->getRow($hideout);
         } 
-        
-        return $rows;
+
+        return $hideouts;
 
     }
+
+    private function getRow (Hideout $hideout): array 
+    {
+
+        return  [
+            'id' => $hideout->getId(),
+            'code' => $hideout->getCode(),
+            'address' => $hideout->getAddress(),
+            'type' => $hideout->getType(),
+            'id_country' => $hideout->getId_country(),
+        ];
+
+    }
+    
 }

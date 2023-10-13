@@ -8,7 +8,7 @@ class CountryController {
 
         $nameEntity = "pays";
 
-        $fields = $this->getFields(new Country("0", "", ""));
+        $fields = $this->getFields();
 
         require_once 'views/header.php';
 
@@ -23,17 +23,21 @@ class CountryController {
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/d/")) {
 
-                Country::deleteDatabase($explode[count($explode) - 1]);
+                $row = Country::find($explode[count($explode) - 1]);
+                $row->delete();
+                $row->persist();
+
                 $rows = $this->getRows();
                 require_once 'views/admin/entityList.php';
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/u/")) {
             
-                $fields = $this->getFields(Country::find($explode[count($explode) - 1]));
+                $row = $this->getRow(Country::find($explode[count($explode) - 1]));
                 require_once 'views/admin/entityForm.php';
 
             } else {
 
+                $row = $this->getRow(new Country("0", "", ""));
                 require_once 'views/admin/entityForm.php';
 
             }    
@@ -45,12 +49,15 @@ class CountryController {
                 if ($_POST['id'] !== "0") {
 
                     $row = new Country ($_POST['id'], $_POST['name'], $_POST['nationality']);
-                    $row->updateDatabase();
+                    $row->update();
+                    $row->persist();
 
                 } else {
 
                     $row = new Country (0, $_POST['name'], $_POST['nationality']);
-                    $row->insertDatabase();
+                    $row->insert();
+                    $row->persist();
+
                 }    
 
             }
@@ -58,32 +65,29 @@ class CountryController {
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
 
-    }
+        }
 
         require_once 'views/footer.php';
 
     }
 
-    private function getFields (Country $row): array
+    private function getFields (): array
     {
 
         $fields[] = [
             'label' => 'Id',
             'name' => 'id',
-            'type' => 'text',
-            'value' => $row->getId()
+            'type' => 'text'
         ];
         $fields[] = [
             'label' => 'Nom',
             'name' => 'name',
-            'type' => 'text',
-            'value' => $row->getName()
+            'type' => 'text'
         ];
         $fields[] = [
             'label' => 'Nationalité',
             'name' => 'nationality',
-            'type' => 'text',
-            'value' => $row->getNationality()
+            'type' => 'text'
         ];
 
         return $fields;
@@ -93,18 +97,26 @@ class CountryController {
     private function getRows (): array
     {
 
-        $rows = [];
-        
-        foreach (Country::findAll() as $row) {
-            $rows[] = [
-                'id' => $row->getId(),
-                'name' => $row->getName(),
-                'nationality' => $row->getNationality()
-            ];
+        $countries = [];
+
+        foreach (Country::findAll() as $country) {
+
+            $countries[] = $this->getRow($country);
         } 
-        
-        return $rows;
+
+        return $countries;
 
     }
 
+    private function getRow (Country $country): array 
+    {
+
+        return  [
+            'id' => $country->getId(),
+            'name' => $country->getName(),
+            'nationality' => $country->getNationality(),
+        ];
+
+    }
+    
 }

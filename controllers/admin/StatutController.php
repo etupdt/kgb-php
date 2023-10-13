@@ -8,7 +8,7 @@ class StatutController {
 
         $nameEntity = "statut";
 
-        $fields = $this->getFields(new Statut("0", ""));
+        $fields = $this->getFields();
 
         require_once 'views/header.php';
 
@@ -23,17 +23,21 @@ class StatutController {
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/d/")) {
 
-                Statut::deleteDatabase($explode[count($explode) - 1]);
+                $row = Statut::find($explode[count($explode) - 1]);
+                $row->delete();
+                $row->persist();
+
                 $rows = $this->getRows();
                 require_once 'views/admin/entityList.php';
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/u/")) {
             
-                $fields = $this->getFields(Statut::find($explode[count($explode) - 1]));
+                $row = $this->getRow(Statut::find($explode[count($explode) - 1]));
                 require_once 'views/admin/entityForm.php';
 
             } else {
 
+                $row = $this->getRow(new Statut("0", "", ""));
                 require_once 'views/admin/entityForm.php';
 
             }    
@@ -45,12 +49,15 @@ class StatutController {
                 if ($_POST['id'] !== "0") {
 
                     $row = new Statut ($_POST['id'], $_POST['statut']);
-                    $row->updateDatabase();
+                    $row->update();
+                    $row->persist();
 
                 } else {
 
                     $row = new Statut (0, $_POST['statut']);
-                    $row->insertDatabase();
+                    $row->insert();
+                    $row->persist();
+
                 }    
 
             }
@@ -58,26 +65,24 @@ class StatutController {
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
 
-    }
+        }
 
         require_once 'views/footer.php';
 
     }
 
-    private function getFields (Statut $row): array
+    private function getFields (): array
     {
 
         $fields[] = [
             'label' => 'Id',
             'name' => 'id',
-            'type' => 'text',
-            'value' => $row->getId()
+            'type' => 'text'
         ];
         $fields[] = [
             'label' => 'Nom',
             'name' => 'statut',
-            'type' => 'text',
-            'value' => $row->getStatut()
+            'type' => 'text'
         ];
 
         return $fields;
@@ -87,17 +92,25 @@ class StatutController {
     private function getRows (): array
     {
 
-        $rows = [];
-        
-        foreach (Statut::findAll() as $row) {
-            $rows[] = [
-                'id' => $row->getId(),
-                'statut' => $row->getStatut()
-            ];
+        $statuts = [];
+
+        foreach (Statut::findAll() as $statut) {
+
+            $statuts[] = $this->getRow($statut);
         } 
-        
-        return $rows;
+
+        return $statuts;
 
     }
 
+    private function getRow (Statut $statut): array 
+    {
+
+        return  [
+            'id' => $statut->getId(),
+            'statut' => $statut->getStatut()
+    ];
+
+    }
+    
 }

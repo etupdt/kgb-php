@@ -9,7 +9,6 @@ class ActorController {
         $nameEntity = "actor";
 
         $fields = $this->getFields();
-        $row = new Actor("0", "", "", "", "", "", []);
 
         require_once 'views/header.php';
 
@@ -24,8 +23,9 @@ class ActorController {
 
             } elseif (strpos($_SERVER['REQUEST_URI'], "/d/")) {
 
-                $actor = Actor::find($explode[count($explode) - 1]);
-                Actor::deleteDatabase($actor);
+                $row = Actor::find($explode[count($explode) - 1]);
+                $row->delete();
+                $row->persist();
 
                 $rows = $this->getRows();
                 require_once 'views/admin/entityList.php';
@@ -37,6 +37,7 @@ class ActorController {
 
             } else {
 
+                $row = $this->getRow(new Actor("0", "", "", "", "", 1, []));
                 require_once 'views/admin/entityForm.php';
 
             }    
@@ -48,13 +49,13 @@ class ActorController {
                 if ($_POST['id'] !== "0") {
 
                     $row = new Actor ($_POST['id'], $_POST['firstname'], $_POST['lastname'], $_POST['birthdate'], $_POST['identificationCode'], $_POST['id_country'], $_POST['specialities']);
-                    $row->updateDatabase();
+                    $row->update();
                     $row->persist();
 
                 } else {
 
                     $row = new Actor (0, $_POST['firstname'], $_POST['lastname'], $_POST['birthdate'], $_POST['identificationCode'], $_POST['id_country'], $_POST['specialities']);
-                    $row->insertDatabase();
+                    $row->insert();
                     $row->persist();
 
                 }    
@@ -64,7 +65,7 @@ class ActorController {
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
 
-    }
+        }
 
         require_once 'views/footer.php';
 
@@ -102,10 +103,7 @@ class ActorController {
         $countries = [];
 
         foreach (Country::findAll() as $country) {
-            $countries[] = [
-                'id' => $country->getId(),
-                'name' => $country->getName()
-            ];
+            $countries[$country->getId()] = $country->getName();
         }
 
         $fields[] = [
@@ -160,9 +158,10 @@ class ActorController {
             'lastname' => $actor->getLastname(),
             'birthdate' => $actor->getBirthdate(),
             'identificationCode' => $actor->getIdentificationCode(),
-            'id_country' => $country->getName(),
+            'id_country' => $actor->getId_country(),
             'specialities' => $actor->getSpecialities()
         ];
 
     }
+    
 }

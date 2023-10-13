@@ -4,11 +4,10 @@
 <select class="form-select me-2" 
   type="<?php echo $field['type'] ?>" 
   name="<?php echo $field['name'] ?>" 
-  value="<?php echo $field['value'] ?>"
 >
   <?php
-    foreach ($field['value'] as $option) {
-      echo '<option'.($option['id'] === $field['selected'] ? ' selected ' : ' ').'value="'.$option['id'].'">'.$option['name'].'</option>';
+    foreach (array_keys($field['value']) as $option) {
+      echo '<option'.($option == $row[$field['name']] ? ' selected ' : ' ').'value="'.$option.'">'.$field['value'][$option].'</option>';
     }
   ?>
 </select>
