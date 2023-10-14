@@ -6,6 +6,8 @@
   multiple
 >
   <?php
+  echo '<pre>';
+  print_r($field);
     foreach ($field['value'] as $option) {
       if (in_array($option['id'], $row[$field['name']])) {
         echo '<option'.' selected '.'value="'.$option['id'].'">'.$option['name'].'</option>';

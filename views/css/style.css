@@ -5,6 +5,7 @@ html, body {
   padding: 0;
   display:flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 main > div {
@@ -55,6 +56,11 @@ footer {
 }
 
 /*------------------------------*/
+
+.table-data {
+  width: max-content !important;
+  min-width: 100%;
+}
 
 .micro-btn {
   --bs-btn-padding-y: 0 !important; 

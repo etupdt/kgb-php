@@ -32,6 +32,7 @@ class Actor {
       $this->id_country = $id_country;
 
       $this->specialities = $specialities;
+      
   }
 
   public function getId()  : string {

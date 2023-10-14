@@ -4,6 +4,29 @@ require_once 'models/Mission.php';
 
 class MissionController {
 
+    private $roles = [];
+    private $actors = [];
+
+    private $role;
+
+    public function __construct() {
+ 
+        foreach (Actor::findAll() as $actor) {
+            $this->actors[] = [
+                'id' => $actor->getId(),
+                'name' => $actor->getIdentificationCode().' '.$actor->getFirstname().' '.$actor->getLastname().' '.$actor->getBirthdate(),
+            ];
+        }
+    
+        foreach (Role::findAll() as $role) {
+            $this->roles[] = [
+                'id' => $role->getId(),
+                'role' => $role->getRole()
+            ];
+        }    
+        
+    }
+
     public function index() { 
 
         $nameEntity = "mission";
@@ -46,23 +69,37 @@ class MissionController {
 
             if ($explode[count($explode) - 1] !== "c") {
                 
+                foreach ($this->roles as $role) {
+
+                    $actors =  $_POST[$role['role']];
+        
+                    foreach($actors as $id_actor) {
+                        $actorsRoles[] = [
+                            'id_actor' => $id_actor,
+                            'id_role' => $role['id']
+                        ];
+                    }
+
+                }
+        
                 if ($_POST['id'] !== "0") {
 
                     $row = new Mission ($_POST['id'], $_POST['title'], $_POST['description'], $_POST['codeName'], $_POST['begin'], $_POST['end'], 
                         $_POST['id_country'], $_POST['id_statut'], $_POST['id_typeMission'], $_POST['id_speciality'], 
-                        $_POST['hideouts'], $_POST['actors']);
-                    $row->update();
-                    $row->persist();
+                        $_POST['hideouts']);
 
                 } else {
 
                     $row = new Mission (0, $_POST['title'], $_POST['description'], $_POST['codeName'], $_POST['begin'], $_POST['end'], 
                         $_POST['id_country'], $_POST['id_statut'], $_POST['id_typeMission'], $_POST['id_speciality'], 
-                        $_POST['hideouts'], $_POST['actors']);
-                    $row->insert();
-                    $row->persist();
-
+                        $_POST['hideouts']);
+                    
                 }    
+
+                $row->setActorsRoles($actorsRoles);
+            
+                $row->insert();
+                $row->persist();
 
             }
 
@@ -124,7 +161,7 @@ class MissionController {
 
         $statuts = [];
 
-        foreach (Country::findAll() as $statut) {
+        foreach (Statut::findAll() as $statut) {
             $statuts[$statut->getId()] = $statut->getStatut();
         }
 
@@ -137,20 +174,20 @@ class MissionController {
 
         $typeMissions = [];
 
-        foreach (Country::findAll() as $typeMission) {
-            $typeMissions[$typeMission->getId()] = $typeMission->getName();
+        foreach (TypeMission::findAll() as $typeMission) {
+            $typeMissions[$typeMission->getId()] = $typeMission->getTypeMission();
         }
 
         $fields[] = [
             'label' => 'Type de mission',
-            'name' => 'id_typemission',
+            'name' => 'id_typeMission',
             'type' => 'select',
             'value' => $typeMissions
         ];
 
         $specialities = [];
 
-        foreach (Country::findAll() as $speciality) {
+        foreach (Speciality::findAll() as $speciality) {
             $specialities[$speciality->getId()] = $speciality->getName();
         }
 
@@ -166,7 +203,7 @@ class MissionController {
         foreach (Hideout::findAll() as $hideout) {
             $hideouts[] = [
                 'id' => $hideout->getId(),
-                'name' => $hideout->getName()
+                'name' => $hideout->getCode().' '.$hideout->getAddress().' '.$hideout->getType()
             ];
         }
 
@@ -177,35 +214,16 @@ class MissionController {
             'value' => $hideouts
         ];
 
-        $actors = [];
+        foreach ($this->roles as $role) {
 
-        foreach (Hideout::findAll() as $hideout) {
-            $actors[] = [
-                'id' => $hideout->getId(),
-                'name' => $hideout->getName()
+            $fields[] = [
+                'label' => $role['role'].'s',
+                'name' => $role['role'],
+                'type' => 'multiSelect',
+                'value' => $this->actors
             ];
-        }
 
-        $fields[] = [
-            'label' => 'Agents',
-            'name' => 'agents',
-            'type' => 'multiSelect',
-            'value' => $actors
-        ];
-
-        $fields[] = [
-            'label' => 'Contacts',
-            'name' => 'contacts',
-            'type' => 'multiSelect',
-            'value' => $actors
-        ];
-
-        $fields[] = [
-            'label' => 'Cibles',
-            'name' => 'cibles',
-            'type' => 'multiSelect',
-            'value' => $actors
-        ];
+        }    
 
         return $fields;
 
@@ -228,9 +246,7 @@ class MissionController {
     private function getRow (Mission $mission): array 
     {
 
-
-
-        return  [
+        $row = [
             'id' => $mission->getId(),
             'title' => $mission->getTitle(),
             'description' => $mission->getDescription(),
@@ -242,10 +258,25 @@ class MissionController {
             'id_typeMission' => $mission->getId_typeMission(),
             'id_speciality' => $mission->getId_speciality(),
             'hideouts' => $mission->getHideouts(),
-//            'agents' => $mission->getActorsByRole(),
-//            'contacts' => $mission->getSpecialities(),
-//            'cibles' => $mission->getSpecialities(),
         ];
+
+        $actorsRoles = $mission->getActorsRoles();
+
+        foreach ($this->roles as $role) {
+
+            $actors = [];
+
+            foreach($actorsRoles as $actorRole) {
+                if ($actorRole['id_role'] == $role['id']) {
+                    $actors[] = $actorRole['id_actor'];
+                }
+            }
+
+            $row[$role['role']] = $actors;
+    
+        }
+        
+        return $row;
 
     }
     

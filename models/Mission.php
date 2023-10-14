@@ -18,7 +18,7 @@ class Mission {
   private $id_speciality;
 
   private $hideouts;
-  private $actors;
+  private $actors_roles;
 
   public function __construct(
     string  $id = null, 
@@ -34,7 +34,7 @@ class Mission {
     string $id_speciality = null,
 
     array $hideouts = [],
-    array $actors = []
+    array $actors_roles = []
 
     ) {
       $this->id = $id;
@@ -50,7 +50,7 @@ class Mission {
       $this->id_speciality = $id_speciality;
 
       $this->hideouts = $hideouts;
-      $this->actors = $actors;
+      $this->actors_roles = $actors_roles;
 
     }
 
@@ -98,8 +98,8 @@ class Mission {
     return $this->hideouts;
   }  
 
-  public function getActors() { 
-    return $this->actors;
+  public function getActorsRoles() { 
+    return $this->actors_roles;
   }  
 
   public function setTitle(string  $title) {
@@ -151,16 +151,16 @@ class Mission {
     $this->hideouts = [];
   }  
 
-  public function setActors(array $actors) {
-    $this->actors = $actors;
+  public function setActorsRoles(array $actors_roles) {
+    $this->actors_roles = $actors_roles;
   }
 
-  public function addActor(Hideout $actor) { 
-    $this->actors[] = $actor;
+  public function addActorsRoles($actors_roles) { 
+    $this->actors_roles[] = $actors_roles;
   }  
 
-  public function removeActors() { 
-    $this->actors = [];
+  public function removeActorsRoles() { 
+    $this->actors_roles = [];
   }  
 
   public function persist() {
@@ -184,11 +184,11 @@ class Mission {
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
     
-    $find = "SELECT a.id, title, description, codename, begin, end, 
-    id_country, id_statut, id_typeMission, id_speciality, 
+    $find = "SELECT id, title, description, codeName, begin, end, 
+    id_country, id_statut, id_typeMission, id_speciality 
     FROM mission WHERE id = ?;";
 
-  $pdoStatement = $pdo->prepare($find);
+    $pdoStatement = $pdo->prepare($find);
 
     $pdoStatement->bindValue(1, $id, PDO::PARAM_INT);
 
@@ -200,6 +200,7 @@ class Mission {
     }
 
     $mission->setHideouts(Mission::getHideoutsDatabase($mission->getId()));
+    $mission->setActorsRoles(Mission::getActorsRolesDatabase($mission->getId()));
 
     return $mission;
 
@@ -209,8 +210,8 @@ class Mission {
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $findAll = "SELECT a.id, title, description, codename, begin, end, 
-    id_country, id_statut, id_typeMission, id_speciality, 
+    $findAll = "SELECT id, title, description, codeName, begin, end, 
+    id_country, id_statut, id_typeMission, id_speciality
     FROM mission";
     
     $pdoStatement = $pdo->prepare($findAll);
@@ -222,6 +223,7 @@ class Mission {
       while($mission = $pdoStatement->fetch()) {
         
         $mission->setHideouts(Mission::getHideoutsDatabase($mission->getId()));
+        $mission->setActorsRoles(Mission::getActorsRolesDatabase($mission->getId()));
 
         $missions[] = $mission;
 
@@ -273,7 +275,7 @@ class Mission {
     $this->id = $pdo->lastInsertId();
 
     $this->insertHideoutsDatabase($pdo);
-    $this->insertActorsDatabase($pdo);
+    $this->insertActorsRolesDatabase($pdo);
 
   }  
 
@@ -281,7 +283,7 @@ class Mission {
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-    $update = 'UPDATE mission SET title = ?, description = ?, begin = ?, end = ?, 
+    $update = 'UPDATE mission SET title = ?, description = ?, codeName = ?, begin = ?, end = ?, 
     id_country = ?, id_statut = ?, id_typeMission = ?, id_speciality = ? 
     WHERE id = ?';
     
@@ -296,7 +298,7 @@ class Mission {
     $pdoStatement->bindValue(7, $this->id_statut, PDO::PARAM_INT);
     $pdoStatement->bindValue(8, $this->id_typeMission, PDO::PARAM_INT);
     $pdoStatement->bindValue(9, $this->id_speciality, PDO::PARAM_INT);
-    $pdoStatement->bindValue(9, $this->id, PDO::PARAM_INT);
+    $pdoStatement->bindValue(10, $this->id, PDO::PARAM_INT);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -305,8 +307,8 @@ class Mission {
     $this->deleteHideoutsDatabase($pdo);
     $this->insertHideoutsDatabase($pdo);
     
-    $this->deleteActorsDatabase($pdo);
-    $this->insertActorsDatabase($pdo);
+    $this->deleteActorsRolesDatabase($pdo);
+    $this->insertActorsRolesDatabase($pdo);
     
   }
 
@@ -315,7 +317,7 @@ class Mission {
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
     $this->deleteHideoutsDatabase($pdo);
-    $this->deleteActorsDatabase($pdo);
+    $this->deleteActorsRolesDatabase($pdo);
 
     $delete = 'DELETE FROM mission WHERE id = ?; ';
     
@@ -386,33 +388,36 @@ class Mission {
 
   }
 
-  public static function getActorsDatabase($id_mission) { 
+  public static function getActorsRolesDatabase($id_mission) { 
   
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
   
-    $findActor = "SELECT id_actor FROM actor_mission WHERE id_mission = ?";
+    $findActor = "SELECT id_actor, id_role FROM mission_actor_role WHERE id_mission = ?";
   
     $pdoStatement = $pdo->prepare($findActor);
   
     $pdoStatement->bindValue(1, $id_mission, PDO::PARAM_INT);
   
-    $actors = [];
+    $actors_roles = [];
   
     if ($pdoStatement->execute()) {  
-      while($actor = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
-        $actors[] = $actor['id_actor'];
+      while($actor_role = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
+        $actors_roles[] = [
+          'id_actor' => $actor_role['id_actor'],
+          'id_role' => $actor_role['id_role']
+        ];
       }
     } else {
       print_r($pdoStatement->errorInfo());  // sensible à modifier
     }  
   
-    return $actors;
+    return $actors_roles;
   
   }  
 
-  private function deleteActorsDatabase($pdo) {
+  private function deleteActorsRolesDatabase($pdo) {
 
-    $delete = 'DELETE FROM actor_mission WHERE id_mission = ? ';
+    $delete = 'DELETE FROM mission_actor_role WHERE id_mission = ? ';
 
     $pdoStatement = $pdo->prepare($delete);
 
@@ -424,16 +429,17 @@ class Mission {
 
   }
 
-  private function insertActorsDatabase($pdo) {
+  private function insertActorsRolesDatabase($pdo) {
 
-    foreach ($this->actors as $actor) {
+    foreach ($this->actors_roles as $actor_role) {
 
-      $insert = 'INSERT actor_mission (id_mission, id_actor) VALUE (?, ?)';
+      $insert = 'INSERT mission_actor_role (id_mission, id_actor, id_role) VALUE (?, ?, ?)';
 
       $pdoStatement = $pdo->prepare($insert);
 
       $pdoStatement->bindValue(1, $this->id, PDO::PARAM_INT);
-      $pdoStatement->bindValue(2, $actor, PDO::PARAM_INT);
+      $pdoStatement->bindValue(2, $actor_role['id_actor'], PDO::PARAM_INT);
+      $pdoStatement->bindValue(3, $actor_role['id_role'], PDO::PARAM_INT);
 
       if (!$pdoStatement->execute()) {  
         print_r($pdoStatement->errorInfo());  // sensible à modifier

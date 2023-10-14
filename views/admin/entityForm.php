@@ -26,6 +26,10 @@
                 require 'multiSelectField.php';
                 break;
               }
+              case "array" : {
+                require 'arrayField.php';
+                break;
+              }
             }
             echo '</div>';
           }

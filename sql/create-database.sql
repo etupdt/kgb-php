@@ -76,8 +76,8 @@ CREATE TABLE IF NOT EXISTS role(
 
 CREATE TABLE IF NOT EXISTS mission(
   id int auto_increment NOT NULL,
-  title date NOT NULL,
-  description int,
+  title varchar (100) NOT NULL,
+  description text NOT NULL,
   codeName varchar (100) NOT NULL,
   begin date NOT NULL,
   end date NOT NULL,
