@@ -6,6 +6,7 @@ class RoleController {
 
     public function index() { 
 
+        $nameMenu = "Roles";
         $nameEntity = "role";
 
         $fields = $this->getFields();

@@ -6,6 +6,7 @@ class ActorController {
 
     public function index() { 
 
+        $nameMenu = "Acteurs";
         $nameEntity = "actor";
 
         $fields = $this->getFields();

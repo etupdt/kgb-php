@@ -6,6 +6,7 @@ class SpecialityController {
 
     public function index() { 
 
+        $nameMenu = "Spécialités";
         $nameEntity = "specialite";
 
         $fields = $this->getFields();

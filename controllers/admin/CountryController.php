@@ -6,6 +6,7 @@ class CountryController {
 
     public function index() { 
 
+        $nameMenu = "Pays";
         $nameEntity = "pays";
 
         $fields = $this->getFields();

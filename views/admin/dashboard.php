@@ -1,10 +1,11 @@
 <main class="container col">         
-  <div class="row title">
-    <h1>Dashboard KGB</h1>
-  </div>
-  <div class="row">
+  <div class="row pt-5">
     <?php require_once 'sidemenu.php' ?>
-    <form action="submit" class="col-9 form">
-    </form>
+    <div class="d-flex flex-column col-9 h-100">
+      <div class="title">
+        <h1>Dashboard Admin KGB</h1>
+      </div>
+      <form action="submit" class="form"></form>
+    </div>
   </div>
 </main>

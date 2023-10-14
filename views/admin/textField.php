@@ -4,7 +4,7 @@
 <?php 
   if ($field['name'] === "id") {
     ?>
-      <input class="form-control me-2" disabled type="<?php echo $field['type'] ?>" name="<?php echo $field['name'] ?>" value="<?php echo $row[$field['name']] ?>"/>
+      <input class="form-control me-2 form-control-success" disabled type="<?php echo $field['type'] ?>" name="<?php echo $field['name'] ?>" value="<?php echo $row[$field['name']] ?>"/>
     <?php
   }
 ?>

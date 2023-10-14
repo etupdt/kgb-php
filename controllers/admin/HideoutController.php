@@ -6,6 +6,7 @@ class HideoutController {
 
     public function index() { 
 
+        $nameMenu = "Planques";
         $nameEntity = "planque";
 
         $fields = $this->getFields();

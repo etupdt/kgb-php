@@ -29,6 +29,7 @@ class MissionController {
 
     public function index() { 
 
+        $nameMenu = "Missions";
         $nameEntity = "mission";
 
         $fields = $this->getFields();
