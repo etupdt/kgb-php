@@ -1,7 +1,7 @@
 <main class="container col">         
   <div class="row pt-5">
     <?php require_once 'sidemenu.php' ?>
-    <div class="d-flex flex-column col-9 h-100">
+    <div class="d-flex flex-column col-9 h-100 mb-5">
       <div class="row title">
         <h1><?php echo $nameMenu?></h1>
       </div>
@@ -13,7 +13,7 @@
           </div>
           <?php
             foreach ($fields as $field) {
-              echo '<div class="">';
+              echo '<div class="mb-3">';
               switch ($field['type']) {
                 case "text" : {
                   require 'textField.php';
@@ -21,6 +21,10 @@
                 }
                 case "select" : {
                   require 'selectField.php';
+                  break;
+                }
+                case "date" : {
+                  require 'dateField.php';
                   break;
                 }
                 case "multiSelect" : {

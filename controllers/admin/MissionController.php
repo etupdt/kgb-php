@@ -139,12 +139,12 @@ class MissionController {
         $fields[] = [
             'label' => 'Date de début',
             'name' => 'begin',
-            'type' => 'text'
+            'type' => 'date'
         ];
         $fields[] = [
             'label' => 'Date de fin',
             'name' => 'end',
-            'type' => 'text'
+            'type' => 'date'
         ];
 
         $countries = [];

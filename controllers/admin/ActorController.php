@@ -93,7 +93,7 @@ class ActorController {
         $fields[] = [
             'label' => 'Date de naissance',
             'name' => 'birthdate',
-            'type' => 'text'
+            'type' => 'date'
         ];
         $fields[] = [
             'label' => 'Code identification',

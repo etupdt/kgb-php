@@ -8,6 +8,11 @@ html, body {
   overflow-y: auto;
 }
 
+a {
+  color: black !important;
+  text-decoration: none !important;
+}
+
 main > div {
   margin: 0;
 }
