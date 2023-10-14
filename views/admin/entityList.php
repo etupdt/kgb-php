@@ -1,13 +1,12 @@
-<main class="container col">         
-  <div class="d-flex flex-column flex-lg-row pt-5">
-    <?php require_once 'sidemenu.php' ?>
-    <div class="d-flex flex-column col-12 col-lg-9 h-100">
-      <div class="title">
+<main class="container row mx-auto p-0">         
+  <div class="d-flex flex-column flex-lg-row p-0">
+    <div class="d-flex flex-column w-100 h-100">
+      <div class="title pt-5">
         <h1><?php echo $nameMenu?></h1>
       </div>
       <form action="/<?php echo $nameEntity; ?>" class="form">
-        <div class="container px-4">
-          <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5 my-4">
+        <div class="container p-0 form-div">
+          <div class="d-grid gap-2 d-md-flex justify-content-md-end my-4">
             <button role="button" class="btn btn-outline-success">Ajouter</button>
           </div>
           <div class="col-12 table-responsive">

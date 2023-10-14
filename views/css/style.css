@@ -8,22 +8,8 @@ html, body {
   overflow-y: auto;
 }
 
-a {
-  color: black !important;
-  text-decoration: none !important;
-}
-
 main > div {
   margin: 0;
-}
-
-.title {
-  width: 100%;
-  padding: auto;
-}
-
-.title > h1 {
-  width: 100%;
 }
 
 main > div {
@@ -31,15 +17,9 @@ main > div {
   width: 100%;
 }
 
-.sidemenu {
-  list-style: none;
-  margin: 0;
-}  
-
-.sidemenu > li {
-  height: 40px;
-  font-size: 1.5em;
-}  
+.right-panel {
+  width: 100% !important;
+}
 
 .form {
   height: 100%;
@@ -76,5 +56,14 @@ footer {
 }
 
 @media screen and (min-width: 992px) {
-
-}
+  
+  .form-div {
+    width: 70% !important;
+  }
+  
+  label {
+    text-align: end;
+    padding-right: 15px;
+  }
+  
+  }
