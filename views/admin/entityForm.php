@@ -1,7 +1,7 @@
 <main class="container col">         
-  <div class="row pt-5">
+  <div class="d-flex flex-column flex-lg-row pt-5">
     <?php require_once 'sidemenu.php' ?>
-    <div class="d-flex flex-column col-9 h-100 mb-5">
+    <div class="d-flex flex-column col-12 col-lg-9 h-100">
       <div class="row title">
         <h1><?php echo $nameMenu?></h1>
       </div>
