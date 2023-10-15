@@ -44,6 +44,10 @@
                             echo $row[$field['name']];
                             break;
                           }
+                          case "date" : {
+                            echo $row[$field['name']];
+                            break;
+                          }
                           case "select" : {
                             // echo '<pre>';
                             // print_r($field['value']);
