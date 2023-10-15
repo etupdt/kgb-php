@@ -17,51 +17,47 @@ class ActorController {
 
         if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
-            if ($_SERVER['REQUEST_URI'] === '/actor') {
-
+            if (! isset($_GET['a']) || $_GET['a'] === 'c') {
                 $rows = $this->getRows();
                 require_once 'views/admin/entityList.php';
-
-            } elseif (strpos($_SERVER['REQUEST_URI'], "/d/")) {
-
-                $row = Actor::find($explode[count($explode) - 1]);
-                $row->delete();
-                $row->persist();
-
-                $rows = $this->getRows();
-                require_once 'views/admin/entityList.php';
-
-            } elseif (strpos($_SERVER['REQUEST_URI'], "/u/")) {
-            
-                $row = $this->getRow(Actor::find($explode[count($explode) - 1]));
-                require_once 'views/admin/entityForm.php';
-
             } else {
-
-                $row = $this->getRow(new Actor("0", "", "", "", "", 1, []));
-                require_once 'views/admin/entityForm.php';
-
-            }    
+                switch ($_GET['a']) {
+                    case 'd' : {
+                        $row = Actor::find($_GET['id']);
+                        $row->delete();
+                        $row->persist();
+                        $rows = $this->getRows();
+                        require_once 'views/admin/entityList.php';
+                        break;
+                    }
+                    case 'u' : {
+                        $row = $this->getRow(Actor::find($_GET['id']));
+                        require_once 'views/admin/entityForm.php';
+                        break;
+                    }
+                    case 'i' : {
+                        $row = $this->getRow(new Actor("0", "", "", "", "", 1, []));
+                        require_once 'views/admin/entityForm.php';
+                        break;
+                    }
+                }
+            }
 
         } else {
 
-            if ($explode[count($explode) - 1] !== "c") {
-                
-                if ($_POST['id'] !== "0") {
+            if ($_POST['id'] !== "0") {
 
-                    $row = new Actor ($_POST['id'], $_POST['firstname'], $_POST['lastname'], $_POST['birthdate'], $_POST['identificationCode'], $_POST['id_country'], $_POST['specialities']);
-                    $row->update();
-                    $row->persist();
+                $row = new Actor ($_POST['id'], $_POST['firstname'], $_POST['lastname'], $_POST['birthdate'], $_POST['identificationCode'], $_POST['id_country'], $_POST['specialities']);
+                $row->update();
+                $row->persist();
 
-                } else {
+            } else {
 
-                    $row = new Actor (0, $_POST['firstname'], $_POST['lastname'], $_POST['birthdate'], $_POST['identificationCode'], $_POST['id_country'], $_POST['specialities']);
-                    $row->insert();
-                    $row->persist();
+                $row = new Actor (0, $_POST['firstname'], $_POST['lastname'], $_POST['birthdate'], $_POST['identificationCode'], $_POST['id_country'], $_POST['specialities']);
+                $row->insert();
+                $row->persist();
 
-                }    
-
-            }
+            }    
 
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';

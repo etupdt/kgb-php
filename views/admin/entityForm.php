@@ -4,11 +4,11 @@
       <div class="title pt-5">
         <h1><?php echo $nameMenu?></h1>
       </div>
-      <form action="/<?php echo $nameEntity; ?>" method="POST" class="form">
+      <form action="/<?php echo $nameEntity; ?>" class="form">
         <div class="container p-0 form-div">
           <div class="d-grid gap-2 d-md-flex justify-content-md-end my-4">
-            <button role="button" class="btn btn-outline-success" formaction='/<?php echo $nameEntity; ?>/c'>Abandonner</button>
-            <button role="button" class="btn btn-outline-success">Enregistrer</button>
+            <?php $button = ['value' => 'Abandonner', 'action' => 'c', 'method' => 'GET']; require 'commandButton.php';?>
+            <?php $button = ['value' => 'Enregistrer', 'method' => 'POST']; require 'commandButton.php';?>
           </div>
           <?php
             foreach ($fields as $field) {
