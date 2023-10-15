@@ -13,55 +13,49 @@ class HideoutController {
 
         require_once 'views/header.php';
 
-        $explode = explode('/', explode('?', $_SERVER['REQUEST_URI'])[0]);
-
         if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
-            if ($_SERVER['REQUEST_URI'] === '/planque') {
-
+            if (! isset($_GET['a']) || $_GET['a'] === 'c') {
                 $rows = $this->getRows();
                 require_once 'views/admin/entityList.php';
-
-            } elseif (strpos($_SERVER['REQUEST_URI'], "/d/")) {
-
-                $row = Hideout::find($explode[count($explode) - 1]);
-                $row->delete();
-                $row->persist();
-
-                $rows = $this->getRows();
-                require_once 'views/admin/entityList.php';
-
-            } elseif (strpos($_SERVER['REQUEST_URI'], "/u/")) {
-            
-                $row = $this->getRow(Hideout::find($explode[count($explode) - 1]));
-                require_once 'views/admin/entityForm.php';
-
             } else {
-
-                $row = $this->getRow(new Hideout("0", "", "", "", 1));
-                require_once 'views/admin/entityForm.php';
-
-            }    
+                switch ($_GET['a']) {
+                    case 'd' : {
+                        $row = Hideout::find($_GET['id']);
+                        $row->delete();
+                        $row->persist();
+                        $rows = $this->getRows();
+                        require_once 'views/admin/entityList.php';
+                        break;
+                    }
+                    case 'u' : {
+                        $row = $this->getRow(Hideout::find($_GET['id']));
+                        require_once 'views/admin/entityForm.php';
+                        break;
+                    }
+                    case 'i' : {
+                        $row = $this->getRow(new Hideout("0", "", "", "", 1));
+                        require_once 'views/admin/entityForm.php';
+                        break;
+                    }
+                }
+            }
 
         } else {
 
-            if ($explode[count($explode) - 1] !== "c") {
-                
-                if ($_POST['id'] !== "0") {
+            if ($_POST['id'] !== "0") {
 
-                    $row = new Hideout ($_POST['id'], $_POST['code'], $_POST['address'], $_POST['type'], $_POST['id_country']);
-                    $row->update();
-                    $row->persist();
+                $row = new Hideout ($_POST['id'], $_POST['code'], $_POST['address'], $_POST['type'], $_POST['id_country']);
+                $row->update();
+                $row->persist();
 
-                } else {
+            } else {
 
-                    $row = new Hideout (0, $_POST['code'], $_POST['address'], $_POST['type'], $_POST['id_country']);
-                    $row->insert();
-                    $row->persist();
+                $row = new Hideout (0, $_POST['code'], $_POST['address'], $_POST['type'], $_POST['id_country']);
+                $row->insert();
+                $row->persist();
 
-                }    
-
-            }
+            }    
 
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';

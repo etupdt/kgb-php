@@ -36,73 +36,67 @@ class MissionController {
 
         require_once 'views/header.php';
 
-        $explode = explode('/', explode('?', $_SERVER['REQUEST_URI'])[0]);
-
         if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
-            if ($_SERVER['REQUEST_URI'] === '/mission') {
-
+            if (! isset($_GET['a']) || $_GET['a'] === 'c') {
                 $rows = $this->getRows();
                 require_once 'views/admin/entityList.php';
-
-            } elseif (strpos($_SERVER['REQUEST_URI'], "/d/")) {
-
-                $row = Mission::find($explode[count($explode) - 1]);
-                $row->delete();
-                $row->persist();
-
-                $rows = $this->getRows();
-                require_once 'views/admin/entityList.php';
-
-            } elseif (strpos($_SERVER['REQUEST_URI'], "/u/")) {
-            
-                $row = $this->getRow(Mission::find($explode[count($explode) - 1]));
-                require_once 'views/admin/entityForm.php';
-
             } else {
-
-                $row = $this->getRow(new Mission("0", "", "", "", "", "", 1, 1, 1, 1, [], []));
-                require_once 'views/admin/entityForm.php';
-
-            }    
+                switch ($_GET['a']) {
+                    case 'd' : {
+                        $row = Mission::find($_GET['id']);
+                        $row->delete();
+                        $row->persist();
+                        $rows = $this->getRows();
+                        require_once 'views/admin/entityList.php';
+                        break;
+                    }
+                    case 'u' : {
+                        $row = $this->getRow(Mission::find($_GET['id']));
+                        require_once 'views/admin/entityForm.php';
+                        break;
+                    }
+                    case 'i' : {
+                        $row = $this->getRow(new Mission("0", "", "", "", "", "", 1, 1, 1, 1, [], []));
+                        require_once 'views/admin/entityForm.php';
+                        break;
+                    }
+                }
+            }
 
         } else {
 
-            if ($explode[count($explode) - 1] !== "c") {
-                
-                foreach ($this->roles as $role) {
+            foreach ($this->roles as $role) {
 
-                    $actors =  $_POST[$role['role']];
-        
-                    foreach($actors as $id_actor) {
-                        $actorsRoles[] = [
-                            'id_actor' => $id_actor,
-                            'id_role' => $role['id']
-                        ];
-                    }
-
+                $actors =  $_POST[$role['role']];
+    
+                foreach($actors as $id_actor) {
+                    $actorsRoles[] = [
+                        'id_actor' => $id_actor,
+                        'id_role' => $role['id']
+                    ];
                 }
-        
-                if ($_POST['id'] !== "0") {
-
-                    $row = new Mission ($_POST['id'], $_POST['title'], $_POST['description'], $_POST['codeName'], $_POST['begin'], $_POST['end'], 
-                        $_POST['id_country'], $_POST['id_statut'], $_POST['id_typeMission'], $_POST['id_speciality'], 
-                        $_POST['hideouts']);
-
-                } else {
-
-                    $row = new Mission (0, $_POST['title'], $_POST['description'], $_POST['codeName'], $_POST['begin'], $_POST['end'], 
-                        $_POST['id_country'], $_POST['id_statut'], $_POST['id_typeMission'], $_POST['id_speciality'], 
-                        $_POST['hideouts']);
-                    
-                }    
-
-                $row->setActorsRoles($actorsRoles);
-            
-                $row->insert();
-                $row->persist();
 
             }
+    
+            if ($_POST['id'] !== "0") {
+
+                $row = new Mission ($_POST['id'], $_POST['title'], $_POST['description'], $_POST['codeName'], $_POST['begin'], $_POST['end'], 
+                    $_POST['id_country'], $_POST['id_statut'], $_POST['id_typeMission'], $_POST['id_speciality'], 
+                    $_POST['hideouts']);
+
+            } else {
+
+                $row = new Mission (0, $_POST['title'], $_POST['description'], $_POST['codeName'], $_POST['begin'], $_POST['end'], 
+                    $_POST['id_country'], $_POST['id_statut'], $_POST['id_typeMission'], $_POST['id_speciality'], 
+                    $_POST['hideouts']);
+                
+            }    
+
+            $row->setActorsRoles($actorsRoles);
+        
+            $row->insert();
+            $row->persist();
 
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';

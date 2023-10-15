@@ -13,60 +13,54 @@ class SpecialityController {
 
         require_once 'views/header.php';
 
-        $explode = explode('/', explode('?', $_SERVER['REQUEST_URI'])[0]);
-
         if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
-            if ($_SERVER['REQUEST_URI'] === '/specialite') {
-
+            if (! isset($_GET['a']) || $_GET['a'] === 'c') {
                 $rows = $this->getRows();
                 require_once 'views/admin/entityList.php';
-
-            } elseif (strpos($_SERVER['REQUEST_URI'], "/d/")) {
-
-                $row = Speciality::find($explode[count($explode) - 1]);
-                $row->delete();
-                $row->persist();
-
-                $rows = $this->getRows();
-                require_once 'views/admin/entityList.php';
-
-            } elseif (strpos($_SERVER['REQUEST_URI'], "/u/")) {
-            
-                $row = $this->getRow(Speciality::find($explode[count($explode) - 1]));
-                require_once 'views/admin/entityForm.php';
-
             } else {
-
-                $row = $this->getRow(new Speciality("0", "", []));
-                require_once 'views/admin/entityForm.php';
-
-            }    
+                switch ($_GET['a']) {
+                    case 'd' : {
+                        $row = Speciality::find($_GET['id']);
+                        $row->delete();
+                        $row->persist();
+                        $rows = $this->getRows();
+                        require_once 'views/admin/entityList.php';
+                        break;
+                    }
+                    case 'u' : {
+                        $row = $this->getRow(Speciality::find($_GET['id']));
+                        require_once 'views/admin/entityForm.php';
+                        break;
+                    }
+                    case 'i' : {
+                        $row = $this->getRow(new Speciality("0", "", []));
+                        require_once 'views/admin/entityForm.php';
+                        break;
+                    }
+                }
+            }
 
         } else {
 
-            if ($explode[count($explode) - 1] !== "c") {
-                
-                if ($_POST['id'] !== "0") {
+            if ($_POST['id'] !== "0") {
 
-                    $row = new Speciality ($_POST['id'], $_POST['name']);
-                    $row->update();
-                    $row->persist();
+                $row = new Speciality ($_POST['id'], $_POST['name']);
+                $row->update();
+                $row->persist();
 
-                } else {
+            } else {
 
-                    $row = new Speciality (0, $_POST['name'], []);
-                    $row->insert();
-                    $row->persist();
+                $row = new Speciality (0, $_POST['name'], []);
+                $row->insert();
+                $row->persist();
 
-                }    
-
-            }
+            }    
 
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
 
-    }
+        }
 
         require_once 'views/footer.php';
 

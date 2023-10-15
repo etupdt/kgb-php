@@ -13,8 +13,6 @@ class ActorController {
 
         require_once 'views/header.php';
 
-        $explode = explode('/', explode('?', $_SERVER['REQUEST_URI'])[0]);
-
         if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
             if (! isset($_GET['a']) || $_GET['a'] === 'c') {
