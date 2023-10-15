@@ -7,7 +7,7 @@
       <li><a class="dropdown-item" href="/">Dashboard</a></li>
       <li><a class="dropdown-item" href="/pays">Pays</a></li>
       <li><a class="dropdown-item" href="/planque">Planques</a></li>
-      <li><a class="dropdown-item" href="/actor">Acteurs</a></li>
+      <li><a class="dropdown-item" href="/acteur">Acteurs</a></li>
       <li><a class="dropdown-item" href="/specialite">Spécialités</a></li>
       <li><a class="dropdown-item" href="/typemission">Types Mission</a></li>
       <li><a class="dropdown-item" href="/statut">Statuts Mission</a></li>

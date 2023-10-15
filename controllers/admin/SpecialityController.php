@@ -7,7 +7,7 @@ class SpecialityController {
     public function index() { 
 
         $nameMenu = "Spécialités";
-        $nameEntity = "specialite";
+        $nameEntity = BASE_URL.ADMIN_URL."/specialite";
 
         $fields = $this->getFields();
 

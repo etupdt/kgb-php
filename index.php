@@ -10,15 +10,16 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
   <script src="/views/js/script.js" defer crossorigin="anonymous"></script>
 </head>
-<body>
+<body clas="d-flex flex-column">
 
 <?php 
 
 define("BASE_URL", '');
+define("ADMIN_URL", '/admin');
 
 require_once 'models/Router.php';
 
-require_once 'controllers/admin/DashboardController.php';
+require_once 'controllers/admin/HomeController.php';
 require_once 'controllers/admin/CountryController.php';
 require_once 'controllers/admin/HideoutController.php';
 require_once 'controllers/admin/ActorController.php';
@@ -32,36 +33,36 @@ require_once 'models/Database.php';
 
 $router = new Router();
 
-$router->addRoute('GET',BASE_URL.'/', 'DashboardController', 'index');
+$router->addRoute('GET',BASE_URL.'/', 'HomeController', 'index');
 
-$router->addRoute('GET',BASE_URL.'/pays', 'CountryController', 'index');
-$router->addRoute('POST',BASE_URL.'/pays', 'CountryController', 'index');
+$router->addRoute('GET',BASE_URL.ADMIN_URL.'/pays', 'CountryController', 'index');
+$router->addRoute('POST',BASE_URL.ADMIN_URL.'/pays', 'CountryController', 'index');
 
-$router->addRoute('GET',BASE_URL.'/planque', 'HideoutController', 'index');
-$router->addRoute('POST',BASE_URL.'/planque', 'HideoutController', 'index');
+$router->addRoute('GET',BASE_URL.ADMIN_URL.'/planque', 'HideoutController', 'index');
+$router->addRoute('POST',BASE_URL.ADMIN_URL.'/planque', 'HideoutController', 'index');
 
-$router->addRoute('GET',BASE_URL.'/actor', 'ActorController', 'index');
-$router->addRoute('POST',BASE_URL.'/actor', 'ActorController', 'index');
+$router->addRoute('GET',BASE_URL.ADMIN_URL.'/acteur', 'ActorController', 'index');
+$router->addRoute('POST',BASE_URL.ADMIN_URL.'/acteur', 'ActorController', 'index');
 
-$router->addRoute('GET',BASE_URL.'/specialite', 'SpecialityController', 'index');
-$router->addRoute('POST',BASE_URL.'/specialite', 'SpecialityController', 'index');
+$router->addRoute('GET',BASE_URL.ADMIN_URL.'/specialite', 'SpecialityController', 'index');
+$router->addRoute('POST',BASE_URL.ADMIN_URL.'/specialite', 'SpecialityController', 'index');
 
-$router->addRoute('GET',BASE_URL.'/typemission', 'TypeMissionController', 'index');
-$router->addRoute('POST',BASE_URL.'/typemission', 'TypeMissionController', 'index');
+$router->addRoute('GET',BASE_URL.ADMIN_URL.'/typemission', 'TypeMissionController', 'index');
+$router->addRoute('POST',BASE_URL.ADMIN_URL.'/typemission', 'TypeMissionController', 'index');
 
-$router->addRoute('GET',BASE_URL.'/statut', 'StatutController', 'index');
-$router->addRoute('POST',BASE_URL.'/statut', 'StatutController', 'index');
+$router->addRoute('GET',BASE_URL.ADMIN_URL.'/statut', 'StatutController', 'index');
+$router->addRoute('POST',BASE_URL.ADMIN_URL.'/statut', 'StatutController', 'index');
 
-$router->addRoute('GET',BASE_URL.'/role', 'RoleController', 'index');
-$router->addRoute('POST',BASE_URL.'/role', 'RoleController', 'index');
+$router->addRoute('GET',BASE_URL.ADMIN_URL.'/role', 'RoleController', 'index');
+$router->addRoute('POST',BASE_URL.ADMIN_URL.'/role', 'RoleController', 'index');
 
-$router->addRoute('GET',BASE_URL.'/mission', 'MissionController', 'index');
-$router->addRoute('POST',BASE_URL.'/mission', 'MissionController', 'index');
+$router->addRoute('GET',BASE_URL.ADMIN_URL.'/mission', 'MissionController', 'index');
+$router->addRoute('POST',BASE_URL.ADMIN_URL.'/mission', 'MissionController', 'index');
 
 $method = $_SERVER['REQUEST_METHOD'];
-$uri = explode('/', explode('?', $_SERVER['REQUEST_URI'])[0])[1];
+$uri = explode('?', $_SERVER['REQUEST_URI'])[0];
 
-$handler = $router->gethandler($method, '/'.$uri);
+$handler = $router->gethandler($method, $uri);
 
 if ($handler == null ) { 
 

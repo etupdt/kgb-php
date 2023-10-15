@@ -7,8 +7,11 @@
       <div class="form">
         <div class="container p-0 form-div">
           <div class="d-grid gap-2 d-md-flex justify-content-md-end my-4">
-          <form action="/<?php echo $nameEntity; ?>">
-            <?php $button = ['value' => 'Ajouter', 'action' => 'i', 'method' => 'GET']; require 'commandButton.php';?>
+          <form action="<?php echo $nameEntity; ?>">
+            <?php 
+              $button = ['value' => 'Ajouter', 'action' => 'i', 'method' => 'GET']; 
+              require 'commandButton.php';
+            ?>
           </form>  
           </div>
           <div class="col-12 table-responsive">

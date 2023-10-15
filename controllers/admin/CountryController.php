@@ -7,7 +7,7 @@ class CountryController {
     public function index() { 
 
         $nameMenu = "Pays";
-        $nameEntity = "pays";
+        $nameEntity = BASE_URL.ADMIN_URL."/pays";
 
         $fields = $this->getFields();
 

@@ -7,8 +7,6 @@ class MissionController {
     private $roles = [];
     private $actors = [];
 
-    private $role;
-
     public function __construct() {
  
         foreach (Actor::findAll() as $actor) {
@@ -30,7 +28,7 @@ class MissionController {
     public function index() { 
 
         $nameMenu = "Missions";
-        $nameEntity = "mission";
+        $nameEntity = BASE_URL.ADMIN_URL."/mission";
 
         $fields = $this->getFields();
 

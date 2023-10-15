@@ -7,7 +7,7 @@ class TypeMissionController {
     public function index() { 
 
         $nameMenu = "Types Mission";
-        $nameEntity = "typemission";
+        $nameEntity = BASE_URL.ADMIN_URL."/typemission";
 
         $fields = $this->getFields();
 

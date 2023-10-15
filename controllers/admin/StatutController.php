@@ -7,7 +7,7 @@ class StatutController {
     public function index() { 
 
         $nameMenu = "Statuts Mission";
-        $nameEntity = "statut";
+        $nameEntity = BASE_URL.ADMIN_URL."/statut";
 
         $fields = $this->getFields();
 

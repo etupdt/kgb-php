@@ -7,7 +7,7 @@ class ActorController {
     public function index() { 
 
         $nameMenu = "Acteurs";
-        $nameEntity = "actor";
+        $nameEntity = BASE_URL.ADMIN_URL."/acteur";
 
         $fields = $this->getFields();
 

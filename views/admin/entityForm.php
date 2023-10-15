@@ -4,7 +4,7 @@
       <div class="title pt-5">
         <h1><?php echo $nameMenu?></h1>
       </div>
-      <form action="/<?php echo $nameEntity; ?>" class="form">
+      <form action="<?php echo $nameEntity; ?>" class="form">
         <div class="container p-0 form-div">
           <div class="d-grid gap-2 d-md-flex justify-content-md-end my-4">
             <?php $button = ['value' => 'Abandonner', 'action' => 'c', 'method' => 'GET']; require 'commandButton.php';?>

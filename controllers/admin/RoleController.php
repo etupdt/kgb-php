@@ -7,7 +7,7 @@ class RoleController {
     public function index() { 
 
         $nameMenu = "Roles";
-        $nameEntity = "role";
+        $nameEntity = BASE_URL.ADMIN_URL."/role";
 
         $fields = $this->getFields();
 
