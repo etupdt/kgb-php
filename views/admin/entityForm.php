@@ -18,6 +18,10 @@
                   require 'textField.php';
                   break;
                 }
+                case "textarea" : {
+                  require 'textareaField.php';
+                  break;
+                }
                 case "select" : {
                   require 'selectField.php';
                   break;

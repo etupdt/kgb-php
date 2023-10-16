@@ -1,16 +1,19 @@
 
 html, body {
   height: 100vh;
-  margin: auto;
+  margin: 0;
   padding: 0;
+  display:flex;
+  flex-direction: column;
   overflow-y: auto;
+}
+
+article {
+  height: 9.3rem;
 }
 
 main > div {
   margin: 0;
-}
-
-main > div {
   height: 100%;
   width: 100%;
 }
@@ -51,6 +54,13 @@ footer {
 .micro-th {
   width: 40px;
   padding: 0.2rem !important;
+}
+
+/*------------------------------*/
+
+.main-mission {
+  margin-right: 0;
+  margin-left: 0;
 }
 
 @media screen and (min-width: 992px) {

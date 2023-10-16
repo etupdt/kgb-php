@@ -66,7 +66,7 @@ class MissionController {
 
             foreach ($this->roles as $role) {
 
-                $actors =  $_POST[$role['role']];
+                $actors =  $_POST[str_replace(' ', '_', $role['role'])];
     
                 foreach($actors as $id_actor) {
                     $actorsRoles[] = [
@@ -121,7 +121,7 @@ class MissionController {
         $fields[] = [
             'label' => 'Description',
             'name' => 'description',
-            'type' => 'text'
+            'type' => 'textarea'
         ];
         $fields[] = [
             'label' => 'Nom de code',
@@ -211,7 +211,7 @@ class MissionController {
 
             $fields[] = [
                 'label' => $role['role'].'s',
-                'name' => $role['role'],
+                'name' => str_replace(' ', '_', $role['role']),
                 'type' => 'multiSelect',
                 'value' => $this->actors
             ];
@@ -265,7 +265,7 @@ class MissionController {
                 }
             }
 
-            $row[$role['role']] = $actors;
+            $row[str_replace(' ', '_', $role['role'])] = $actors;
     
         }
         

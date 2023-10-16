@@ -10,7 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
   <script src="/views/js/script.js" defer crossorigin="anonymous"></script>
 </head>
-<body clas="d-flex flex-column">
+<body>
 
 <?php 
 
@@ -19,7 +19,9 @@ define("ADMIN_URL", '/admin');
 
 require_once 'models/Router.php';
 
-require_once 'controllers/admin/HomeController.php';
+require_once 'controllers/home/HomeController.php';
+require_once 'controllers/missions/MissionsController.php';
+require_once 'controllers/missions/MissionPageController.php';
 require_once 'controllers/admin/CountryController.php';
 require_once 'controllers/admin/HideoutController.php';
 require_once 'controllers/admin/ActorController.php';
@@ -34,6 +36,9 @@ require_once 'models/Database.php';
 $router = new Router();
 
 $router->addRoute('GET',BASE_URL.'/', 'HomeController', 'index');
+
+$router->addRoute('GET',BASE_URL.'/missions', 'MissionsController', 'index');
+$router->addRoute('GET',BASE_URL.'/mission', 'MissionPageController', 'index');
 
 $router->addRoute('GET',BASE_URL.ADMIN_URL.'/pays', 'CountryController', 'index');
 $router->addRoute('POST',BASE_URL.ADMIN_URL.'/pays', 'CountryController', 'index');
