@@ -1,20 +1,50 @@
 
-function toggleSideMenu () {
+let actorsData
+let hideoutsData
 
-  const sidemenu = document.getElementById('sidemenu-div')
-  const sidemenu_expand = document.getElementById('sidemenu-expand');
-  const sidemenu_collapse = document.getElementById('sidemenu-collapse')
+getControlMission ()
 
-  if (sidemenu.style.display === 'none') {
-    sidemenu.style.display = 'initial'
-//    sidemenu.style.position = 'absolute'
-    sidemenu_expand.style.display = 'none'
-    sidemenu_collapse.style.display = 'initial'
-  } else {
-    sidemenu.style.display = 'none'    
-//    sidemenu.style.position = 'initial'
-    sidemenu_expand.style.display = 'initial'
-    sidemenu_collapse.style.display = 'none'
+function controlMission (fieldId, fieldValue) {
+
+  const missionCountry = document.getElementById('id_country').value
+  const missionHideouts = Array.from(document.getElementById('hideouts').querySelectorAll("option:checked"),e=>e.value)
+
+  console.log ('id_country', missionCountry)
+  console.log ('missionHideouts', missionHideouts)
+  
+  let sameCountry = false
+
+  missionHideouts.forEach((id_hideout) => {
+    // console.log(this.hideoutsData[id_hideout]['country'])
+    if (this.hideoutsData[id_hideout]['country'] === missionCountry) {
+      console.log('pays match')
+    } else {
+      console.log('pays ne match pas')
+    }
+
+  })
+
+
+/*
+  for (let hideout in missionHideouts) {
+    console.log('hideout', missionHideouts[hideout])
+    console.log('loop', this.controlMissionData['hideoutsData'])
+    if (this.controlMissionData['hideoutsData'][missionHideouts[hideout]]['country'] === missionCountry) {
+      console.log('trouve')
+    }
   }
+*/
+}
+
+async function getControlMission () {
+
+  const reponse = await fetch("https://localhost:8000/api/controlmission");
+
+  const json = await reponse.json()
+
+  this.actorsData = json.actorsData
+  this.hideoutsData = json.hideoutsData
+
+  console.log(json)
 
 }

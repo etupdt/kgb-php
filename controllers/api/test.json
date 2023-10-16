@@ -1,0 +1,61 @@
+{
+  "actorsCountry": {
+    "7": {
+      "country": "1",
+      "specialities": [
+        2
+      ]
+    },
+    "9": {
+      "country": "3",
+      "specialities": [
+        2,
+        3
+      ]
+    },
+    "11": {
+      "country": "2",
+      "specialities": [
+        5
+      ]
+    },
+    "32": {
+      "country": "2",
+      "specialities": [
+        3
+      ]
+    },
+    "35": {
+      "country": "1",
+      "specialities": [
+        2,
+        3,
+        5,
+        9
+      ]
+    },
+    "36": {
+      "country": "25",
+      "specialities": [
+        3
+      ]
+    },
+    "37": {
+      "country": "25",
+      "specialities": [
+        5
+      ]
+    }
+  },
+  "hideoutCountry": {
+    "1": [
+      "7"
+    ],
+    "4": [
+      "2"
+    ],
+    "9": [
+      "21"
+    ]
+  }
+}

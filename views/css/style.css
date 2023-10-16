@@ -63,6 +63,42 @@ footer {
   margin-left: 0;
 }
 
+td .firstname {
+  width: 20%;
+}
+
+td .lastname {
+  width: 20%;
+}
+
+td .birthdate {
+  width: 20%;
+}
+
+td .identificationCode {
+  width: 20%;
+}
+
+td .country {
+  width: 20%;
+}
+
+td .code {
+  width: 20%;
+}
+
+td .address {
+  width: 20%;
+}
+
+td .type {
+  width: 40%;
+}
+
+.form-mission {
+  width: 100%;
+}
+
 @media screen and (min-width: 992px) {
   
   .form-div {
@@ -79,5 +115,9 @@ footer {
     min-width: 70%;
     margin: auto;
   }  
+
+  .form-mission {
+    width: 75%;
+  }
   
 }

@@ -6,6 +6,8 @@
     <select class="form-select bg-success-subtle border-success col-9" 
       type="<?php echo $field['type'] ?>" 
       name="<?php echo $field['name'] ?>" 
+      <?php if (isset($field['id'])) echo "id='".$field['id']."'" ?> 
+      <?php echo "onchange='controlMission(this);'" ?> 
     >
       <?php
         foreach (array_keys($field['value']) as $option) {

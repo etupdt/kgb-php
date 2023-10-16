@@ -148,6 +148,7 @@ class MissionController {
         $fields[] = [
             'label' => 'Pays',
             'name' => 'id_country',
+            'id' => 'id_country',
             'type' => 'select',
             'value' => $countries
         ];
@@ -159,7 +160,7 @@ class MissionController {
         }
 
         $fields[] = [
-            'label' => 'Staut de mission',
+            'label' => 'Statut de mission',
             'name' => 'id_statut',
             'type' => 'select',
             'value' => $statuts
@@ -203,6 +204,7 @@ class MissionController {
         $fields[] = [
             'label' => 'Planques de la mission',
             'name' => 'hideouts',
+            'id' => 'hideouts',
             'type' => 'multiSelect',
             'value' => $hideouts
         ];

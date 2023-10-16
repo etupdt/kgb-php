@@ -5,6 +5,8 @@
   <div class="form-group col-12 col-lg-9">
     <select class="form-select me-2 bg-success-subtle border-success" 
       name="<?php echo $field['name'].'[]' ?>" 
+      <?php echo "onchange='controlMission(this);'" ?> 
+      <?php if (isset($field['id'])) echo "id='".$field['id']."'" ?> 
       multiple
     >
       <?php
