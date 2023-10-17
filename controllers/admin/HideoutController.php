@@ -112,7 +112,7 @@ class HideoutController {
     private function getRows (): array
     {
 
-        $actors = [];
+        $hideouts = [];
 
         foreach (Hideout::findAll() as $hideout) {
 

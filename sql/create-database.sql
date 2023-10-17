@@ -1,7 +1,7 @@
 
-CREATE DATABASE IF NOT EXISTS kgb;
+CREATE DATABASE IF NOT EXISTS denist_kgb;
 
-USE kgb;
+USE denist_kgb;
 
 CREATE TABLE IF NOT EXISTS person(
   id int auto_increment  NOT NULL,
@@ -98,14 +98,6 @@ CREATE TABLE IF NOT EXISTS mission_hideout(
 	CONSTRAINT mission_hideout_PK PRIMARY KEY (id_mission, id_hideout),
   CONSTRAINT mission_hideout_mission_FK FOREIGN KEY (id_mission) REFERENCES mission(id),
 	CONSTRAINT mission_hideout_hideout_FK FOREIGN KEY (id_hideout) REFERENCES hideout(id)
-);
-
-CREATE TABLE IF NOT EXISTS actor_mission(
-  id_actor int NOT NULL,
-  id_mission int NOT NULL ,
-	CONSTRAINT actor_mission_PK PRIMARY KEY (id_actor, id_mission),
-	CONSTRAINT actor_mission_actor_FK FOREIGN KEY (id_actor) REFERENCES actor(id),
-  CONSTRAINT actor_mission_mission_FK FOREIGN KEY (id_mission) REFERENCES mission(id)
 );
 
 CREATE TABLE IF NOT EXISTS actor_speciality(

@@ -54,24 +54,24 @@
           ?>
         </table>
       </div>
-      <?php 
-        foreach($roles as $role) {
-          echo '<div class="form-group col-12 table-responsive">';
-          echo '<label class="mt-3" for="speciality">'.$role->getRole().'</label>';
-          echo '<table class="table table-success table-striped m-0 border border-success">';
-          foreach ($mission[str_replace(' ', '_', $role->getRole())] as $actor) {
-            echo '  <tr>';
-            echo '    <td class="firstname">'.$actor['firstname'].'</td>';
-            echo '    <td class="lastname">'.$actor['lastname'].'</td>';
-            echo '    <td class="birthdate">'.$actor['birthdate'].'</td>';
-            echo '    <td class="identificationCode">'.$actor['identificationCode'].'</td>';
-            echo '    <td class="country">'.$actor['country'].'</td>';
-            echo '  </tr>';
-          }
-          echo'</table>';
-          echo'</div>';
-        }
-      ?>
     </div>
+    <?php 
+      foreach($roles as $role) {
+        echo '<div class="form-group col-12 table-responsive">';
+        echo '<label class="mt-3" for="speciality">'.$role->getRole().'</label>';
+        echo '<table class="table table-success table-striped m-0 border border-success">';
+        foreach ($mission[str_replace(' ', '_', $role->getRole())] as $actor) {
+          echo '  <tr>';
+          echo '    <td class="firstname">'.$actor['firstname'].'</td>';
+          echo '    <td class="lastname">'.$actor['lastname'].'</td>';
+          echo '    <td class="birthdate">'.$actor['birthdate'].'</td>';
+          echo '    <td class="identificationCode">'.$actor['identificationCode'].'</td>';
+          echo '    <td class="country">'.$actor['country'].'</td>';
+          echo '  </tr>';
+        }
+        echo'</table>';
+        echo'</div>';
+      }
+    ?>
   </form>
 </main>

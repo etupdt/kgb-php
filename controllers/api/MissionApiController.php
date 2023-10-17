@@ -4,6 +4,9 @@ class MissionApiController {
 
     public function index() { 
 
+      $actorsData = [];
+      $hideoutsData = [];
+
       foreach (Actor::findAll() as $actor) {
         $actorsData[$actor->getId()] = [
           'country' => $actor->getId_country(),

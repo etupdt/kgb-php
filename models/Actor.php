@@ -22,7 +22,7 @@ class Actor {
     string $birthdate = null, 
     string $identificationCode = null, 
     string $id_country = null,
-    array $specialities = []
+    array $specialities = null
   ) {
       $this->id = $id;
       $this->firstname = $firstname;
