@@ -14,6 +14,7 @@ require_once 'controllers/admin/StatutController.php';
 require_once 'controllers/admin/RoleController.php';
 require_once 'controllers/admin/MissionController.php';
 require_once 'controllers/api/MissionApiController.php';
+require_once 'controllers/api/ActorApiController.php';
 
 require_once 'models/Database.php';
 
@@ -53,6 +54,7 @@ $router->addRoute('GET',BASE_URL.ADMIN_URL.'/mission', 'MissionController', 'ind
 $router->addRoute('POST',BASE_URL.ADMIN_URL.'/mission', 'MissionController', 'index');
 
 $router->addRoute('GET',BASE_URL.API_URL.'/controlmission', 'MissionApiController', 'index');
+$router->addRoute('GET',BASE_URL.API_URL.'/controlactor', 'ActorApiController', 'index');
 
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = explode('?', $_SERVER['REQUEST_URI'])[0];

@@ -4,25 +4,40 @@ class MissionApiController {
 
     public function index() { 
 
-      $actorsData = [];
+      $agentssData = [];
+      $contactsData = [];
       $hideoutsData = [];
 
       foreach (Actor::findAll() as $actor) {
         $actorsData[$actor->getId()] = [
-          'country' => $actor->getId_country(),
+          'countries' => [$actor->getId_country()],
           'specialities' => $actor->getSpecialities()
         ];
       }
       
       foreach (Hideout::findAll() as $hideout) {
         $hideoutsData[$hideout->getId()] = [
-          'country' => $hideout->getId_country()
+          'countries' => [$hideout->getId_country()]
+        ];
+      }
+
+      foreach (Country::findAll() as $country) {
+        $countriesData[$country->getId()] = [
+          'libelle' => $country->getName()
+        ];
+      }
+
+      foreach (Speciality::findAll() as $speciality) {
+        $specialitiesData[$speciality->getId()] = [
+          'libelle' => $speciality->getName()
         ];
       }
 
       $json = json_encode([
         'actorsData' => $actorsData,
-        'hideoutsData' => $hideoutsData
+        'hideoutsData' => $hideoutsData,
+        'countriesData' => $countriesData,
+        'specialitiesData' => $specialitiesData,
       ]);
 
       echo $json;

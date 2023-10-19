@@ -77,17 +77,41 @@ class ActorController {
         $fields[] = [
             'label' => 'Nom',
             'name' => 'firstname',
-            'type' => 'text'
+            'id' => 'firstname',
+            'type' => 'text',
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired',
+                    ]
+                ]
+            ]
         ];
         $fields[] = [
             'label' => 'Prénom',
             'name' => 'lastname',
-            'type' => 'text'
+            'id' => 'lastname',
+            'type' => 'text',
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired',
+                    ]
+                ]
+            ]
         ];
         $fields[] = [
             'label' => 'Date de naissance',
             'name' => 'birthdate',
-            'type' => 'date'
+            'id' => 'birthdate',
+            'type' => 'date',
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired',
+                    ]
+                ]
+            ]
         ];
         $fields[] = [
             'label' => 'Code identification',
@@ -105,7 +129,17 @@ class ActorController {
             'label' => 'Pays',
             'name' => 'id_country',
             'type' => 'select',
-            'value' => $countries
+            'value' => $countries,
+            'events' => [
+                'select.onchange' => [
+                    [
+                        'function' => 'isRequired'
+                    ],
+                    [
+                        'function' => 'controlActor'
+                    ]
+                ]
+            ]
         ];
 
         $specialities = [];
@@ -120,9 +154,21 @@ class ActorController {
         $fields[] = [
             'label' => 'Spécialités',
             'name' => 'specialities',
+            'id' => 'specialities',
             'type' => 'multiSelect',
-            'value' => $specialities
+            'value' => $specialities,
+            'events' => [
+                'select.onchange' => [
+                    [
+                        'function' => 'isRequired'
+                    ],
+                    [
+                        'function' => 'controlActor'
+                    ]
+                ]
+            ]
         ];
+
 
         return $fields;
 

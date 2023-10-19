@@ -12,8 +12,11 @@ class MissionController {
         foreach (Actor::findAll() as $actor) {
             $this->actors[] = [
                 'id' => $actor->getId(),
-                'name' => $actor->getIdentificationCode().' '.$actor->getFirstname().' '.$actor->getLastname().' '.$actor->getBirthdate(),
-            ];
+                'name' => '<p>'.$actor->getIdentificationCode().' '.
+                    $actor->getFirstname().' '.
+                    $actor->getLastname().' '.
+                    $actor->getBirthdate(),
+            ]; 
         }
     
         foreach (Role::findAll() as $role) {
@@ -55,7 +58,7 @@ class MissionController {
                         break;
                     }
                     case 'i' : {
-                        $row = $this->getRow(new Mission("0", "", "", "", "", "", 1, 1, 1, 1, [], []));
+                        $row = $this->getRow(new Mission("0", "", "", "", "", "", 0, 0, 0, 0, [], []));
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
@@ -66,7 +69,9 @@ class MissionController {
 
             foreach ($this->roles as $role) {
 
-                $actors =  $_POST[str_replace(' ', '_', $role['role'])];
+                $actors = $_POST[str_replace(' ', '_', $role['role'])];
+
+                $actorsRoles = [];
     
                 foreach($actors as $id_actor) {
                     $actorsRoles[] = [
@@ -116,30 +121,70 @@ class MissionController {
         $fields[] = [
             'label' => 'Titre',
             'name' => 'title',
-            'type' => 'text'
+            'id' => 'title',
+            'type' => 'text',
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired',
+                    ]
+                ]
+            ]
         ];
         $fields[] = [
             'label' => 'Description',
             'name' => 'description',
-            'type' => 'textarea'
+            'id' => 'description',
+            'type' => 'textarea',
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired',
+                    ]
+                ]
+            ]
         ];
         $fields[] = [
             'label' => 'Nom de code',
             'name' => 'codeName',
-            'type' => 'text'
+            'id' => 'codeName',
+            'type' => 'text',
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired',
+                    ]
+                ]
+            ]
         ];
         $fields[] = [
             'label' => 'Date de début',
             'name' => 'begin',
-            'type' => 'date'
+            'id' => 'begin',
+            'type' => 'date',
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired'
+                    ]
+                ]
+            ]
         ];
         $fields[] = [
             'label' => 'Date de fin',
             'name' => 'end',
-            'type' => 'date'
+            'id' => 'end',
+            'type' => 'date',
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired'
+                    ]
+                ]
+            ]
         ];
 
-        $countries = [];
+        $countries = ['0' => ''];
 
         foreach (Country::findAll() as $country) {
             $countries[$country->getId()] = $country->getName();
@@ -150,10 +195,25 @@ class MissionController {
             'name' => 'id_country',
             'id' => 'id_country',
             'type' => 'select',
-            'value' => $countries
+            'value' => $countries,
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired',
+                    ],
+                    [
+                        'function' => 'controlPaysMission',
+                        'param' => 'hideouts',
+                    ],
+                    [
+                        'function' => 'controlPaysMission',
+                        'param' => 'Contact',
+                    ]
+                ]
+            ]
         ];
 
-        $statuts = [];
+        $statuts = ['0' => ''];
 
         foreach (Statut::findAll() as $statut) {
             $statuts[$statut->getId()] = $statut->getStatut();
@@ -162,11 +222,19 @@ class MissionController {
         $fields[] = [
             'label' => 'Statut de mission',
             'name' => 'id_statut',
+            'id' => 'id_statut',
             'type' => 'select',
-            'value' => $statuts
+            'value' => $statuts,
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired'
+                    ]
+                ]
+            ]
         ];
 
-        $typeMissions = [];
+        $typeMissions = ['0' => ''];
 
         foreach (TypeMission::findAll() as $typeMission) {
             $typeMissions[$typeMission->getId()] = $typeMission->getTypeMission();
@@ -175,23 +243,42 @@ class MissionController {
         $fields[] = [
             'label' => 'Type de mission',
             'name' => 'id_typeMission',
+            'id' => 'id_typeMission',
             'type' => 'select',
-            'value' => $typeMissions
+            'value' => $typeMissions,
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired'
+                    ]
+                ]
+            ]
         ];
 
-        $specialities = [];
+        $specialities = ['0' => ''];
 
         foreach (Speciality::findAll() as $speciality) {
             $specialities[$speciality->getId()] = $speciality->getName();
         }
 
         $fields[] = [
-            'label' => 'Spécialité de l\'agent',
+            'label' => 'Spécialité requise',
             'name' => 'id_speciality',
+            'id' => 'id_speciality',
             'type' => 'select',
-            'value' => $specialities
+            'value' => $specialities,
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired'
+                    ],
+                    [
+                        'function' => 'controlSpecialityMission'
+                    ]
+                ]
+            ]
         ];
-
+        
         $hideouts = [];
 
         foreach (Hideout::findAll() as $hideout) {
@@ -206,16 +293,87 @@ class MissionController {
             'name' => 'hideouts',
             'id' => 'hideouts',
             'type' => 'multiSelect',
-            'value' => $hideouts
+            'value' => $hideouts,
+            'events' => [
+                'select.onchange' => [
+                    [
+                        'function' => 'isRequired'
+                    ],
+                    [
+                        'function' => 'controlPaysMission',
+                        'param' => [
+                            'hideouts'
+                        ]
+                    ]
+                ],
+                'option.onmouseover' => [
+                    [
+                        'function' => 'displayAttributes',
+                        'param' => [
+                            'countries'
+                        ]
+                    ]
+                ]
+            ]
         ];
 
         foreach ($this->roles as $role) {
 
+            $onchange = [];
+
+            $onchange[] = [
+                'function' => 'isRequired'
+            ];
+
+            switch ($role['role']) {
+                case 'Agent' : {
+                    $onchange[] = [
+                        'function' => 'controlPaysCiblesAgents',
+                    ];
+                    $onchange[] = [
+                        'function' => 'controlSpecialityMission',
+                    ];
+                    break;
+                }
+                case 'Contact' : {
+                    $onchange[] = [
+                        'function' => 'controlPaysMission',
+                        'param' => [
+                            'Contact',
+                        ]
+                    ];
+                    break;
+                }
+                case 'Cible' : {
+                    $onchange[] = [
+                        'function' => 'controlPaysCiblesAgents',
+                    ];
+                    break;
+                }
+            }
+            
             $fields[] = [
                 'label' => $role['role'].'s',
                 'name' => str_replace(' ', '_', $role['role']),
+                'id' => str_replace(' ', '_', $role['role']),
                 'type' => 'multiSelect',
-                'value' => $this->actors
+                'value' => $this->actors,
+                'events' => [
+                    'onchange' => $onchange
+                ],
+                'events' => [
+                    'select.onchange' => $onchange,
+                    'option.onmouseover' => [
+                        [
+                            'function' => 'displayAttributes',
+                            'param' => [
+                                'countries',
+                                'specialities'
+                            ]
+                        ]
+                    ]
+                ]
+            
             ];
 
         }    

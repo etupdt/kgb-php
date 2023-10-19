@@ -4,11 +4,11 @@
       <div class="title pt-5">
         <h1><?php echo $nameMenu?></h1>
       </div>
-      <form action="<?php echo $nameEntity; ?>" class="form">
+      <form  onSubmit="return isValidForm(this)" action="<?php echo $nameEntity; ?>" class="form admin">
         <div class="container p-0 form-div">
           <div class="d-grid gap-2 d-md-flex justify-content-md-end my-4">
-            <?php $button = ['value' => 'Abandonner', 'action' => 'c', 'method' => 'GET']; require 'commandButton.php';?>
-            <?php $button = ['value' => 'Enregistrer', 'method' => 'POST']; require 'commandButton.php';?>
+            <?php $button = ['id' => "cancelButton" , 'value' => 'Abandonner', 'action' => 'c', 'method' => 'GET']; require 'commandButton.php';?>
+            <?php $button = ['id' => "validButton" , 'value' => 'Enregistrer', 'method' => 'POST']; require 'commandButton.php';?>
           </div>
           <?php
             foreach ($fields as $field) {
@@ -18,16 +18,24 @@
                   require 'textField.php';
                   break;
                 }
+                case "number" : {
+                  require 'textField.php';
+                  break;
+                }
+                case "email" : {
+                  require 'textField.php';
+                  break;
+                }
                 case "textarea" : {
                   require 'textareaField.php';
                   break;
                 }
-                case "select" : {
-                  require 'selectField.php';
+                case "date" : {
+                  require 'textField.php';
                   break;
                 }
-                case "date" : {
-                  require 'dateField.php';
+                case "select" : {
+                  require 'selectField.php';
                   break;
                 }
                 case "multiSelect" : {

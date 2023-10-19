@@ -33,8 +33,8 @@ class Mission {
     string $id_typeMission = null,
     string $id_speciality = null,
 
-    array $hideouts = [],
-    array $actors_roles = []
+    array $hideouts = null,
+    array $actors_roles = null
 
     ) {
       $this->id = $id;

@@ -77,7 +77,15 @@ class SpecialityController {
         $fields[] = [
             'label' => 'Nom',
             'name' => 'name',
-            'type' => 'text'
+            'id' => 'name',
+            'type' => 'text',
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired',
+                    ]
+                ]
+            ]
         ];
 
         return $fields;
