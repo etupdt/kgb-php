@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/Speciality.php';
+require_once 'models/entities/Speciality.php';
 
 class SpecialityController {
 

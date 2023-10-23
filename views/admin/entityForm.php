@@ -7,7 +7,11 @@
       <form  onSubmit="return isValidForm(this)" action="<?php echo $nameEntity; ?>" class="form admin">
         <div class="container p-0 form-div">
           <div class="d-grid gap-2 d-md-flex justify-content-md-end my-4">
-            <?php $button = ['id' => "cancelButton" , 'value' => 'Abandonner', 'action' => 'c', 'method' => 'GET']; require 'commandButton.php';?>
+            <div>
+              <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#helppage">Aide</button>
+              <?php require_once 'views/modals/help.php' ?>
+            </div>
+            <a href="<?php echo $nameEntity; ?>"><?php $button = ['id' => "cancelButton" , 'type' => 'button', 'action' => 'c', 'value' => 'Abandonner']; require 'commandButton.php';?></a>
             <?php $button = ['id' => "validButton" , 'value' => 'Enregistrer', 'method' => 'POST']; require 'commandButton.php';?>
           </div>
           <?php

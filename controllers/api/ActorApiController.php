@@ -18,35 +18,31 @@ class ActorApiController {
       foreach (Mission::findAll() as $mission) {
 
         $actors = [];
-        $actorActif = false;
 
         // on recherche les acteurs intervenent dans la mission dans
         // le but de pouvoir vérifier les contraintes 1 et 2
         foreach ($mission->getActorsRoles() as $actor_role) {
 
           $actor = Actor::find($actor_role['id_actor']);
-          $actors[$actor->getId()] = [
-            'countries' => [$actor->getId_country],
-            'specialities' => $actor->getSpecialities()
-          ];
+          if (!isset( $actors[$actor->getId()])) {
+            $actors[$actor->getId()] = [
+              'countries' => [$actor->getId_country()],
+              'specialities' => $actor->getSpecialities(),
+              'roles' => []  
+            ];
+          }
 
           // pour les contraintes on a bessoin des roles de l'acteur
-          array_push($actors[$actor->getId()]['roles'], $actor_role['id_role']);
-
-          // on ne gardera que les missions où intervient l'acteur
-          if ($actor->getId() === $_GET['id']) {
-            $actorActif = true;
-          }
+          $actors[$actor->getId()]['roles'][] = Role::find($actor_role['id_role'])->getRole();
 
         }
         
-        if ($actorActif) {
-          $missionsData[$mission->getId()] = [
-            'countries' => [$mission->getId_country()],
-            'specialities' => [$mission->getId_speciality()],
-            'actors' => $actors
-          ];
-        }
+        $missionsData[] = [
+          'id_mission' => $mission->getId(),
+          'countries' => [$mission->getId_country()],
+          'specialities' => [$mission->getId_speciality()],
+          'actors' => $actors
+        ];
 
       }
       

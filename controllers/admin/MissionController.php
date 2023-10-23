@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/Mission.php';
+require_once 'models/entities/Mission.php';
 
 class MissionController {
 
@@ -67,12 +67,12 @@ class MissionController {
 
         } else {
 
+            $actorsRoles = [];
+            
             foreach ($this->roles as $role) {
 
                 $actors = $_POST[str_replace(' ', '_', $role['role'])];
 
-                $actorsRoles = [];
-    
                 foreach($actors as $id_actor) {
                     $actorsRoles[] = [
                         'id_actor' => $id_actor,

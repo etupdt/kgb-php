@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/Country.php';
+require_once 'models/entities/Country.php';
 
 class CountryController {
 

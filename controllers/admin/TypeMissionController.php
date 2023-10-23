@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/TypeMission.php';
+require_once 'models/entities/TypeMission.php';
 
 class TypeMissionController {
 

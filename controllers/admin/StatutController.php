@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/Statut.php';
+require_once 'models/entities/Statut.php';
 
 class StatutController {
 

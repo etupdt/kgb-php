@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/Actor.php';
+require_once 'models/entities/Actor.php';
 
 class ActorController {
 
@@ -128,10 +128,11 @@ class ActorController {
         $fields[] = [
             'label' => 'Pays',
             'name' => 'id_country',
+            'id' => 'id_country',
             'type' => 'select',
             'value' => $countries,
             'events' => [
-                'select.onchange' => [
+                'onchange' => [
                     [
                         'function' => 'isRequired'
                     ],

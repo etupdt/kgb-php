@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/Role.php';
+require_once 'models/entities/Role.php';
 
 class RoleController {
 

@@ -15,6 +15,7 @@ require_once 'controllers/admin/RoleController.php';
 require_once 'controllers/admin/MissionController.php';
 require_once 'controllers/api/MissionApiController.php';
 require_once 'controllers/api/ActorApiController.php';
+require_once 'controllers/api/HideoutApiController.php';
 
 require_once 'models/Database.php';
 
@@ -55,6 +56,7 @@ $router->addRoute('POST',BASE_URL.ADMIN_URL.'/mission', 'MissionController', 'in
 
 $router->addRoute('GET',BASE_URL.API_URL.'/controlmission', 'MissionApiController', 'index');
 $router->addRoute('GET',BASE_URL.API_URL.'/controlactor', 'ActorApiController', 'index');
+$router->addRoute('GET',BASE_URL.API_URL.'/controlhideout', 'HideoutApiController', 'index');
 
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = explode('?', $_SERVER['REQUEST_URI'])[0];

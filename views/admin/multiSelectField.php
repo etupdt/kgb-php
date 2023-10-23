@@ -28,7 +28,7 @@
             $littleEvent = substr($event, strpos($event, '.') + 1);
             $selectFunctions = '';
             $optionFunctions = '';
-            $params = "'".$field["id"]."'";
+            $params = "'".$field["id"]."', '".$row['id']."'";
             foreach ($eventValue as $value) {
               if (isset($value['param'])) {
                 $params = $params.", '".implode("', '", $value['param'])."'";

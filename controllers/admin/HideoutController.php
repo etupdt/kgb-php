@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/Hideout.php';
+require_once 'models/entities/Hideout.php';
 
 class HideoutController {
 
@@ -101,8 +101,19 @@ class HideoutController {
         $fields[] = [
             'label' => 'Pays',
             'name' => 'id_country',
+            'id' => 'id_country',
             'type' => 'select',
-            'value' => $countries
+            'value' => $countries,
+            'events' => [
+                'onchange' => [
+                    [
+                        'function' => 'isRequired'
+                    ],
+                    [
+                        'function' => 'controlHideout'
+                    ]
+                ]
+            ]
         ];
 
         return $fields;
