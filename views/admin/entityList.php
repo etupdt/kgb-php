@@ -54,8 +54,6 @@
                             break;
                           }
                           case "select" : {
-                            // echo '<pre>';
-                            // print_r($field['value']);
                             echo $field['value'][$row[$field['name']]];
                             break;
                           }

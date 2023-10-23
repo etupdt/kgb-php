@@ -1,5 +1,6 @@
 <?php
 
+require_once 'models/EntityManager.php';
 require_once 'models/entities/Mission.php';
 
 class MissionController {
@@ -30,6 +31,8 @@ class MissionController {
 
     public function index() { 
 
+        $em = new EntityManager();
+
         $nameMenu = "Missions";
         $nameEntity = BASE_URL.ADMIN_URL."/mission";
 
@@ -46,8 +49,8 @@ class MissionController {
                 switch ($_GET['a']) {
                     case 'd' : {
                         $row = Mission::find($_GET['id']);
-                        $row->delete();
-                        $row->persist();
+                        $em->remove($row);
+                        $em->flush();
                         $rows = $this->getRows();
                         require_once 'views/admin/entityList.php';
                         break;
@@ -98,8 +101,8 @@ class MissionController {
 
             $row->setActorsRoles($actorsRoles);
         
-            $row->insert();
-            $row->persist();
+            $em->persist($row);
+            $em->flush();
 
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';

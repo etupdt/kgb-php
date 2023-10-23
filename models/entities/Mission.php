@@ -5,16 +5,16 @@ require 'models/repositories/MissionRepository.php';
 class Mission extends MissionRepository {
 
   private $id;
-  private $title;
-  private $description;
-  private $codeName;
-  private $begin;
-  private $end;
+  protected $title;
+  protected $description;
+  protected $codeName;
+  protected $begin;
+  protected $end;
 
-  private $id_country;
-  private $id_statut;
-  private $id_typeMission;
-  private $id_speciality;
+  protected $id_country;
+  protected Statut $statut;
+  protected $id_typeMission;
+  protected $id_speciality;
 
   private $hideouts;
   private $actors_roles;
@@ -28,7 +28,7 @@ class Mission extends MissionRepository {
     string $end = null, 
 
     string $id_country = null,
-    string $id_statut = null,
+    string $statut = null,
     string $id_typeMission = null,
     string $id_speciality = null,
 
@@ -36,22 +36,26 @@ class Mission extends MissionRepository {
     array $actors_roles = null
 
     ) {
-      $this->id = $id;
-      $this->title = $title;
-      $this->description = $description;
-      $this->codeName = $codeName;
-      $this->begin = $begin;
-      $this->end = $end;
+    $this->id = $id;
+    $this->title = $title;
+    $this->description = $description;
+    $this->codeName = $codeName;
+    $this->begin = $begin;
+    $this->end = $end;
 
-      $this->id_country = $id_country;
-      $this->id_statut = $id_statut;
-      $this->id_typeMission = $id_typeMission;
-      $this->id_speciality = $id_speciality;
+    $this->id_country = $id_country;
+    $this->statut = $statut;
+    $this->id_typeMission = $id_typeMission;
+    $this->id_speciality = $id_speciality;
 
-      $this->hideouts = $hideouts;
-      $this->actors_roles = $actors_roles;
+    $this->hideouts = $hideouts;
+    $this->actors_roles = $actors_roles;
 
-    }
+  }
+
+  public static function getClassFields () {
+    return array_keys(get_class_vars('Mission'));
+  }
 
   public function getId()  : string {
     return $this->id;
@@ -81,8 +85,8 @@ class Mission extends MissionRepository {
     return $this->id_country;
   }
 
-  public function getId_statut()  : string {
-    return $this->id_statut;
+  public function getStatut()  : Statut {
+    return $this->statut;
   }
 
   public function getId_typeMission()  : string {
@@ -129,8 +133,8 @@ class Mission extends MissionRepository {
     $this->id_country = $id_country;
   }
 
-  public function setId_statut(string  $id_statut) {
-    $this->id_statut = $id_statut;
+  public function setStatut(string  $statut) {
+    $this->statut = $statut;
   }
 
   public function setId_typeMission(string  $id_typeMission) {
