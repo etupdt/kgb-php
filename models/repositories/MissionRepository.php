@@ -4,24 +4,28 @@ require 'models/ServiceEntityRepository.php';
 
 class MissionRepository extends ServiceEntityRepository {
 
-  public static function find($id) {
+  public function __construct() {
 
-    $mission = ServiceEntityRepository::repositoryFind('Mission', $id);
-
-    $mission->setHideouts(Mission::getHideoutsDatabase($mission->getId()));
-    $mission->setActorsRoles(Mission::getActorsRolesDatabase($mission->getId()));
-
-    return $mission;
+    parent::__construct(Mission::class);
 
   }
 
-  public static function findAll() { 
+  public function find($id) {
 
-    $missions = ServiceEntityRepository::repositoryFindAll('Mission', Mission::getClassFields());
+    return $this->constructObject(parent::find($id), new Mission());
 
-    foreach ($missions as $mission) {
-      $mission->setHideouts(Mission::getHideoutsDatabase($mission->getId()));
-      $mission->setActorsRoles(Mission::getActorsRolesDatabase($mission->getId()));
+  }
+
+  public function findAll() { 
+
+    $objects = parent::findAll();
+
+    $missions = [];
+
+    foreach ($objects as $object) {
+
+      $missions[] = $this->constructObject($object, new Mission());
+
     }
 
     return $missions;

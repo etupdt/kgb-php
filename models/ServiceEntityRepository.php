@@ -3,46 +3,104 @@
 class ServiceEntityRepository {
     //call_user_func
 
-    public static function repositoryFind($classe, string $id) { 
+    protected $class = Mission::class;
+    protected $fields = [];
+    protected $associations = [];
 
-        $fields = ServiceEntityRepository::getFields ($classe);
+    public function __construct($class) {
+
+        $this->class = $class;
+
+        foreach ((new ReflectionClass($this->class))->getProperties() as $property) {
+            foreach ($property->getAttributes() as $attribut) {
+                if (isset($attribut->getArguments()['foreignKey'])) {
+                    $this->fields[$attribut->getArguments()['foreignKey']] = [
+                        'type' => 'foreignKey',
+                        'property' => $property,
+                        'class' => $property->getType()->getName()
+                    ];
+                } elseif (isset($attribut->getArguments()['class'])) {
+                    $classes = [];
+                    foreach ($attribut->getArguments() as $argument) {
+                        $classes[] = $argument['class'];
+                    }
+                    $this->associations[$property->getName()] = [
+                        'type' => 'association',
+                        'property' => $property,
+                        'class' => $classes
+                    ]; 
+                } else {
+                    $this->fields[$property->getName()] = [
+                        'type' => 'field',
+                        'property' => $property
+                    ];
+                }
+            }
+        }
+                  echo '<pre>';
+                  print_r($this->associations);
+    }    
+
+    public function constructObject($array, $object) {
+
+        foreach (array_keys($array) as $field) {
+    
+            $record = $this->fields[$field];
+            
+            switch ($record['type']) {
+                case 'field' : {
+                    $record['property']->setValue($object, $array[$field]);
+                    break;
+                }
+                case 'foreignKey' : {
+                    $record['property']->setValue($object, $record['class']::find($array[$field]));
+                    break;
+                }
+            }
+    
+        }
+
+        return $object;
+    
+    }    
+  
+    public function find(string $id) { 
 
         $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-        $find = "SELECT id, ".implode(', ',$fields)." FROM ".strtolower($classe)." WHERE id = ?;";
+        $find = "SELECT ".implode(', ', array_keys($this->fields))." FROM ".strtolower($this->class)." WHERE id = ?;";
 
         $pdoStatement = $pdo->prepare($find);
 
         $pdoStatement->bindValue(1, $id, PDO::PARAM_INT);
 
         if ($pdoStatement->execute()) {
-            $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $classe);
-            $object = $pdoStatement->fetch();
-        } else {
-            print_r($pdoStatement->errorInfo());  // sensible à modifier
-        }
 
+            $object = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+
+        } else {
+
+            print_r($pdoStatement->errorInfo());  // sensible à modifier
+        
+        }
+        
         return $object;
 
     }    
 
-    public static function repositoryFindAll($classe) { 
-
-        $fields = ServiceEntityRepository::getFields ($classe);
+    public function findAll() { 
 
         $pdo = new PDO(Database::$host, Database::$username, Database::$password);
         
-        $findAll = "SELECT id, ".$fields." FROM ".strtolower($classe);
-        
+        $findAll = "SELECT ".implode(', ', array_keys($this->fields))." FROM ".strtolower($this->class);
         $pdoStatement = $pdo->prepare($findAll);
 
         $objects = [];
 
         if ($pdoStatement->execute()) {  
-            $pdoStatement->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, $classe);
-            while($object = $pdoStatement->fetch()) {
+            while($fetch = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
             
-            $objects[] = $object;
+                $objects[] = $fetch;
 
             } 
         } else {
@@ -83,9 +141,10 @@ class ServiceEntityRepository {
 
     public function repositoryUpdate($classe, $object) { 
 
+        $fields = array_keys(get_class_vars($classe));
+
         $pdo = new PDO(Database::$host, Database::$username, Database::$password);
     
-        $fields = array_keys(get_class_vars($classe));
         $updateFields = implode(' = ?, ', $fields).' = ?';
 
         $update = "UPDATE ".strtolower($classe)." SET ".$updateFields." WHERE id = ?";
@@ -111,9 +170,6 @@ class ServiceEntityRepository {
     }
     
     public function repositoryDelete($classe, $object) { 
-        // echo '<pre>';
-        // print_r($object);
-    
     
         $pdo = new PDO(Database::$host, Database::$username, Database::$password);
     
@@ -128,24 +184,31 @@ class ServiceEntityRepository {
         }  
     
     }
+/*
+    private static function getOneToMany ($oneToMany) {
 
-    private static function getFields ($classe) {
+        $fields = array_keys(get_class_vars($oneToMany['className']));
 
-        $fields = [];
-
-         foreach (get_class_vars($classe) as $field) {
-
-            $class = get_class($field);
-            if (isset($class)) {
-                $fields[] = 'id_'.$field;
-            } else {
-                $fields[] = $field;
+        $pdo = new PDO(Database::$host, Database::$username, Database::$password);
+        
+        $findHideout = "SELECT FROM "." WHERE id_mission = ?";
+        
+        $pdoStatement = $pdo->prepare($findHideout);
+        
+        $pdoStatement->bindValue(1, $id_mission, PDO::PARAM_INT);
+        
+        $hideouts = [];
+        
+        if ($pdoStatement->execute()) {  
+            while($hideout = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
+            $hideouts[] = $hideout['id_hideout'];
             }
-
-        }
-
-        return $fields;
-    
-    }
-
+        } else {
+            print_r($pdoStatement->errorInfo());  // sensible à modifier
+        }  
+        
+        return $hideouts;
+        
+    }  
+*/    
 }

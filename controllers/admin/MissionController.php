@@ -2,11 +2,14 @@
 
 require_once 'models/EntityManager.php';
 require_once 'models/entities/Mission.php';
+require_once 'models/repositories/MissionRepository.php';
 
 class MissionController {
 
     private $roles = [];
     private $actors = [];
+
+    private MissionRepository $missionRepository;
 
     public function __construct() {
  
@@ -31,6 +34,8 @@ class MissionController {
 
     public function index() { 
 
+        $this->missionRepository = new  MissionRepository();
+
         $em = new EntityManager();
 
         $nameMenu = "Missions";
@@ -48,7 +53,7 @@ class MissionController {
             } else {
                 switch ($_GET['a']) {
                     case 'd' : {
-                        $row = Mission::find($_GET['id']);
+                        $row = $this->missionRepository->find($_GET['id']);
                         $em->remove($row);
                         $em->flush();
                         $rows = $this->getRows();
@@ -56,12 +61,23 @@ class MissionController {
                         break;
                     }
                     case 'u' : {
-                        $row = $this->getRow(Mission::find($_GET['id']));
+                        $row = $this->getRow($this->missionRepository->find($_GET['id']));
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
                     case 'i' : {
-                        $row = $this->getRow(new Mission("0", "", "", "", "", "", 0, 0, 0, 0, [], []));
+                        $mission = new Mission();
+                        $mission->setTitle(''); 
+                        $mission->setDescription(''); 
+                        $mission->setCodeName(''); 
+                        $mission->setBegin(''); 
+                        $mission->setEnd(''); 
+                        // $mission->setCountry(null);
+                        // $mission->setStatut(null);
+                        // $mission->setTypeMission(null);
+                        // $mission->setSpeciality(null);
+
+                        $row = $this->getRow($mission);
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
@@ -87,17 +103,23 @@ class MissionController {
     
             if ($_POST['id'] !== "0") {
 
-                $row = new Mission ($_POST['id'], $_POST['title'], $_POST['description'], $_POST['codeName'], $_POST['begin'], $_POST['end'], 
-                    $_POST['id_country'], $_POST['id_statut'], $_POST['id_typeMission'], $_POST['id_speciality'], 
-                    $_POST['hideouts']);
+                $row = $this->missionRepository->find($_POST['id']); 
 
             } else {
 
-                $row = new Mission (0, $_POST['title'], $_POST['description'], $_POST['codeName'], $_POST['begin'], $_POST['end'], 
-                    $_POST['id_country'], $_POST['id_statut'], $_POST['id_typeMission'], $_POST['id_speciality'], 
-                    $_POST['hideouts']);
-                
+                $row = new Mission ();
+
             }    
+
+            $mission->setTitle($_POST['title']); 
+            $mission->setDescription($_POST['description']); 
+            $mission->setCodeName($_POST['codeName']); 
+            $mission->setBegin($_POST['begin']); 
+            $mission->setEnd($_POST['end']); 
+            $mission->setCountry(Country::find($_POST['id_country'])); 
+            $mission->setStatut(Statut::find($_POST['id_statut'])); 
+            $mission->setTypeMission(TypeMission::find($_POST['id_typeMission'])); 
+            $mission->setSpeciality(Speciality::find($_POST['id_speciality'])); 
 
             $row->setActorsRoles($actorsRoles);
         
@@ -390,7 +412,7 @@ class MissionController {
 
         $missions = [];
 
-        foreach (Mission::findAll() as $mission) {
+        foreach ($this->missionRepository->findAll() as $mission) {
 
             $missions[] = $this->getRow($mission);
         } 
@@ -402,6 +424,11 @@ class MissionController {
     private function getRow (Mission $mission): array 
     {
 
+        $country = $mission->getCountry();
+        $statut = $mission->getStatut();
+        $typeMission = $mission->getTypeMission();
+        $speciality = $mission->getSpeciality();
+
         $row = [
             'id' => $mission->getId(),
             'title' => $mission->getTitle(),
@@ -409,10 +436,10 @@ class MissionController {
             'codeName' => $mission->getCodeName(),
             'begin' => $mission->getBegin(),
             'end' => $mission->getEnd(),
-            'id_country' => $mission->getId_country(),
-            'id_statut' => $mission->getId_statut(),
-            'id_typeMission' => $mission->getId_typeMission(),
-            'id_speciality' => $mission->getId_speciality(),
+            'id_country' => isset($country) ? $country->getId() : 0,
+            'id_statut' => isset($statut) ? $statut->getId() : 0,
+            'id_typeMission' => isset($typeMission) ? $typeMission->getId() : 0,
+            'id_speciality' => isset($speciality) ? $speciality->getId() : 0,
             'hideouts' => $mission->getHideouts(),
         ];
 

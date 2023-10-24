@@ -1,55 +1,43 @@
 <?php
 
-require 'models/repositories/MissionRepository.php';
+class Mission {
 
-class Mission extends MissionRepository {
-
-  private $id;
+  #[Column]
+  protected $id;
+  #[Column]
   protected $title;
+  #[Column]
   protected $description;
+  #[Column]
   protected $codeName;
+  #[Column]
   protected $begin;
+  #[Column]
   protected $end;
 
-  protected $id_country;
-  protected Statut $statut;
-  protected $id_typeMission;
-  protected $id_speciality;
+  #[OneToMany(foreignKey: 'id_country')]
+  protected ?Country $country;
+  #[OneToMany(foreignKey: 'id_statut')]
+  protected ?Statut $statut;
+  #[OneToMany(foreignKey: 'id_typeMission')]
+  protected ?TypeMission $typeMission;
+  #[OneToMany(foreignKey: 'id_speciality')]
+  protected ?Speciality $speciality;
 
-  private $hideouts;
-  private $actors_roles;
+  #[ManyToMany(class: 'Hideout')]
+  protected $hideouts;
+  #[ManyToMany(class: 'Actor')]
+  #[ManyToMany(class: 'Role')]
+  protected $actors_roles;
 
-  public function __construct(
-    string  $id = null, 
-    string  $title = null, 
-    string $description = null, 
-    string $codeName = null, 
-    string $begin = null, 
-    string $end = null, 
+  public function __construct() {
 
-    string $id_country = null,
-    string $statut = null,
-    string $id_typeMission = null,
-    string $id_speciality = null,
+    $this->id = 0;
 
-    array $hideouts = null,
-    array $actors_roles = null
-
-    ) {
-    $this->id = $id;
-    $this->title = $title;
-    $this->description = $description;
-    $this->codeName = $codeName;
-    $this->begin = $begin;
-    $this->end = $end;
-
-    $this->id_country = $id_country;
-    $this->statut = $statut;
-    $this->id_typeMission = $id_typeMission;
-    $this->id_speciality = $id_speciality;
-
-    $this->hideouts = $hideouts;
-    $this->actors_roles = $actors_roles;
+    $this->country = null;
+    $this->statut = null;
+    $this->typeMission = null;
+    $this->speciality = null;
 
   }
 
@@ -81,20 +69,20 @@ class Mission extends MissionRepository {
     return $this->end;
   }
 
-  public function getId_country()  : string {
-    return $this->id_country;
+  public function getCountry()  : ?Country {
+    return $this->country;
   }
 
-  public function getStatut()  : Statut {
+  public function getStatut()  : ?Statut {
     return $this->statut;
   }
 
-  public function getId_typeMission()  : string {
-    return $this->id_typeMission;
+  public function getTypeMission()  : ?TypeMission {
+    return $this->typeMission;
   }
 
-  public function getId_speciality()  : string {
-    return $this->id_speciality;
+  public function getSpeciality()  : ?Speciality {
+    return $this->speciality;
   }
 
   public function getHideouts() { 
@@ -129,20 +117,20 @@ class Mission extends MissionRepository {
     $this->end = $end;
   }
 
-  public function setId_country(string  $id_country) {
-    $this->id_country = $id_country;
+  public function setCountry(Country  $country) {
+    $this->country = $country;
   }
 
-  public function setStatut(string  $statut) {
+  public function setStatut(Statut  $statut) {
     $this->statut = $statut;
   }
 
-  public function setId_typeMission(string  $id_typeMission) {
-    $this->id_typeMission = $id_typeMission;
+  public function setTypeMission(TypeMission  $typeMission) {
+    $this->typeMission = $typeMission;
   }
 
-  public function setId_speciality(string  $id_speciality) {
-    $this->id_speciality = $id_speciality;
+  public function setSpeciality(Speciality  $speciality) {
+    $this->speciality = $speciality;
   }
 
   public function setHideouts(array $hideouts) {
