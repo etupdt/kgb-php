@@ -2,7 +2,6 @@
 
 class Mission {
 
-  #[Column]
   protected $id;
   #[Column]
   protected $title;
@@ -24,8 +23,10 @@ class Mission {
   #[OneToMany(foreignKey: 'id_speciality')]
   protected ?Speciality $speciality;
 
+  #[ManyToMany(class: 'Mission')]
   #[ManyToMany(class: 'Hideout')]
   protected $hideouts;
+  #[ManyToMany(class: 'Mission')]
   #[ManyToMany(class: 'Actor')]
   #[ManyToMany(class: 'Role')]
   protected $actors_roles;
@@ -39,10 +40,6 @@ class Mission {
     $this->typeMission = null;
     $this->speciality = null;
 
-  }
-
-  public static function getClassFields () {
-    return array_keys(get_class_vars('Mission'));
   }
 
   public function getId()  : string {

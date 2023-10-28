@@ -2,11 +2,11 @@
 
 require_once 'models/ServiceEntityRepository.php';
 
-class MissionRepository extends ServiceEntityRepository {
+class StatutRepository extends ServiceEntityRepository {
 
   public function __construct($depth) {
 
-    parent::__construct(Mission::class);
+    parent::__construct(Statut::class);
 
     $this->depth = $depth;
 
@@ -14,7 +14,7 @@ class MissionRepository extends ServiceEntityRepository {
 
   public function find($id) {
 
-    return $this->constructObject(parent::find($id), new Mission());
+    return $this->constructObject(parent::find($id), new Statut());
 
   }
 
@@ -22,21 +22,21 @@ class MissionRepository extends ServiceEntityRepository {
 
     $objects = parent::findAll();
 
-    $missions = [];
+    $statuts = [];
 
     foreach ($objects as $object) {
 
-      $missions[] = $this->constructObject($object, new Mission());
+      $statuts[] = $this->constructObject($object, new Statut());
 
     }
 
-    return $missions;
+    return $statuts;
     
   }  
 
   public function insertDatabase() { 
 
-    $this->repositoryInsert('Mission', $this);
+    $this->repositoryInsert('Statut', $this);
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
@@ -47,7 +47,7 @@ class MissionRepository extends ServiceEntityRepository {
 
   public function updateDatabase() { 
 
-    $this->repositoryUpdate('Mission', $this);
+    $this->repositoryUpdate('Statut', $this);
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
@@ -66,21 +66,21 @@ class MissionRepository extends ServiceEntityRepository {
     $this->deleteHideoutsDatabase($pdo, $this);
     $this->deleteActorsRolesDatabase($pdo, $this);
 
-    $this->repositoryDelete('Mission', $this);
+    $this->repositoryDelete('Statut', $this);
 
-    $this->repositoryDelete('Mission', $this);
+    $this->repositoryDelete('Statut', $this);
 
   }
 
-  public static function getHideoutsDatabase($id_mission) { 
+  public static function getHideoutsDatabase($id_statut) { 
   
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
   
-    $findHideout = "SELECT id_hideout FROM mission_hideout WHERE id_mission = ?";
+    $findHideout = "SELECT id_hideout FROM statut_hideout WHERE id_statut = ?";
   
     $pdoStatement = $pdo->prepare($findHideout);
   
-    $pdoStatement->bindValue(1, $id_mission, PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $id_statut, PDO::PARAM_INT);
   
     $hideouts = [];
   
@@ -96,13 +96,13 @@ class MissionRepository extends ServiceEntityRepository {
   
   }  
 
-  private function deleteHideoutsDatabase($pdo, $mission) {
+  private function deleteHideoutsDatabase($pdo, $statut) {
 
-    $delete = 'DELETE FROM mission_hideout WHERE id_mission = ? ';
+    $delete = 'DELETE FROM statut_hideout WHERE id_statut = ? ';
 
     $pdoStatement = $pdo->prepare($delete);
 
-    $pdoStatement->bindValue(1, $mission->getId(), PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $statut->getId(), PDO::PARAM_INT);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -110,15 +110,15 @@ class MissionRepository extends ServiceEntityRepository {
 
   }
 
-  private function insertHideoutsDatabase($pdo, $mission) {
+  private function insertHideoutsDatabase($pdo, $statut) {
 
-    foreach ($mission->getHideouts() as $hideout) {
+    foreach ($statut->getHideouts() as $hideout) {
 
-      $insert = 'INSERT mission_hideout (id_mission, id_hideout) VALUE (?, ?)';
+      $insert = 'INSERT statut_hideout (id_statut, id_hideout) VALUE (?, ?)';
 
       $pdoStatement = $pdo->prepare($insert);
 
-      $pdoStatement->bindValue(1, $mission->getId(), PDO::PARAM_INT);
+      $pdoStatement->bindValue(1, $statut->getId(), PDO::PARAM_INT);
       $pdoStatement->bindValue(2, $hideout, PDO::PARAM_INT);
 
       if (!$pdoStatement->execute()) {  
@@ -129,15 +129,15 @@ class MissionRepository extends ServiceEntityRepository {
 
   }
 
-  public static function getActorsRolesDatabase($id_mission) { 
+  public static function getActorsRolesDatabase($id_statut) { 
   
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
   
-    $findActor = "SELECT id_actor, id_role FROM mission_actor_role WHERE id_mission = ?";
+    $findActor = "SELECT id_actor, id_role FROM statut_actor_role WHERE id_statut = ?";
   
     $pdoStatement = $pdo->prepare($findActor);
   
-    $pdoStatement->bindValue(1, $id_mission, PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $id_statut, PDO::PARAM_INT);
   
     $actors_roles = [];
   
@@ -156,13 +156,13 @@ class MissionRepository extends ServiceEntityRepository {
   
   }  
 
-  private function deleteActorsRolesDatabase($pdo, $mission) {
+  private function deleteActorsRolesDatabase($pdo, $statut) {
 
-    $delete = 'DELETE FROM mission_actor_role WHERE id_mission = ? ';
+    $delete = 'DELETE FROM statut_actor_role WHERE id_statut = ? ';
 
     $pdoStatement = $pdo->prepare($delete);
 
-    $pdoStatement->bindValue(1, $mission->getId(), PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $statut->getId(), PDO::PARAM_INT);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -170,15 +170,15 @@ class MissionRepository extends ServiceEntityRepository {
 
   }
 
-  private function insertActorsRolesDatabase($pdo, $mission) {
+  private function insertActorsRolesDatabase($pdo, $statut) {
 
-    foreach ($mission->getActorsRoles() as $actor_role) {
+    foreach ($statut->getActorsRoles() as $actor_role) {
 
-      $insert = 'INSERT mission_actor_role (id_mission, id_actor, id_role) VALUE (?, ?, ?)';
+      $insert = 'INSERT statut_actor_role (id_statut, id_actor, id_role) VALUE (?, ?, ?)';
 
       $pdoStatement = $pdo->prepare($insert);
 
-      $pdoStatement->bindValue(1, $mission->getId(), PDO::PARAM_INT);
+      $pdoStatement->bindValue(1, $statut->getId(), PDO::PARAM_INT);
       $pdoStatement->bindValue(2, $actor_role['id_actor'], PDO::PARAM_INT);
       $pdoStatement->bindValue(3, $actor_role['id_role'], PDO::PARAM_INT);
 

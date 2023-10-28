@@ -2,11 +2,11 @@
 
 require_once 'models/ServiceEntityRepository.php';
 
-class MissionRepository extends ServiceEntityRepository {
+class TypeMissionRepository extends ServiceEntityRepository {
 
   public function __construct($depth) {
 
-    parent::__construct(Mission::class);
+    parent::__construct(TypeMission::class);
 
     $this->depth = $depth;
 
@@ -14,7 +14,7 @@ class MissionRepository extends ServiceEntityRepository {
 
   public function find($id) {
 
-    return $this->constructObject(parent::find($id), new Mission());
+    return $this->constructObject(parent::find($id), new TypeMission());
 
   }
 
@@ -22,21 +22,21 @@ class MissionRepository extends ServiceEntityRepository {
 
     $objects = parent::findAll();
 
-    $missions = [];
+    $typeMissions = [];
 
     foreach ($objects as $object) {
 
-      $missions[] = $this->constructObject($object, new Mission());
+      $typeMissions[] = $this->constructObject($object, new TypeMission());
 
     }
 
-    return $missions;
+    return $typeMissions;
     
   }  
 
   public function insertDatabase() { 
 
-    $this->repositoryInsert('Mission', $this);
+    $this->repositoryInsert('TypeMission', $this);
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
@@ -47,7 +47,7 @@ class MissionRepository extends ServiceEntityRepository {
 
   public function updateDatabase() { 
 
-    $this->repositoryUpdate('Mission', $this);
+    $this->repositoryUpdate('TypeMission', $this);
 
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
@@ -66,21 +66,21 @@ class MissionRepository extends ServiceEntityRepository {
     $this->deleteHideoutsDatabase($pdo, $this);
     $this->deleteActorsRolesDatabase($pdo, $this);
 
-    $this->repositoryDelete('Mission', $this);
+    $this->repositoryDelete('TypeMission', $this);
 
-    $this->repositoryDelete('Mission', $this);
+    $this->repositoryDelete('TypeMission', $this);
 
   }
 
-  public static function getHideoutsDatabase($id_mission) { 
+  public static function getHideoutsDatabase($id_typeMission) { 
   
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
   
-    $findHideout = "SELECT id_hideout FROM mission_hideout WHERE id_mission = ?";
+    $findHideout = "SELECT id_hideout FROM typeMission_hideout WHERE id_typeMission = ?";
   
     $pdoStatement = $pdo->prepare($findHideout);
   
-    $pdoStatement->bindValue(1, $id_mission, PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $id_typeMission, PDO::PARAM_INT);
   
     $hideouts = [];
   
@@ -96,13 +96,13 @@ class MissionRepository extends ServiceEntityRepository {
   
   }  
 
-  private function deleteHideoutsDatabase($pdo, $mission) {
+  private function deleteHideoutsDatabase($pdo, $typeMission) {
 
-    $delete = 'DELETE FROM mission_hideout WHERE id_mission = ? ';
+    $delete = 'DELETE FROM typeMission_hideout WHERE id_typeMission = ? ';
 
     $pdoStatement = $pdo->prepare($delete);
 
-    $pdoStatement->bindValue(1, $mission->getId(), PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $typeMission->getId(), PDO::PARAM_INT);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -110,15 +110,15 @@ class MissionRepository extends ServiceEntityRepository {
 
   }
 
-  private function insertHideoutsDatabase($pdo, $mission) {
+  private function insertHideoutsDatabase($pdo, $typeMission) {
 
-    foreach ($mission->getHideouts() as $hideout) {
+    foreach ($typeMission->getHideouts() as $hideout) {
 
-      $insert = 'INSERT mission_hideout (id_mission, id_hideout) VALUE (?, ?)';
+      $insert = 'INSERT typeMission_hideout (id_typeMission, id_hideout) VALUE (?, ?)';
 
       $pdoStatement = $pdo->prepare($insert);
 
-      $pdoStatement->bindValue(1, $mission->getId(), PDO::PARAM_INT);
+      $pdoStatement->bindValue(1, $typeMission->getId(), PDO::PARAM_INT);
       $pdoStatement->bindValue(2, $hideout, PDO::PARAM_INT);
 
       if (!$pdoStatement->execute()) {  
@@ -129,15 +129,15 @@ class MissionRepository extends ServiceEntityRepository {
 
   }
 
-  public static function getActorsRolesDatabase($id_mission) { 
+  public static function getActorsRolesDatabase($id_typeMission) { 
   
     $pdo = new PDO(Database::$host, Database::$username, Database::$password);
   
-    $findActor = "SELECT id_actor, id_role FROM mission_actor_role WHERE id_mission = ?";
+    $findActor = "SELECT id_actor, id_role FROM typeMission_actor_role WHERE id_typeMission = ?";
   
     $pdoStatement = $pdo->prepare($findActor);
   
-    $pdoStatement->bindValue(1, $id_mission, PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $id_typeMission, PDO::PARAM_INT);
   
     $actors_roles = [];
   
@@ -156,13 +156,13 @@ class MissionRepository extends ServiceEntityRepository {
   
   }  
 
-  private function deleteActorsRolesDatabase($pdo, $mission) {
+  private function deleteActorsRolesDatabase($pdo, $typeMission) {
 
-    $delete = 'DELETE FROM mission_actor_role WHERE id_mission = ? ';
+    $delete = 'DELETE FROM typeMission_actor_role WHERE id_typeMission = ? ';
 
     $pdoStatement = $pdo->prepare($delete);
 
-    $pdoStatement->bindValue(1, $mission->getId(), PDO::PARAM_INT);
+    $pdoStatement->bindValue(1, $typeMission->getId(), PDO::PARAM_INT);
 
     if (!$pdoStatement->execute()) {  
       print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -170,15 +170,15 @@ class MissionRepository extends ServiceEntityRepository {
 
   }
 
-  private function insertActorsRolesDatabase($pdo, $mission) {
+  private function insertActorsRolesDatabase($pdo, $typeMission) {
 
-    foreach ($mission->getActorsRoles() as $actor_role) {
+    foreach ($typeMission->getActorsRoles() as $actor_role) {
 
-      $insert = 'INSERT mission_actor_role (id_mission, id_actor, id_role) VALUE (?, ?, ?)';
+      $insert = 'INSERT typeMission_actor_role (id_typeMission, id_actor, id_role) VALUE (?, ?, ?)';
 
       $pdoStatement = $pdo->prepare($insert);
 
-      $pdoStatement->bindValue(1, $mission->getId(), PDO::PARAM_INT);
+      $pdoStatement->bindValue(1, $typeMission->getId(), PDO::PARAM_INT);
       $pdoStatement->bindValue(2, $actor_role['id_actor'], PDO::PARAM_INT);
       $pdoStatement->bindValue(3, $actor_role['id_role'], PDO::PARAM_INT);
 

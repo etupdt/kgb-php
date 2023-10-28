@@ -53,7 +53,16 @@
     >
       <?php
         foreach ($field['value'] as $index=>$option) {
-          if (in_array($option['id'], $row[$field['name']])) {
+          $ids = [];
+          foreach($row[$field['name']] as $record) {
+            // echo '<pre>';
+            // print_r(array_keys($record));
+            // echo '</pre';
+            $key = array_keys($record);
+            $ids[] = $record[$key[0]]->getId();
+          }
+          if (in_array($option['id'], $ids)) {
+//          if (in_array($option['id'], $row[$field['name']])) {
             echo '<option selected value="'.$option['id'].'"'.$optionEvents.'>'.$option['name'].'</option>';
           } else {
             echo '<option index="'.$index.'" value="'.$option['id'].'"'.$optionEvents.'>'.$option['name'].'</option>';

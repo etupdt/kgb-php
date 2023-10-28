@@ -1,7 +1,7 @@
 
-CREATE DATABASE IF NOT EXISTS denist_kgb;
+CREATE DATABASE IF NOT EXISTS kgb;
 
-USE denist_kgb;
+USE kgb;
 
 CREATE TABLE IF NOT EXISTS person(
   id int auto_increment  NOT NULL,

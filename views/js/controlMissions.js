@@ -3,7 +3,7 @@ const entity = 'mission'
 
 let controlData 
 
-getData (entity)
+//getData (entity)
 
 function controlPaysCiblesAgents () {
 

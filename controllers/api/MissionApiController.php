@@ -2,46 +2,53 @@
 
 class MissionApiController {
 
-    public function index() { 
+  public function index() { 
 
-      $agentssData = [];
-      $contactsData = [];
-      $hideoutsData = [];
+    $depth = 0;
 
-      foreach (Actor::findAll() as $actor) {
-        $actorsData[$actor->getId()] = [
-          'countries' => [$actor->getId_country()],
-          'specialities' => $actor->getSpecialities()
-        ];
-      }
-      
-      foreach (Hideout::findAll() as $hideout) {
-        $hideoutsData[$hideout->getId()] = [
-          'countries' => [$hideout->getId_country()]
-        ];
-      }
+    $hideoutRepository = new HideoutRepository($depth);
+    $countryRepository = new CountryRepository($depth);
+    $actorRepository = new ActorRepository($depth);
+    $specialityRepository = new SpecialityRepository($depth);
 
-      foreach (Country::findAll() as $country) {
-        $countriesData[$country->getId()] = [
-          'libelle' => $country->getName()
-        ];
-      }
+    $agentssData = [];
+    $contactsData = [];
+    $hideoutsData = [];
 
-      foreach (Speciality::findAll() as $speciality) {
-        $specialitiesData[$speciality->getId()] = [
-          'libelle' => $speciality->getName()
-        ];
-      }
-
-      $json = json_encode([
-        'actorsData' => $actorsData,
-        'hideoutsData' => $hideoutsData,
-        'countriesData' => $countriesData,
-        'specialitiesData' => $specialitiesData,
-      ]);
-
-      echo $json;
-
+    foreach ($actorRepository->findAll() as $actor) {
+      $actorsData[$actor->getId()] = [
+        'countries' => [$actor->getCountry()->getId()],
+        'specialities' => $actor->getSpecialities()
+      ];
     }
     
+    foreach ($hideoutRepository->findAll() as $hideout) {
+      $hideoutsData[$hideout->getId()] = [
+        'countries' => [$hideout->getCountry()->getName()]
+      ];
+    }
+
+    foreach ($countryRepository->findAll() as $country) {
+      $countriesData[$country->getId()] = [
+        'libelle' => $country->getName()
+      ];
+    }
+
+    foreach ($specialityRepository->findAll() as $speciality) {
+      $specialitiesData[$speciality->getId()] = [
+        'libelle' => $speciality->getName()
+      ];
+    }
+
+    $json = json_encode([
+      'actorsData' => $actorsData,
+      'hideoutsData' => $hideoutsData,
+      'countriesData' => $countriesData,
+      'specialitiesData' => $specialitiesData,
+    ]);
+
+    echo $json;
+
+  }
+  
 }

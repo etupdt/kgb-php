@@ -10,7 +10,7 @@ class HideoutApiController {
 
       switch ($origin) {
         case 'Actor' : {
-          Mission::findBy(['id_actor'])
+          Mission::findBy(['id_actor']);
         }
       }
 

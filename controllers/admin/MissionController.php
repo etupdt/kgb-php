@@ -3,6 +3,13 @@
 require_once 'models/EntityManager.php';
 require_once 'models/entities/Mission.php';
 require_once 'models/repositories/MissionRepository.php';
+require_once 'models/repositories/CountryRepository.php';
+require_once 'models/repositories/HideoutRepository.php';
+require_once 'models/repositories/StatutRepository.php';
+require_once 'models/repositories/SpecialityRepository.php';
+require_once 'models/repositories/TypeMissionRepository.php';
+require_once 'models/repositories/ActorRepository.php';
+require_once 'models/repositories/RoleRepository.php';
 
 class MissionController {
 
@@ -10,10 +17,28 @@ class MissionController {
     private $actors = [];
 
     private MissionRepository $missionRepository;
+    private CountryRepository $countryRepository;
+    private HideoutRepository $hideoutRepository;
+    private StatutRepository $statutRepository;
+    private SpecialityRepository $specialityRepository;
+    private TypeMissionRepository $typeMissionRepository;
+    private ActorRepository $actorRepository;
+    private RoleRepository $roleRepository;
 
     public function __construct() {
  
-        foreach (Actor::findAll() as $actor) {
+        $depth = 0;
+
+        $this->missionRepository = new MissionRepository($depth);
+        $this->countryRepository = new CountryRepository($depth);
+        $this->hideoutRepository = new HideoutRepository($depth);
+        $this->statutRepository = new StatutRepository($depth);
+        $this->specialityRepository = new SpecialityRepository($depth);
+        $this->typeMissionRepository = new TypeMissionRepository($depth);
+        $this->actorRepository = new ActorRepository($depth);
+        $this->roleRepository = new RoleRepository($depth);
+
+        foreach ($this->actorRepository->findAll() as $actor) {
             $this->actors[] = [
                 'id' => $actor->getId(),
                 'name' => '<p>'.$actor->getIdentificationCode().' '.
@@ -23,7 +48,7 @@ class MissionController {
             ]; 
         }
     
-        foreach (Role::findAll() as $role) {
+        foreach ($this->roleRepository->findAll() as $role) {
             $this->roles[] = [
                 'id' => $role->getId(),
                 'role' => $role->getRole()
@@ -33,8 +58,6 @@ class MissionController {
     }
 
     public function index() { 
-
-        $this->missionRepository = new  MissionRepository();
 
         $em = new EntityManager();
 
@@ -116,10 +139,10 @@ class MissionController {
             $mission->setCodeName($_POST['codeName']); 
             $mission->setBegin($_POST['begin']); 
             $mission->setEnd($_POST['end']); 
-            $mission->setCountry(Country::find($_POST['id_country'])); 
-            $mission->setStatut(Statut::find($_POST['id_statut'])); 
-            $mission->setTypeMission(TypeMission::find($_POST['id_typeMission'])); 
-            $mission->setSpeciality(Speciality::find($_POST['id_speciality'])); 
+            $mission->setCountry($this->countryRepository->find($_POST['id_country'])); 
+            $mission->setStatut($statutRepository->find($_POST['id_statut'])); 
+            $mission->setTypeMission($typeMissionRepository->find($_POST['id_typeMission'])); 
+            $mission->setSpeciality($specialityRepository->find($_POST['id_speciality'])); 
 
             $row->setActorsRoles($actorsRoles);
         
@@ -211,7 +234,7 @@ class MissionController {
 
         $countries = ['0' => ''];
 
-        foreach (Country::findAll() as $country) {
+        foreach ($this->countryRepository->findAll() as $country) {
             $countries[$country->getId()] = $country->getName();
         }
 
@@ -240,7 +263,7 @@ class MissionController {
 
         $statuts = ['0' => ''];
 
-        foreach (Statut::findAll() as $statut) {
+        foreach ($this->statutRepository->findAll() as $statut) {
             $statuts[$statut->getId()] = $statut->getStatut();
         }
 
@@ -261,7 +284,7 @@ class MissionController {
 
         $typeMissions = ['0' => ''];
 
-        foreach (TypeMission::findAll() as $typeMission) {
+        foreach ($this->typeMissionRepository->findAll() as $typeMission) {
             $typeMissions[$typeMission->getId()] = $typeMission->getTypeMission();
         }
 
@@ -282,7 +305,7 @@ class MissionController {
 
         $specialities = ['0' => ''];
 
-        foreach (Speciality::findAll() as $speciality) {
+        foreach ($this->specialityRepository->findAll() as $speciality) {
             $specialities[$speciality->getId()] = $speciality->getName();
         }
 
@@ -306,7 +329,7 @@ class MissionController {
         
         $hideouts = [];
 
-        foreach (Hideout::findAll() as $hideout) {
+        foreach ($this->hideoutRepository->findAll() as $hideout) {
             $hideouts[] = [
                 'id' => $hideout->getId(),
                 'name' => $hideout->getCode().' '.$hideout->getAddress().' '.$hideout->getType()
@@ -430,6 +453,7 @@ class MissionController {
         $speciality = $mission->getSpeciality();
 
         $row = [
+            'object' => $mission,
             'id' => $mission->getId(),
             'title' => $mission->getTitle(),
             'description' => $mission->getDescription(),
@@ -450,8 +474,8 @@ class MissionController {
             $actors = [];
 
             foreach($actorsRoles as $actorRole) {
-                if ($actorRole['id_role'] == $role['id']) {
-                    $actors[] = $actorRole['id_actor'];
+                if ($actorRole['Role']->getId() == $role['id']) {
+                    $actors[] = ['Actor' => $actorRole['Actor']];
                 }
             }
 
