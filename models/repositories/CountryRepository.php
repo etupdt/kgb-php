@@ -14,24 +14,14 @@ class CountryRepository extends ServiceEntityRepository {
 
   public function find($id) {
 
-    return $this->constructObject(parent::find($id), new Country());
+    return parent::find($id);
 
   }
 
   public function findAll() { 
 
-    $objects = parent::findAll();
+    return parent::findAll();
 
-    $countrys = [];
-
-    foreach ($objects as $object) {
-
-      $countrys[] = $this->constructObject($object, new Country());
-
-    }
-
-    return $countrys;
-    
   }  
 
   public function insertDatabase() { 

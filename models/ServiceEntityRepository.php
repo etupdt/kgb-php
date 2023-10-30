@@ -4,13 +4,13 @@ class ServiceEntityRepository {
     //call_user_func
 
     protected $rootClass;
-    protected $heritClass;
-    protected $fields = [];
     protected $columns = [];
     protected $associations = [];
-    private $find;
-    protected $depth;
-    protected $maxDepth = 1;
+    private $where;
+    protected $depth = 0;
+    protected $maxDepth;
+
+    private $tables = [];
 
     private $log = true;
 
@@ -18,140 +18,163 @@ class ServiceEntityRepository {
 
         $this->rootClass = $rootClass;
 
-        $reflectionClass = new ReflectionClass($rootClass);
-        
-        foreach ($reflectionClass->getAttributes() as $classAttribut) {
-            if ($classAttribut->getName() === 'Herit') {
-                $this->heritClass = $classAttribut->getArguments()['class'];
-            }
-        }
+        $analyse = $this->analyseClasse ($rootClass, $this->depth);
 
-        foreach ($reflectionClass->getProperties() as $property) {
+        $this->columns = $analyse['columns'];
+        $this->where = $analyse['where'];
+        $this->tables = $analyse['tables'];
+        $this->associations = $analyse['associations'];
+        
+    }
+
+    private function analyseClasse ($class, $depth) {
+
+        error_log('===== analyseClasse =======>   '.$depth.'    '.$class.'    <======================');
+
+        $columns = [];
+        $tables = [];
+        $where = [];
+        $associations = [];
+
+        $originPropertyClass = $class;
+
+        foreach ((new ReflectionClass($class))->getProperties() as $property) {
 
             $attributes = $property->getAttributes();
 
-            $TransformedProperty = [
-                'property' => $property,
-                'type' => 'field'
-            ];
+            $originPropertyClass = $property->getDeclaringClass()->getName();
 
             foreach ($attributes as $attribut) {
 
                 $arguments = $attribut->getArguments();
 
-                if ($attribut->getName() === 'Column') {
-                    $TransformedProperty['type'] = 'column';
-                }
+                switch ($attribut->getName()) {
 
-                foreach (array_keys($arguments) as $argument) {
+                    case 'Column' : {
+                        $tables[strtolower(strtolower($this->rootClass))] = [
+                            'class' => $class,
+                            'object' => new $class('0')
+                        ];
+                        $columns[strtolower($class).'_'.$property->getName()] = [
+                            'type' => 'column',
+                            'property' => $property,
+                            'class' => $class,
+                            'selectField' => strtolower($originPropertyClass).'.'.$property->getName().' AS '.strtolower($class).'_'.$property->getName()
+                        ];
+                        break;
+                    }
+                    case 'OneToMany' : {
+                        error_log('===== onetomany <======================');
+                        $foreignClass = str_replace('?', '', $property->getType());
+                        $foreignTable = strtolower($foreignClass);
+        
+                        if ($depth < $this->maxDepth) {
+                            error_log('===== analyseClasse recurse onetomany =======>   '.$depth.'    '.$foreignClass.'    <======================');
+                            $analyse = $this->analyseClasse ($foreignClass, $depth + 1);
+                            $tables[$foreignTable] = [
+                                'class' => $foreignClass,
+                                'object' => new $foreignClass('0')
+                            ];
+                            $columns = array_merge($columns, $analyse['columns']);
+                            $where[] = strtolower($class).".id_".$foreignTable." = ".$foreignTable.".id";
+                        }    
 
-                      switch ($argument) {
-                        case 'foreignKey' : {
-                            $TransformedProperty['type'] = 'foreignKey';
-                            $TransformedProperty['class'] = $property->getType()->getName();
-                            $TransformedProperty['name'] = $arguments['foreignKey'];
-                            break;
+                        break;
+
+                    }
+                    case 'ManyToMany' : {
+                        error_log('===== manytomany <======================');
+                        
+                        $tupleTable = strtolower(implode('_', $arguments['classes']));
+
+                        $associationColumns = [];
+                        $associationTables = [];
+                        $associationWhere[] = strtolower($class).".id = ".$tupleTable.".id_".strtolower($class);
+
+                        foreach ($arguments['classes'] as $foreignClass) {
+
+                            if ($depth < $this->maxDepth) {
+
+                                if ($foreignClass === $class) {
+
+                                    $associationTables[strtolower($class)] = [
+                                        'class' => $class,
+                                        'object' => new $class('0')
+                                    ];
+            
+                                } else {
+                                    
+                                    $foreignTable = strtolower($foreignClass);
+                
+                                    error_log('===== analyseClasse recurse manytomany =======>   '.$depth.'    '.$foreignClass.'    <======================');
+                                    $analyse = $this->analyseClasse ($foreignClass, $depth + 1);
+                                    $associationTables[$foreignTable] = [
+                                        'class' => $foreignClass,
+                                        'object' => new $foreignClass('0')
+                                    ];
+                                    $associationColumns = array_merge($associationColumns, $analyse['columns']);
+                                    $associationWhere[] = strtolower($foreignTable).".id = ".$tupleTable.".id_".$foreignTable;
+                                }
+
+                            }
+
                         }
-                        case 'class' : {
-                            $TransformedProperty['type'] = 'association';
-                            $TransformedProperty['classes'][] = $arguments['class'];
-                        }
+
+                        $associationTables[ucfirst($tupleTable)] = [
+                            'class' => $tupleTable,
+                            'object' => null
+                        ];
+
+                        if ($depth < $this->maxDepth) {
+                            $associations[$property->getName()] = [
+                            'property' => $property,
+                            'mainClass' => $class,
+                            'tables' => $associationTables,
+                            'columns' => $associationColumns,
+                            'where' => $associationWhere,
+                            'associations' => []
+                        ];
+                    }
+
+                        break;
+
                     }
 
                 }
+                
+            }
             
-            }
-
-            switch ($TransformedProperty['type']) {
-    
-                case 'field' : {
-                    $this->fields[$property->getName()] = $TransformedProperty;
-                    break;
-                }
-                case 'column' : {
-                    $this->columns[$property->getName()] = $TransformedProperty;
-                    break;
-                }
-                case 'foreignKey' : {
-                    $this->columns[$TransformedProperty['name']] = $TransformedProperty;
-                    break;
-                }
-                case 'association' : {
-                    $this->associations[$property->getName()] = $TransformedProperty;
-                    break;
-                }
-    
-            }
-        
         }
+
+        if (isset($originPropertyClass) && $class !== $originPropertyClass) {
+            error_log('===== originPropertyClass =======>   '.$originPropertyClass);
+            $tables[strtolower($originPropertyClass)] = [
+                'class' => $originPropertyClass,
+                'object' => null
+            ];
+            $where[] = strtolower($originPropertyClass).".id = ".strtolower($class).".id_".strtolower($originPropertyClass); 
+        }
+
+        return [
+            'columns' => $columns,
+            'where' => $where,
+            'tables' => $tables,
+            'associations' => $associations
+        ];
 
     }    
 
-    public function constructObject($array, $object) {
+    public function constructObject($array, $class, $tables, $columns) {
 
-        foreach (array_keys($array) as $field) {
+        foreach (array_keys($array) as $fieldName) {
     
-            $record = array_merge($this->fields, $this->columns)[$field];
-            
-            switch ($record['type']) {
-                case 'field' : {
-                    $record['property']->setValue($object, $array[$field]);
-                    break;
-                }
-                case 'column' : {
-                    $record['property']->setValue($object, $array[$field]);
-                    break;
-                }
-                case 'foreignKey' : {
-                    if ($this->depth < $this->maxDepth) {
-                        $classe = $record['class'].'Repository';
-                        $repository = new $classe($this->depth + 1);
-                        $record['property']->setValue($object, $repository->find($array[$field]));
-                    } else {
-                        $record['property']->setValue($object, null);
-                    }
-                    break;
-                }
-            }
-    
+            $table = explode('_', $fieldName)[0];
+
+            $columns[$fieldName]['property']->setValue($tables[$table]['object'], $array[$fieldName]);
+
         }
 
-        foreach (array_keys($this->associations) as $association) {
-    
-            $record = $this->associations[$association];
-
-            $tuplesIds = $this->findAllAssociations($record['classes'], $object->getId());
-    
-            $tuplesObjects = [];
-
-            foreach ($tuplesIds as $tupleIds) {
-
-                $tupleObjects = [];
-
-                foreach (array_keys($tupleIds) as $key) {
-    
-                    $class = ucfirst(str_replace('id_', '', $key));
-    
-                    if ($this->depth < $this->maxDepth) {
-                        $classe = $class.'Repository';
-                        $repository = new $classe($this->depth + 1);
-                        $tupleObjects[$class] = $repository->find($tupleIds[$key]);
-                    } else {
-                        $tupleObjects[$class] = null;
-                    }             
-
-                }    
-
-                $tuplesObjects[] = $tupleObjects;
-                                                 
-            }    
-            
-            // echo '<pre>';
-            // print_r($tuplesObjects);
-            // echo '</pre';
-            $record['property']->setValue($object, $tuplesObjects);
-        
-        }
+        $object = $tables[strtolower($class)]['object'];
 
         return $object;
     
@@ -159,27 +182,35 @@ class ServiceEntityRepository {
   
     public function find(string $id) { 
 
-        $this->find = "SELECT ".strtolower($this->rootClass).".id AS id, ".implode(', ', array_keys($this->columns))." FROM "
-            .strtolower($this->rootClass)
-            .(isset($this->heritClass) ? ', '.strtolower($this->heritClass)." WHERE ".strtolower($this->heritClass).".id = id_".strtolower($this->heritClass) : "");
+        // echo '<pre>';
+        // print_r($this->where);
+
+        $find = "SELECT ".implode(', ', array_column($this->columns, 'selectField')).
+        " FROM ".strtolower(implode(', ', array_keys($this->tables))).
+        " WHERE ".array_keys($this->tables)[0].".id = ?".
+        (count($this->where) === 0 ? "" : " AND ".implode(' AND ', $this->where));
 
         $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-        $find = $this->find." ".(isset($this->heritClass) ? "AND" : "WHERE")." ".strtolower($this->rootClass).".id = ?;";
-
         $pdoStatement = $pdo->prepare($find);
 
-        // if ($this->log) {
-        //     echo '<pre>';
-        //     print_r('============>   '.$this->depth.'    '.$find);
-            error_log('============>   '.$this->depth.'    '.$find);
-        // }
+        error_log('===== find =======>   '.$this->depth.'    '.$id.'    '.$find);
 
         $pdoStatement->bindValue(1, $id, PDO::PARAM_INT);
 
         if ($pdoStatement->execute()) {
 
-            $object = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+            $fetch = $pdoStatement->fetch(PDO::FETCH_ASSOC);
+
+            foreach ($this->associations as $association) {
+
+                $tupleObjects = $this->findAllAssociation($this->rootClass, $association['tables'], $association['columns'], $association['where']);
+
+                $association['property']->setValue($fetch, $tupleObjects);
+            
+            }
+
+            $object = $fetch;
 
         } else {
             print_r($pdoStatement->errorInfo());  // sensible à modifier
@@ -189,21 +220,20 @@ class ServiceEntityRepository {
 
     }    
 
-    public function findAllAssociations($classes, string $id) { 
-
-        $table = implode('_', $classes);
-
-        $select  = [];
-
-        foreach ($classes as $class) {
-            if ($class !== $this->rootClass) {
-                $select[] = 'id_'.$class; 
-            }
-        }
+    public function findAllAssociation(string $id, $association) { 
 
         $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-        $find = "SELECT ".strtolower(implode(', ', $select))." FROM ".strtolower($table)." WHERE id_".$this->rootClass." = ?;";
+        $where = $association['where'];
+
+        $find = "SELECT ".implode(', ', array_column($association['columns'], 'selectField')).
+        " FROM ".strtolower(implode(', ', array_keys($association['tables']))).
+        " WHERE ".array_keys($association['tables'])[0].".id = ?".
+        (count($where) === 0 ? "" : " AND ".implode(' AND ', $where));
+
+        if ($this->log) {
+            error_log('===== findAllAssociations =======>   '.$this->depth.'    '.$id.'   '.$this->rootClass.'    '.$find);
+        }
 
         $pdoStatement = $pdo->prepare($find);
 
@@ -213,8 +243,8 @@ class ServiceEntityRepository {
         
         if ($pdoStatement->execute()) {
             while($fetch = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
-            
-                $objects[] = $fetch;
+
+                $objects[] = $this->constructObject($fetch, $association['mainClass'], $association['tables'], $association['columns']);
 
             } 
         } else {
@@ -227,21 +257,16 @@ class ServiceEntityRepository {
 
     public function findAll() { 
 
-        $this->find = "SELECT ".strtolower($this->rootClass).".id AS id, ".implode(', ', array_keys($this->columns))." FROM "
-            .strtolower($this->rootClass)
-            .(isset($this->heritClass) ? ', '.strtolower($this->heritClass)." WHERE ".strtolower($this->heritClass).".id = id_".strtolower($this->heritClass) : "");
+        $findAll = "SELECT ".implode(', ', array_column($this->columns, 'selectField')).
+        " FROM ".strtolower(implode(', ', array_keys($this->tables))).
+        (count($this->where) === 0 ? "" : " WHERE ".implode(' AND ', $this->where));
 
         $pdo = new PDO(Database::$host, Database::$username, Database::$password);
         
-        $findAll = $this->find;
         $pdoStatement = $pdo->prepare($findAll);
 
         if ($this->log) {
-            // echo '<pre>';
-            // echo '<br>';
-            // print_r('============>   '.$this->depth.'    '.$findAll);
-            error_log('============>   '.$this->depth.'    '.$findAll);
-            // echo '</pre>';
+            error_log('===== findAll =======>   '.$this->depth.'    '.$findAll);
         }
 
         $objects = [];
@@ -249,9 +274,22 @@ class ServiceEntityRepository {
         if ($pdoStatement->execute()) {  
             while($fetch = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
             
-                $objects[] = $fetch;
+                $object = $this->constructObject($fetch, $this->rootClass, $this->tables, $this->columns);
+
+                foreach ($this->associations as $association) {
+
+        echo '<pre>';
+        print_r($association);
+                    $tupleObjects = $this->findAllAssociation($object->getId(), $association);
+
+                    $association['property']->setValue($object, $tupleObjects);
+                
+                }
+
+                $objects[] = $object;
 
             } 
+
         } else {
             print_r($pdoStatement->errorInfo());  // sensible à modifier
         }  

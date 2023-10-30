@@ -27,16 +27,11 @@ class MissionController {
 
     public function __construct() {
  
-        $depth = 0;
+        error_log('===== Missions ====================================================================================================================>   ');
 
-        $this->missionRepository = new MissionRepository($depth);
-        $this->countryRepository = new CountryRepository($depth);
-        $this->hideoutRepository = new HideoutRepository($depth);
-        $this->statutRepository = new StatutRepository($depth);
-        $this->specialityRepository = new SpecialityRepository($depth);
-        $this->typeMissionRepository = new TypeMissionRepository($depth);
+        $depth = 1;
+
         $this->actorRepository = new ActorRepository($depth);
-        $this->roleRepository = new RoleRepository($depth);
 
         foreach ($this->actorRepository->findAll() as $actor) {
             $this->actors[] = [
@@ -48,6 +43,14 @@ class MissionController {
             ]; 
         }
     
+        $this->missionRepository = new MissionRepository($depth);
+        $this->countryRepository = new CountryRepository($depth);
+        $this->hideoutRepository = new HideoutRepository($depth);
+        $this->statutRepository = new StatutRepository($depth);
+        $this->specialityRepository = new SpecialityRepository($depth);
+        $this->typeMissionRepository = new TypeMissionRepository($depth);
+        $this->roleRepository = new RoleRepository($depth);
+
         foreach ($this->roleRepository->findAll() as $role) {
             $this->roles[] = [
                 'id' => $role->getId(),

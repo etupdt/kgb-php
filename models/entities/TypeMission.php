@@ -2,6 +2,7 @@
 
 class TypeMission {
 
+  #[Column]
   protected $id;
   #[Column]
   protected $typeMission;

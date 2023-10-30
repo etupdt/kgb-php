@@ -2,6 +2,7 @@
 
 class Hideout {
 
+  #[Column]
   protected $id;
   #[Column]
   protected $code;

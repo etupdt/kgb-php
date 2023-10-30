@@ -4,34 +4,24 @@ require_once 'models/ServiceEntityRepository.php';
 
 class SpecialityRepository extends ServiceEntityRepository {
 
-  public function __construct($depth) {
+  public function __construct($maxDepth) {
 
     parent::__construct(Speciality::class);
 
-    $this->depth = $depth;
+    $this->maxDepth = $maxDepth;
 
   }
 
   public function find($id) {
 
-    return $this->constructObject(parent::find($id), new Speciality());
+    return parent::find($id);
 
   }
 
   public function findAll() { 
 
-    $objects = parent::findAll();
+    return parent::findAll();
 
-    $specialities = [];
-
-    foreach ($objects as $object) {
-
-      $specialities[] = $this->constructObject($object, new Speciality());
-
-    }
-
-    return $specialities;
-    
   }  
 
   public function insertDatabase() { 

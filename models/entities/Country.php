@@ -2,11 +2,12 @@
 
 class Country {
 
-  private $id;
   #[Column]
-  private $name;
+  protected $id;
   #[Column]
-  private $nationality;
+  protected $name;
+  #[Column]
+  protected $nationality;
 
   public function __construct() {
 

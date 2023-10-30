@@ -2,6 +2,7 @@
 
 class Mission {
 
+  #[Column]
   protected $id;
   #[Column]
   protected $title;
@@ -23,12 +24,9 @@ class Mission {
   #[OneToMany(foreignKey: 'id_speciality')]
   protected ?Speciality $speciality;
 
-  #[ManyToMany(class: 'Mission')]
-  #[ManyToMany(class: 'Hideout')]
+  #[ManyToMany(classes: ['Mission', 'Hideout'])]
   protected $hideouts;
-  #[ManyToMany(class: 'Mission')]
-  #[ManyToMany(class: 'Actor')]
-  #[ManyToMany(class: 'Role')]
+  #[ManyToMany(classes: ['Mission', 'Actor', 'Role'])]
   protected $actors_roles;
 
   public function __construct() {

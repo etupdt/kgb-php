@@ -2,6 +2,7 @@
 
 class Role {
 
+  #[Column]
   private $id;
   #[Column]
   private $role;

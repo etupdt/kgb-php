@@ -2,16 +2,16 @@
 
 class Person {
 
+  #[Column]
   protected $id;
   #[Column]
   protected $firstname;
   #[Column]
   protected $lastname;
-  #[Column]
 
-  public function __construct() {
+  public function __construct(int $id = null) {
 
-    $this->id = 0;
+    $this->id = $id;
 
   }
 

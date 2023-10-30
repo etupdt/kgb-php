@@ -4,34 +4,24 @@ require_once 'models/ServiceEntityRepository.php';
 
 class ActorRepository extends ServiceEntityRepository {
 
-  public function __construct($depth) {
+  public function __construct($maxDepth) {
 
+    $this->maxDepth = $maxDepth;
+    
     parent::__construct(Actor::class);
-
-    $this->depth = $depth;
 
   }
 
   public function find($id) {
 
-    return $this->constructObject(parent::find($id), new Actor());
+    return parent::find($id);
 
   }
 
   public function findAll() { 
 
-    $objects = parent::findAll();
+    return parent::findAll();
 
-    $actors = [];
-
-    foreach ($objects as $object) {
-
-      $actors[] = $this->constructObject($object, new Actor());
-
-    }
-
-    return $actors;
-    
   }  
 
   public function insertDatabase() { 

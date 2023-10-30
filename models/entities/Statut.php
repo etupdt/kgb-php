@@ -2,6 +2,7 @@
 
 class Statut {
 
+  #[Column]
   protected $id;
   #[Column]
   protected $statut;

@@ -15,13 +15,12 @@ class Actor extends Person {
   #[OneToMany(foreignKey: 'id_country')]
   protected ?Country $country;
 
-  #[ManyToMany(class: 'Actor')]
-  #[ManyToMany(class: 'Speciality')]
+  #[ManyToMany(classes: ['Actor', 'Speciality'])]
   protected $specialities;
 
-  public function __construct() {
+  public function __construct(int $id = null) {
 
-    $this->id = 0;
+    $this->id = $id;
 
     $this->country = null;
 

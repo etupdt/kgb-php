@@ -2,12 +2,12 @@
 
 class Speciality {
 
+  #[Column]
   protected $id;
   #[Column]
   protected $name;
 
-  #[ManyToMany(class: 'Actor')]
-  #[ManyToMany(class: 'Speciality')]
+  #[ManyToMany(classes: ['Actor', 'Speciality'])]
   protected $actors;
 
   public function __construct() {

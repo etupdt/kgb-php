@@ -4,34 +4,24 @@ require_once 'models/ServiceEntityRepository.php';
 
 class HideoutRepository extends ServiceEntityRepository {
 
-  public function __construct($depth) {
+  public function __construct($maxDepth) {
 
     parent::__construct(Hideout::class);
 
-    $this->depth = $depth;
+    $this->maxDepth = $maxDepth;
 
   }
 
   public function find($id) {
 
-    return $this->constructObject(parent::find($id), new Hideout());
+    return parent::find($id);
 
   }
 
   public function findAll() { 
 
-    $objects = parent::findAll();
+    return parent::findAll();
 
-    $hideouts = [];
-
-    foreach ($objects as $object) {
-
-      $hideouts[] = $this->constructObject($object, new Hideout());
-
-    }
-
-    return $hideouts;
-    
   }  
 
   public function insertDatabase() { 

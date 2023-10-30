@@ -14,24 +14,14 @@ class StatutRepository extends ServiceEntityRepository {
 
   public function find($id) {
 
-    return $this->constructObject(parent::find($id), new Statut());
+    return parent::find($id);
 
   }
 
   public function findAll() { 
 
-    $objects = parent::findAll();
+    return parent::findAll();
 
-    $statuts = [];
-
-    foreach ($objects as $object) {
-
-      $statuts[] = $this->constructObject($object, new Statut());
-
-    }
-
-    return $statuts;
-    
   }  
 
   public function insertDatabase() { 

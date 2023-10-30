@@ -14,24 +14,14 @@ class RoleRepository extends ServiceEntityRepository {
 
   public function find($id) {
 
-    return $this->constructObject(parent::find($id), new Role());
+    return parent::find($id);
 
   }
 
   public function findAll() { 
 
-    $objects = parent::findAll();
+    return parent::findAll();
 
-    $roles = [];
-
-    foreach ($objects as $object) {
-
-      $roles[] = $this->constructObject($object, new Role());
-
-    }
-
-    return $roles;
-    
   }  
 
   public function insertDatabase() { 

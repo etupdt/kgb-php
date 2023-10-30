@@ -14,24 +14,14 @@ class TypeMissionRepository extends ServiceEntityRepository {
 
   public function find($id) {
 
-    return $this->constructObject(parent::find($id), new TypeMission());
+    return parent::find($id);
 
   }
 
   public function findAll() { 
 
-    $objects = parent::findAll();
+    return parent::findAll();
 
-    $typeMissions = [];
-
-    foreach ($objects as $object) {
-
-      $typeMissions[] = $this->constructObject($object, new TypeMission());
-
-    }
-
-    return $typeMissions;
-    
   }  
 
   public function insertDatabase() { 
