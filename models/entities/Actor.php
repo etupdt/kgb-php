@@ -86,4 +86,8 @@ class Actor extends Person {
     $this->specialities = [];
   }  
 
+  public function __clone() {
+    
+  }
+
 }

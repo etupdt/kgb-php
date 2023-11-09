@@ -9,8 +9,8 @@ début, date de fin.</p>
     <?php 
         foreach ($row['object']->getActorsRoles() as $actorRoleArray) {
             echo '<li>';
-            $actor = $actorRoleArray['Actor'];
-            $role = $actorRoleArray['Role'];
+            $actor = $actorRoleArray['actor'];
+            $role = $actorRoleArray['role'];
             echo $actor->getLastname().' '.$actor->getFirstname().' comme '.$role->getRole();
             echo '</li>';
         }
@@ -22,7 +22,7 @@ début, date de fin.</p>
     <?php 
         foreach ($row['object']->getHideouts() as $hideoutArray) {
             echo '<li>';
-            $hideout = $hideoutArray['Hideout'];
+            $hideout = $hideoutArray['hideout'];
             echo $hideout->getAddress().' de '.$hideout->getCountry()->getNationality();
             echo '</li>';
         }

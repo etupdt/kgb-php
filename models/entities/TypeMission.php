@@ -1,6 +1,6 @@
 <?php
 
-class TypeMission {
+class TypeMission extends Entity {
 
   #[Column]
   protected $id;

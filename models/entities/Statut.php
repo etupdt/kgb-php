@@ -1,6 +1,6 @@
 <?php
 
-class Statut {
+class Statut extends Entity {
 
   #[Column]
   protected $id;

@@ -1,6 +1,6 @@
 <?php
 
-class Hideout {
+class Hideout extends Entity {
 
   #[Column]
   protected $id;

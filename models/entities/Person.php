@@ -1,6 +1,8 @@
 <?php
 
-class Person {
+require_once 'models/Entity.php';
+
+class Person extends Entity {
 
   #[Column]
   protected $id;

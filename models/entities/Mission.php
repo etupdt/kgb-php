@@ -1,6 +1,8 @@
 <?php
 
-class Mission {
+require_once 'models/Entity.php';
+
+class Mission extends Entity {
 
   #[Column]
   protected $id;
@@ -140,15 +142,15 @@ class Mission {
     $this->hideouts = [];
   }  
 
-  public function setActorsRoles(array $actors_roles) {
+  public function setActors_roles(array $actors_roles) {
     $this->actors_roles = $actors_roles;
   }
 
-  public function addActorsRoles($actors_roles) { 
+  public function addActors_roles($actors_roles) { 
     $this->actors_roles[] = $actors_roles;
   }  
 
-  public function removeActorsRoles() { 
+  public function removeActors_roles() { 
     $this->actors_roles = [];
   }  
 

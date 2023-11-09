@@ -1,6 +1,6 @@
 <?php
 
-class Role {
+class Role extends Entity {
 
   #[Column]
   private $id;

@@ -1,6 +1,6 @@
 <?php
 
-class Speciality {
+class Speciality extends Entity {
 
   #[Column]
   protected $id;

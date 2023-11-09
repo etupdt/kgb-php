@@ -43,7 +43,7 @@ class MissionController {
             ]; 
         }
     
-        $this->missionRepository = new MissionRepository($depth);
+        $this->missionRepository = new MissionRepository(1);
         $this->countryRepository = new CountryRepository($depth);
         $this->hideoutRepository = new HideoutRepository($depth);
         $this->statutRepository = new StatutRepository($depth);
@@ -75,6 +75,7 @@ class MissionController {
 
             if (! isset($_GET['a']) || $_GET['a'] === 'c') {
                 $rows = $this->getRows();
+        
                 require_once 'views/admin/entityList.php';
             } else {
                 switch ($_GET['a']) {
@@ -439,6 +440,8 @@ class MissionController {
         $missions = [];
 
         foreach ($this->missionRepository->findAll() as $mission) {
+            // echo '<pre>';
+            // print_r($mission);
 
             $missions[] = $this->getRow($mission);
         } 
@@ -477,12 +480,14 @@ class MissionController {
             $actors = [];
 
             foreach($actorsRoles as $actorRole) {
-                if ($actorRole['Role']->getId() == $role['id']) {
-                    $actors[] = ['Actor' => $actorRole['Actor']];
+                if ($actorRole['role']->getId() == $role['id']) {
+                    $actors[] = ['Actor' => $actorRole['actor']];
                 }
             }
 
             $row[str_replace(' ', '_', $role['role'])] = $actors;
+            echo '<pre>';
+            print_r($row);
     
         }
         

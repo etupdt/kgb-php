@@ -1,6 +1,6 @@
 <?php
 
-class Country {
+class Country extends Entity {
 
   #[Column]
   protected $id;
