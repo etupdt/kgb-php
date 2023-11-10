@@ -5,10 +5,10 @@ require_once 'models/ServiceEntityRepository.php';
 class SpecialityRepository extends ServiceEntityRepository {
 
   public function __construct($maxDepth) {
+    
+    $this->maxDepth = $maxDepth;
 
     parent::__construct(Speciality::class);
-
-    $this->maxDepth = $maxDepth;
 
   }
 

@@ -43,7 +43,7 @@ class MissionController {
             ]; 
         }
     
-        $this->missionRepository = new MissionRepository(1);
+        $this->missionRepository = new MissionRepository(2);
         $this->countryRepository = new CountryRepository($depth);
         $this->hideoutRepository = new HideoutRepository($depth);
         $this->statutRepository = new StatutRepository($depth);
@@ -486,8 +486,6 @@ class MissionController {
             }
 
             $row[str_replace(' ', '_', $role['role'])] = $actors;
-            echo '<pre>';
-            print_r($row);
     
         }
         

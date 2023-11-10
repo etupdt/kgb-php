@@ -22,7 +22,7 @@ class ServiceEntityRepository {
         $this->datas['where'] = [];
         $this->datas['associations'] = [];
 
-        $this->analyseClasse ($rootClass, $this->datas, $this->depth);
+        $this->analyseClasse($rootClass, $this->datas, $this->depth);
         $this->datas['master'] = strtolower($rootClass);
 
     }
@@ -75,23 +75,19 @@ class ServiceEntityRepository {
 
                     case 'OneToMany' : {
 
-                        error_log('===== onetomany <======================');
-
                         $foreignClass = str_replace('?', '', $property->getType());
                         $foreignTable = strtolower($foreignClass);
         
-                        $datas['results'][$table.'_'.$property->getName()] = [
-                            'table' => $table,
-                            'type' => 'OneToMany',
-                            'property' => $property,
-                            'source' => $foreignTable
-                        ];
-
                         if ($depth < $this->maxDepth) {
 
-                            error_log('===== analyseClasse recurse onetomany =======>   '.$depth.'    '.$foreignClass.'    <======================');
+                            $datas['results'][$table.'_'.$property->getName()] = [
+                                'table' => $table,
+                                'type' => 'OneToMany',
+                                'property' => $property,
+                                'source' => $foreignTable
+                            ];
 
-                            $this->analyseClasse ($foreignClass, $datas, $depth + 1);
+                            $this->analyseClasse($foreignClass, $datas, $depth + 1);
                             
                             $datas['tables'][$foreignTable] = [
                                 'class' => $foreignClass,
@@ -106,16 +102,7 @@ class ServiceEntityRepository {
 
                     }
                     case 'ManyToMany' : {
-                        
-                        error_log('===== manytomany <======================');
-                        
-                        $datas['results'][$table.'_'.$property->getName()] = [
-                            'table' => $table,
-                            'type' => 'ManyToMany',
-                            'property' => $property,
-                            'sources' => []
-                        ];
-
+                                              
                         $tupleTable = strtolower(implode('_', $arguments['classes']));
                         $associationWhere[] = strtolower($class).".id = ".$tupleTable.".id_".strtolower($class);
                         
@@ -123,25 +110,21 @@ class ServiceEntityRepository {
                         $associationDatas['results'] = [];
                         $associationDatas['tables'] = [];
                         $associationDatas['where'] = [];
-                        $associationDatas['associations'] = [];
-                        $associationDatas['pivot'] = $tupleTable.'.id_'.$table;
+                        $associationDatas['pivot'] = $table;
                         $associationDatas['master'] = $tupleTable;
                         
-                        foreach ($arguments['classes'] as $foreignClass) {
+                        if ($depth < $this->maxDepth) {
 
-                            $foreignTable = strtolower($foreignClass);
+                            foreach ($arguments['classes'] as $foreignClass) {
 
-                            if ($foreignClass !== $class) {
-                                $datas['results'][$table.'_'.$property->getName()]['sources'][] = $foreignTable;
-                            }
-    
-                            if ($depth < $this->maxDepth) {
+                                $foreignTable = strtolower($foreignClass);
+
 
                                 if ($foreignClass !== $class) {         
 
                                     $associationDatas['results'][$tupleTable.'_'.$foreignTable] = [
                                         'table' => $tupleTable,
-                                        'type' => 'OneToMany',
+                                        'type' => 'ManyToManyEntry',
                                         'source' => $foreignTable
                                     ];
             
@@ -150,31 +133,28 @@ class ServiceEntityRepository {
                                         'object' => new $foreignClass('0')
                                     ];
                                 
-                                    error_log('===== analyseClasse recurse manytomany =======>   '.$depth.'    '.$foreignClass.'    <======================');
-                                    $this->analyseClasse ($foreignClass, $associationDatas, $depth + 1);
+                                    $this->analyseClasse($foreignClass, $associationDatas, $depth + 1);
 
                                     $associationDatas['where'][] = strtolower($foreignTable).".id = ".$tupleTable.".id_".$foreignTable;
 
                                 }
 
+                                
                             }
-
-                        }
-
-                        $associationDatas['tables'][$tupleTable] = [
-                            'class' => ucfirst($tupleTable),
-                            'object' => []
-                        ];
-
-                        if ($depth < $this->maxDepth) {
-
-                            $datas['associations'][$property->getName()] = [
+                            
+                            $associationDatas['tables'][$tupleTable] = [
+                                'class' => ucfirst($tupleTable),
+                                'object' => []
+                            ];
+                            
+                            $datas['results'][$table.'_'.$property->getName()] = [
+                                'table' => $table,
+                                'type' => 'ManyToMany',
                                 'property' => $property,
                                 'datas' => $associationDatas
-                            ];
-
+                            ];    
+                            
                         }
-
                         break;
 
                     }
@@ -189,27 +169,9 @@ class ServiceEntityRepository {
 
     public function constructObject($array, $datas) {
 
-        error_log('=================================================================================> ');
-        error_log('=================================================================================> ');
-        foreach ($datas['tables'] as $t) {
-            error_log('===== classes <======================> '.$t['class']);
-        }
-        // if (isset($array['mission_title'])) {
-        //     echo '<pre>';
-        //     print_r($datas);
-        // }
-        // // foreach (array_keys($array) as $fieldName) {
-    
-        //     $table = explode('_', $fieldName)[0];
-
-        //     $datas['results'][$fieldName]['property']->setValue($datas['tables'][$table]['object'], $array[$fieldName]);
-
-        // }
-
         foreach ($datas['results'] as $fieldName=>$field) {
     
             $table = $field['table'];
-            // error_log('===== field <======================'.$table.'   '.'  '.$fieldName);
 
             switch ($field['type']) {
                 case 'Column' : {
@@ -217,45 +179,36 @@ class ServiceEntityRepository {
                     break;
                 }
                 case 'OneToMany' : {
-                    if (!isset($field['property'])) {
-                        error_log('===== onetomany sans property <======================'.$table.'   '.'  '.$fieldName);
-                        $datas['tables'][$table]['object'][strtolower($field['source'])] = $datas['tables'][strtolower($field['source'])]['object'];
-                    } else if (isset($datas['tables'][$field['source']])) {
-                        error_log('===== onetomany avec property <======================'.$table.'   '.'  '.$fieldName);
-                        $field['property']->setValue($datas['tables'][$table]['object'], $datas['tables'][strtolower($field['source'])]['object']);
-                    } 
+                    $field['property']->setValue($datas['tables'][$table]['object'], $datas['tables'][strtolower($field['source'])]['object']);
+                    break;
+                }
+                case 'ManyToManyEntry' : {
+                    $datas['tables'][$table]['object'][$field['source']] = $datas['tables'][strtolower($field['source'])]['object'];
                     break;
                 }
                 case 'ManyToMany' : {
-                    $sources = [];
-                    foreach ($field['sources'] as $source) {
-                        if (isset($datas['tables'][$source])) {
-                            $sources[] = $datas['tables'][$source]['object'];
-                        }
-                    }
-                    $field['property']->setValue($datas['tables'][$table]['object'], $sources);
+
+                    $id = $array[$field['datas']['pivot'].'_id'];
+
+                    $associationObjects = $this->findAllAssociation($id, $field['datas']);
+                            
+                    $field['property']->setValue($datas['tables'][$table]['object'], $associationObjects);
                     break;
+
                 }
             }
 
         }
 
-        // if ($table === 'mission_actor_role') {
-            // echo '<pre>';
-            // print_r(gettype($datas['tables'][$datas['master']]['object']));
-        // }
-        // error_log('===== master <======================'.$datas['master']);
         if (gettype($datas['tables'][$datas['master']]['object']) === 'object') {
-            // error_log('===== objet <======================'.gettype($datas['tables'][$datas['master']]['object']).'    '.$fieldName.'   '.gettype($datas['tables'][$datas['master']]['object']));
-            return clone $datas['tables'][$datas['master']]['object'];
+            return clone $datas['tables'][$datas['master']]['object'];    
         } else {
-            // error_log('===== tableau <======================'.gettype($datas['tables'][$datas['master']]['object']).'    '.$fieldName.'   '.gettype($datas['tables'][$datas['master']]['object']));
-            $retour = [];
-            foreach($datas['tables'][$datas['master']]['object'] as $key=>$object) {
-                $retour[$key] = clone $object;
+            $entries = [];
+            foreach($datas['tables'][$datas['master']]['object'] as $key=>$entry) {
+                $entries[$key] = clone $entry;   
             }
-            return $retour;
-        }
+            return $entries;
+        } 
 
     }    
   
@@ -284,16 +237,6 @@ class ServiceEntityRepository {
 
             $object = $this->constructObject($fetch, $this->datas);
 
-            foreach ($this->datas['associations'] as $key=>$association) {
-
-                $associationObjects = $this->findAllAssociation($fetch[$table.'_id'], $association);
-                
-                $set = 'set'.ucFirst($key);
-                
-                $object->$set($associationObjects);
-
-            }
-
         } else {
             print_r($pdoStatement->errorInfo());  // sensible à modifier
         }
@@ -302,17 +245,17 @@ class ServiceEntityRepository {
 
     }    
 
-    public function findAllAssociation(string $id, $association) { 
+    public function findAllAssociation(string $id, $datas) { 
 
         $pdo = new PDO(Database::$host, Database::$username, Database::$password);
 
-        $find = "SELECT ".implode(', ', array_column($association['datas']['columns'], 'selectField')).
-        " FROM ".strtolower(implode(', ', array_keys($association['datas']['tables']))).
-        " WHERE ".$association['datas']['pivot']." = ?".
-        (count($association['datas']['where']) === 0 ? "" : " AND ".implode(' AND ', $association['datas']['where']));
+        $find = "SELECT ".implode(', ', array_column($datas['columns'], 'selectField')).
+        " FROM ".strtolower(implode(', ', array_keys($datas['tables']))).
+        " WHERE ".$datas['master'].".id_".$datas['pivot']." = ?".  
+        (count($datas['where']) === 0 ? "" : " AND ".implode(' AND ', $datas['where']));
 
         if ($this->log) {
-            error_log('===== findAllAssociations =======>   '.$id.'   '.$find);
+            error_log('===== findAllAssociations2 =======>   '.$id.'   '.$find);
         }
 
         $pdoStatement = $pdo->prepare($find);
@@ -324,7 +267,7 @@ class ServiceEntityRepository {
         if ($pdoStatement->execute()) {
             while($fetch = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
 
-                $object = $this->constructObject($fetch, $association['datas']);
+                $object = $this->constructObject($fetch, $datas);
 
                 $objects[] = $object;
 
@@ -339,8 +282,6 @@ class ServiceEntityRepository {
 
     public function findAll() { 
 
-        $table = strtolower($this->rootClass);
-        
         $findAll = "SELECT ".implode(', ', array_column($this->datas['columns'], 'selectField')).
         " FROM ".strtolower(implode(', ', array_keys($this->datas['tables']))).
         (count($this->datas['where']) === 0 ? "" : " WHERE ".implode(' AND ', $this->datas['where']));
@@ -350,7 +291,7 @@ class ServiceEntityRepository {
         $pdoStatement = $pdo->prepare($findAll);
 
         if ($this->log) {
-            error_log('===== findAll =======>   '.$this->depth.'    '.$findAll);
+            error_log('===== findAll2 =======>   '.$this->depth.'    '.$findAll);
         }
 
         $objects = [];
@@ -359,16 +300,6 @@ class ServiceEntityRepository {
             while($fetch = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
             
                 $object = $this->constructObject($fetch, $this->datas);
-
-                foreach ($this->datas['associations'] as $key=>$association) {
-    
-                    $associationObjects = $this->findAllAssociation($fetch[$table.'_id'], $association);
-                    
-                    $set = 'set'.ucFirst($key);
-                    
-                    $object->$set($associationObjects);
-
-                }
 
                 $objects[] = $object;
 
