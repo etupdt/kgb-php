@@ -4,10 +4,26 @@ require_once 'models/entities/Statut.php';
 
 class StatutController {
 
+    private StatutRepository $statutRepository;
+
+    public function __construct() {
+ 
+        error_log('===== Statut ====================================================================================================================>   ');
+
+        $depth = 1;
+
+        $this->statutRepository = new StatutRepository(0);
+
+    }
+
     public function index() { 
 
+        $help = false;
+
+        $em = new EntityManager();
+
         $nameMenu = "Statuts Mission";
-        $nameEntity = BASE_URL.ADMIN_URL."/statut";
+        $nameEntity = "statut";
 
         $fields = $this->getFields();
 
@@ -21,20 +37,22 @@ class StatutController {
             } else {
                 switch ($_GET['a']) {
                     case 'd' : {
-                        $row = Statut::find($_GET['id']);
-                        $row->delete();
-                        $row->persist();
+                        $row = $this->statutRepository->find($_GET['id']);
+                        $em->remove($row);
+                        $em->flush();
                         $rows = $this->getRows();
                         require_once 'views/admin/entityList.php';
                         break;
                     }
                     case 'u' : {
-                        $row = $this->getRow(Statut::find($_GET['id']));
+                        $row = $this->getRow($this->statutRepository->find($_GET['id']));
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
                     case 'i' : {
-                        $row = $this->getRow(new Statut("0", "", ""));
+                        $statut = new Statut();
+                        $statut->setStatut('');
+                        $row = $this->getRow($statut);
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
@@ -45,17 +63,18 @@ class StatutController {
 
             if ($_POST['id'] !== "0") {
 
-                $row = new Statut ($_POST['id'], $_POST['statut']);
-                $row->update();
-                $row->persist();
+                $statut = $this->statutRepository->find($_POST['id']); 
 
             } else {
 
-                $row = new Statut (0, $_POST['statut']);
-                $row->insert();
-                $row->persist();
+                $statut = new Statut(0);
 
             }    
+
+            $statut->setStatut($_POST['statut']);
+
+            $em->persist($statut);
+            $em->flush();
 
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
@@ -89,7 +108,7 @@ class StatutController {
 
         $statuts = [];
 
-        foreach (Statut::findAll() as $statut) {
+        foreach ($this->statutRepository->findAll() as $statut) {
 
             $statuts[] = $this->getRow($statut);
         } 

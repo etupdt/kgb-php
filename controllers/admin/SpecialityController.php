@@ -4,10 +4,29 @@ require_once 'models/entities/Speciality.php';
 
 class SpecialityController {
 
+    private ActorRepository $actorRepository;
+    private SpecialityRepository $specialityRepository;
+
+    public function __construct() {
+ 
+        error_log('===== Actors ====================================================================================================================>   ');
+
+        $depth = 1;
+
+        $this->specialityRepository = new SpecialityRepository(1);
+
+        $this->actorRepository = new ActorRepository(0);
+
+    }
+
     public function index() { 
 
+        $help = false;
+
+        $em = new EntityManager();
+
         $nameMenu = "Spécialités";
-        $nameEntity = BASE_URL.ADMIN_URL."/specialite";
+        $nameEntity = "speciality";
 
         $fields = $this->getFields();
 
@@ -21,20 +40,22 @@ class SpecialityController {
             } else {
                 switch ($_GET['a']) {
                     case 'd' : {
-                        $row = Speciality::find($_GET['id']);
-                        $row->delete();
-                        $row->persist();
+                        $row = $this->specialityRepository->find($_GET['id']);
+                        $em->remove($row);
+                        $em->flush();
                         $rows = $this->getRows();
                         require_once 'views/admin/entityList.php';
                         break;
                     }
                     case 'u' : {
-                        $row = $this->getRow(Speciality::find($_GET['id']));
+                        $row = $this->getRow($this->specialityRepository->find($_GET['id']));
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
                     case 'i' : {
-                        $row = $this->getRow(new Speciality("0", "", []));
+                        $speciality = new Speciality();
+                        $speciality->setName('');
+                        $row = $this->getRow($speciality);
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
@@ -43,19 +64,31 @@ class SpecialityController {
 
         } else {
 
+            $actors = [];
+            
+            $idsActors = $_POST['actors'];
+
+            foreach($idsActors as $id_actor) {
+                $actors[] = [
+                    'id_actor' => $id_actor,
+                ];
+            }
+
             if ($_POST['id'] !== "0") {
 
-                $row = new Speciality ($_POST['id'], $_POST['name']);
-                $row->update();
-                $row->persist();
+                $speciality = $this->specialityRepository->find($_POST['id']); 
 
             } else {
 
-                $row = new Speciality (0, $_POST['name'], []);
-                $row->insert();
-                $row->persist();
+                $speciality = new Speciality();
 
             }    
+
+            $speciality->setName($_POST['name']); 
+            $speciality->setActors($actors); 
+
+            $em->persist($speciality);
+            $em->flush();
 
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
@@ -88,6 +121,36 @@ class SpecialityController {
             ]
         ];
 
+        // $actors = [];
+
+        // foreach ($this->actorRepository->findAll() as $actor) {
+        //     $actors[] = [
+        //         'id' => $actor->getId(),
+        //         'name' => '<p>'.$actor->getIdentificationCode().' '.
+        //         $actor->getFirstname().' '.
+        //         $actor->getLastname().' '.
+        //         $actor->getBirthdate(),
+        //     ];
+        // }
+
+        // $fields[] = [
+        //     'label' => 'Acteurs',
+        //     'name' => 'actors',
+        //     'id' => 'actors',
+        //     'type' => 'multiSelect',
+        //     'value' => $actors,
+        //     'events' => [
+        //         'select.onchange' => [
+        //             [
+        //                 'function' => 'isRequired'
+        //             ],
+        //             [
+        //                 'function' => 'controlActor'
+        //             ]
+        //         ]
+        //     ]
+        // ];
+
         return $fields;
 
     }
@@ -97,7 +160,7 @@ class SpecialityController {
 
         $specialities = [];
 
-        foreach (Speciality::findAll() as $speciality) {
+        foreach ($this->specialityRepository->findAll() as $speciality) {
 
             $specialities[] = $this->getRow($speciality);
 
@@ -110,9 +173,12 @@ class SpecialityController {
     private function getRow (Speciality $speciality): array 
     {
 
+        $actors = $speciality->getActors();
+
         return  [
             'id' => $speciality->getId(),
             'name' => $speciality->getName(),
+            // 'actors' => isset($actors) ? $actors : [],
         ];
 
     }

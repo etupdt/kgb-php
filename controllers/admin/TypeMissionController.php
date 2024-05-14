@@ -4,10 +4,26 @@ require_once 'models/entities/TypeMission.php';
 
 class TypeMissionController {
 
+    private TypeMissionRepository $typeMissionRepository;
+
+    public function __construct() {
+ 
+        error_log('===== TypeMission ====================================================================================================================>   ');
+
+        $depth = 1;
+
+        $this->typeMissionRepository = new TypeMissionRepository(0);
+
+    }
+
     public function index() { 
 
-        $nameMenu = "Types Mission";
-        $nameEntity = BASE_URL.ADMIN_URL."/typemission";
+        $help = false;
+
+        $em = new EntityManager();
+
+        $nameMenu = "TypeMissions";
+        $nameEntity = "typemission";
 
         $fields = $this->getFields();
 
@@ -21,20 +37,22 @@ class TypeMissionController {
             } else {
                 switch ($_GET['a']) {
                     case 'd' : {
-                        $row = TypeMission::find($_GET['id']);
-                        $row->delete();
-                        $row->persist();
+                        $row = $this->typeMissionRepository->find($_GET['id']);
+                        $em->remove($row);
+                        $em->flush();
                         $rows = $this->getRows();
                         require_once 'views/admin/entityList.php';
                         break;
                     }
                     case 'u' : {
-                        $row = $this->getRow(TypeMission::find($_GET['id']));
+                        $row = $this->getRow($this->typeMissionRepository->find($_GET['id']));
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
                     case 'i' : {
-                        $row = $this->getRow(new TypeMission("0", "", ""));
+                        $typeMission = new TypeMission();
+                        $typeMission->setTypeMission('');
+                        $row = $this->getRow($typeMission);
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
@@ -45,17 +63,18 @@ class TypeMissionController {
 
             if ($_POST['id'] !== "0") {
 
-                $row = new TypeMission ($_POST['id'], $_POST['typeMission']);
-                $row->update();
-                $row->persist();
+                $typeMission = $this->typeMissionRepository->find($_POST['id']); 
 
             } else {
 
-                $row = new TypeMission (0, $_POST['typeMission']);
-                $row->insert();
-                $row->persist();
+                $typeMission = new TypeMission(0);
 
             }    
+
+            $typeMission->setTypeMission($_POST['typeMission']);
+
+            $em->persist($typeMission);
+            $em->flush();
 
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
@@ -89,7 +108,7 @@ class TypeMissionController {
 
         $typeMissions = [];
 
-        foreach (TypeMission::findAll() as $typeMission) {
+        foreach ($this->typeMissionRepository->findAll() as $typeMission) {
 
             $typeMissions[] = $this->getRow($typeMission);
         } 
@@ -104,7 +123,7 @@ class TypeMissionController {
         return  [
             'id' => $typeMission->getId(),
             'typeMission' => $typeMission->getTypeMission()
-];
+    ];
 
     }
     

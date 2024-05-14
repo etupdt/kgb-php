@@ -110,6 +110,11 @@ td .type {
     padding-right: 15px;
   }
   
+  .title {
+    width: 70%;
+    margin: auto;
+  }  
+
   .form {
     width: auto;
     min-width: 70%;

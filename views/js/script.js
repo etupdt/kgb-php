@@ -1,15 +1,12 @@
 
 function isValidForm (form) {
 
-  console.log('form', form)
   const fields = form.querySelectorAll(".need-validation")
 
-  console.log('fields', fields)
-
-  let ok = false
+  let ok = true
 
   fields.forEach((field) => {
-    ok = true
+    ok = true && ok
     field.classList.forEach((classe) => {
       if (ok && classe.indexOf('validation-') === 0) {
         ok = eval(`${classe.substring(11)}('${field.id}')`)
@@ -82,23 +79,32 @@ async function getControlData (type) {
 
 }
 
-function response (formGroupId, error, message) {
+function response (formGroupIds, error, message) {
 
-  const formGroup = document.querySelector(`#${formGroupId}`)
-  const messageId = formGroup.querySelector(".message")
-  const type = formGroup.getAttribute('type')
-  const control = formGroup.querySelector(type)
+  let formGroupId
+  let messageId
+  let type
+  let control
 
-  messageId.style.display = 'none'
+  formGroupIds.forEach((formGroupId) => {
+    
+    formGroup = document.querySelector(`#${formGroupId}`)
+    messageId = formGroup.querySelector(".message")
+    type = formGroup.getAttribute('type')
+    control = formGroup.querySelector(type)
 
-  if (error) {
-    control.classList.add('is-invalid')
-    messageId.innerHTML = message
-    messageId.style.display = 'block'
-  } else {
-    control.classList.remove('is-invalid')
-  }
+    messageId.style.display = 'none'
   
+    if (error) {
+      control.classList.add('is-invalid')
+      messageId.innerHTML = message
+      messageId.style.display = 'block'
+    } else {
+      control.classList.remove('is-invalid')
+    }
+    
+  })
+
   return error
 
 }

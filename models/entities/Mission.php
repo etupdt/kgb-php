@@ -86,7 +86,7 @@ class Mission extends Entity {
     return $this->hideouts;
   }  
 
-  public function getActorsRoles() { 
+  public function getActors_roles() { 
     return $this->actors_roles;
   }  
 

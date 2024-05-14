@@ -3,17 +3,22 @@
 
 class Entity {
 
-    function __clone(){
+    function clone() {
 
-        foreach($this as $name => $value){
+        $retour = clone $this;
 
-            if(gettype($value)=='object'){
+        foreach ((new ReflectionClass($this))->getProperties() as $property) {
 
-                $this->$name = clone $this->$name;
-
+            if ($property->gettype() !== null) {
+                $name = $property->getName();
+                if ($this->$name !== null) {
+                    $property->setValue($retour, $this->$name->clone());
+                }
             }
 
         }
+
+        return $retour;
 
     }
 

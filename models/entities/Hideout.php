@@ -14,6 +14,9 @@ class Hideout extends Entity {
   #[OneToMany(foreignKey: 'id_country')]
   protected ?Country $country;
 
+  #[ManyToMany(classes: ['Mission', 'Hideout'])]
+  protected $missions;
+
   public function __construct() {
 
     $this->id = 0;
@@ -42,6 +45,10 @@ class Hideout extends Entity {
     return $this->country;
   }
 
+  public function getMissions() { 
+    return $this->missions;
+  }  
+
   public function setCode(string  $code) {
         $this->code = $code;
   }
@@ -54,8 +61,20 @@ class Hideout extends Entity {
     $this->type = $type;
   }
 
-  public function setId_country(Country $country) {
+  public function setCountry(Country $country) {
     $this->country = $country;
   }
+
+  public function setMissions(array $missions) {
+    $this->missions = $missions;
+  }
+
+  public function addHideout(Mission $mission) { 
+    $this->missions[] = $mission;
+  }  
+
+  public function removeMissions() { 
+    $this->missions = [];
+  }  
 
 }

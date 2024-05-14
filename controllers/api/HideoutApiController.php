@@ -12,16 +12,33 @@ class HideoutApiController {
 
     public function index() { 
 
+      $missionRepository = new MissionRepository(2);
+
       $missionsData = [];
 
       // on recherche les missisons
-      foreach (Mission::findAll() as $mission) {
-   
-        $missionsData[] = [
+      foreach ($missionRepository->findAll() as $mission) {
+        
+        $hideouts = [];
+        foreach ($mission->getHideouts() as $hideout) {
+          error_log('======= hideout =========> '.$hideout['hideout']->getAddress());
+          $hideouts[$hideout['hideout']->getId()] = [
+            'address' => $hideout['hideout']->getAddress(),
+            'country' => [
+              'id' => $hideout['hideout']->getCountry()->getId(),
+              'name' => $hideout['hideout']->getCountry()->getName()
+            ],  
+          ];
+        }
+
+        $missionsData[$mission->getTitle()] = [
           'id_mission' => $mission->getId(),
           'title' => $mission->getTitle(),
-          'countries' => [$mission->getId_country()],
-          'hideouts' => $mission->getHideouts()
+          'country' => [
+            'id' => $mission->getCountry()->getId(),
+            'name' => $mission->getCountry()->getName()
+          ],
+          'hideouts' => $hideouts
         ];
 
       }

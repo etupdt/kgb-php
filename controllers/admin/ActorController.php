@@ -4,10 +4,32 @@ require_once 'models/entities/Actor.php';
 
 class ActorController {
 
+    private CountryRepository $countryRepository;
+    private SpecialityRepository $specialityRepository;
+    private ActorRepository $actorRepository;
+
+    public function __construct() {
+ 
+        error_log('===== Actors ====================================================================================================================>   ');
+
+        $depth = 1;
+
+        $this->actorRepository = new ActorRepository(1);
+
+        $this->countryRepository = new CountryRepository(0);
+        $this->specialityRepository = new SpecialityRepository(0);
+
+    }
+
     public function index() { 
 
+        $help = true;
+        $script = true;
+
+        $em = new EntityManager();
+
         $nameMenu = "Acteurs";
-        $nameEntity = BASE_URL.ADMIN_URL."/acteur";
+        $nameEntity = "actor";
 
         $fields = $this->getFields();
 
@@ -21,20 +43,25 @@ class ActorController {
             } else {
                 switch ($_GET['a']) {
                     case 'd' : {
-                        $row = Actor::find($_GET['id']);
-                        $row->delete();
-                        $row->persist();
+                        $row = $this->actorRepository->find($_GET['id']);
+                        $em->remove($row);
+                        $em->flush();
                         $rows = $this->getRows();
                         require_once 'views/admin/entityList.php';
                         break;
                     }
                     case 'u' : {
-                        $row = $this->getRow(Actor::find($_GET['id']));
+                        $row = $this->getRow($this->actorRepository->find($_GET['id']));
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
                     case 'i' : {
-                        $row = $this->getRow(new Actor("0", "", "", "", "", 1, []));
+                        $actor = new Actor();
+                        $actor->setFirstname('');
+                        $actor->setLastname('');
+                        $actor->setBirthdate('');
+                        $actor->setIdentificationCode('');
+                        $row = $this->getRow($actor);
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
@@ -43,19 +70,35 @@ class ActorController {
 
         } else {
 
+            $specialities = [];
+            
+            $idsSpecialities = $_POST['specialities'];
+
+            foreach($idsSpecialities as $id_speciality) {
+                $specialities[] = [
+                    'id_speciality' => $id_speciality,
+                ];
+            }
+
             if ($_POST['id'] !== "0") {
 
-                $row = new Actor ($_POST['id'], $_POST['firstname'], $_POST['lastname'], $_POST['birthdate'], $_POST['identificationCode'], $_POST['id_country'], $_POST['specialities']);
-                $row->update();
-                $row->persist();
+                $actor = $this->actorRepository->find($_POST['id']); 
 
             } else {
 
-                $row = new Actor (0, $_POST['firstname'], $_POST['lastname'], $_POST['birthdate'], $_POST['identificationCode'], $_POST['id_country'], $_POST['specialities']);
-                $row->insert();
-                $row->persist();
+                $actor = new Actor();
 
             }    
+
+            $actor->setFirstname($_POST['firstname']); 
+            $actor->setlastname($_POST['lastname']); 
+            $actor->setBirthdate($_POST['birthdate']); 
+            $actor->setIdentificationCode($_POST['identificationCode']); 
+            $actor->setCountry($this->countryRepository->find($_POST['id_country'])); 
+            $actor->setSpecialities($specialities); 
+
+            $em->persist($actor);
+            $em->flush();
 
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
@@ -121,7 +164,7 @@ class ActorController {
 
         $countries = [];
 
-        foreach (Country::findAll() as $country) {
+        foreach ($this->countryRepository->findAll() as $country) {
             $countries[$country->getId()] = $country->getName();
         }
 
@@ -145,7 +188,7 @@ class ActorController {
 
         $specialities = [];
 
-        foreach (Speciality::findAll() as $speciality) {
+        foreach ($this->specialityRepository->findAll() as $speciality) {
             $specialities[] = [
                 'id' => $speciality->getId(),
                 'name' => $speciality->getName()
@@ -164,12 +207,11 @@ class ActorController {
                         'function' => 'isRequired'
                     ],
                     [
-                        'function' => 'controlActor'
+                        'function' => 'controlSpeciality'
                     ]
                 ]
             ]
         ];
-
 
         return $fields;
 
@@ -180,8 +222,9 @@ class ActorController {
 
         $actors = [];
 
-        foreach (Actor::findAll() as $actor) {
-
+        foreach ($this->actorRepository->findAll() as $actor) {
+            // echo '<pre>';
+            // print_r($actor);
             $actors[] = $this->getRow($actor);
         } 
 
@@ -192,7 +235,8 @@ class ActorController {
     private function getRow (Actor $actor): array 
     {
 
-        $country = Country::find($actor->getId_country());
+        $country = $actor->getCountry();
+        $specialities = $actor->getSpecialities();
 
         return  [
             'id' => $actor->getId(),
@@ -200,8 +244,8 @@ class ActorController {
             'lastname' => $actor->getLastname(),
             'birthdate' => $actor->getBirthdate(),
             'identificationCode' => $actor->getIdentificationCode(),
-            'id_country' => $actor->getId_country(),
-            'specialities' => $actor->getSpecialities()
+            'id_country' => isset($country) ? $country->getId() : 0,
+            'specialities' => isset($specialities) ? $specialities : [],
         ];
 
     }

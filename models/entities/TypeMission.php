@@ -21,7 +21,7 @@ class TypeMission extends Entity {
     return $this->typeMission;
   }
 
-  public function setTypeMisson(string  $typeMission) {
+  public function setTypeMission(string $typeMission) {
     $this->typeMission = $typeMission;
   }
 

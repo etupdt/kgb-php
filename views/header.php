@@ -6,10 +6,14 @@
   <link href="/views/css/style.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <script
+  src="https://code.jquery.com/jquery-3.7.1.js"
+  integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+  crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
   <script src="/views/js/script.js" crossorigin="anonymous"></script>
-  <script src="/views/js/control<?php echo $nameMenu?>.js" crossorigin="anonymous"></script>
+  <?php if ($script) echo '<script src="/views/js/control'.ucfirst($nameEntity).'.js" crossorigin="anonymous"></script>'; ?>
 </head>
 <body>
 
@@ -33,16 +37,15 @@
               Administration
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/pays";?>>Pays</a></li>
-              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/planque";?>>Planques</a></li>
-              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/acteur";?>>Acteurs</a></li>
-              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/specialite";?>>Spécialités</a></li>
-              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/typemission";?>>Types Mission</a></li>
-              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/statut";?>>Statuts Mission</a></li>
+              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/actor";?>>Acteurs</a></li>
+              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/country";?>>Pays</a></li>
+              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/hideout";?>>Planques</a></li>
               <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/role";?>>Roles</a></li>
-              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/mission";?>>Missions</a></li>
+              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/speciality";?>>Spécialités</a></li>
+              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/statut";?>>Statuts Mission</a></li>
+              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/typemission";?>>Types Mission</a></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
+              <li><a class="dropdown-item" href=<?php echo BASE_URL.ADMIN_URL."/mission";?>>Missions</a></li>
             </ul>
           </li>
         </ul>

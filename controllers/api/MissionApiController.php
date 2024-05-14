@@ -6,9 +6,9 @@ class MissionApiController {
 
     $depth = 0;
 
-    $hideoutRepository = new HideoutRepository($depth);
+    $hideoutRepository = new HideoutRepository(1);
     $countryRepository = new CountryRepository($depth);
-    $actorRepository = new ActorRepository($depth);
+    $actorRepository = new ActorRepository(2);
     $specialityRepository = new SpecialityRepository($depth);
 
     $agentssData = [];
@@ -16,16 +16,30 @@ class MissionApiController {
     $hideoutsData = [];
 
     foreach ($actorRepository->findAll() as $actor) {
+      error_log('===== api =======>   '.$actor->getId().'    <======================');
+
+      $specialities = [];
+
+      foreach ($actor->getSpecialities() as $speciality) {
+        $specialities[$speciality['speciality']->getId()] = $speciality['speciality']->getName();
+      }
+
       $actorsData[$actor->getId()] = [
-        'countries' => [$actor->getCountry()->getId()],
-        'specialities' => $actor->getSpecialities()
+        'country' => [
+          'id' => $actor->getCountry()->getId(),
+          'name' => $actor->getCountry()->getName()
+        ],
+        'specialities' => $specialities
       ];
     }
     
     foreach ($hideoutRepository->findAll() as $hideout) {
       $hideoutsData[$hideout->getId()] = [
-        'countries' => [$hideout->getCountry()->getName()]
-      ];
+        'country' => [
+          'id' => $hideout->getCountry()->getId(),
+          'name' => $hideout->getCountry()->getName()
+        ],
+];
     }
 
     foreach ($countryRepository->findAll() as $country) {

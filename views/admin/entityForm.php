@@ -4,14 +4,19 @@
       <div class="title pt-5">
         <h1><?php echo $nameMenu?></h1>
       </div>
-      <form  onSubmit="return isValidForm(this)" action="<?php echo $nameEntity; ?>" class="form admin">
+      <form  onSubmit="return isValidForm(this)" action="<?php echo BASE_URL.ADMIN_URL."/".$nameEntity; ?>" class="form admin">
         <div class="container p-0 form-div">
           <div class="d-grid gap-2 d-md-flex justify-content-md-end my-4">
             <div>
-              <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#helppage">Aide</button>
-              <?php require_once 'views/modals/help.php' ?>
+              <?php 
+                if ($help) {
+                  echo '<button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#helppage">Aide</button>';
+                  require_once 'views/modals/help.php';
+                }
+                require_once 'views/modals/error.php';
+              ?>
             </div>
-            <a href="<?php echo $nameEntity; ?>"><?php $button = ['id' => "cancelButton" , 'type' => 'button', 'action' => 'c', 'value' => 'Abandonner']; require 'commandButton.php';?></a>
+            <a href="<?php echo BASE_URL.ADMIN_URL."/".$nameEntity; ?>"><?php $button = ['id' => "cancelButton" , 'type' => 'button', 'action' => 'c', 'value' => 'Abandonner']; require 'commandButton.php';?></a>
             <?php $button = ['id' => "validButton" , 'value' => 'Enregistrer', 'method' => 'POST']; require 'commandButton.php';?>
           </div>
           <?php

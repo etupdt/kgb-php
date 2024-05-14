@@ -45,10 +45,10 @@
           <?php 
             foreach($mission['hideouts'] as $hideout) {
               echo '<tr>';
-              echo '<td code>'.$hideout['hideout']->getCode().'</td>';
-              echo '<td address>'.$hideout['hideout']->getAddress().'</td>';
-              echo '<td type>'.$hideout['hideout']->getType().'</td>';
-              echo '<td country>'.$hideout['hideout']->getCountry()->getName().'</td>';
+              echo '<td code>'.$hideout['code'].'</td>';
+              echo '<td address>'.$hideout['address'].'</td>';
+              echo '<td type>'.$hideout['type'].'</td>';
+              echo '<td country>'.$hideout['country']->getName().'</td>';
               echo '</tr>';
             }
           ?>
@@ -62,11 +62,11 @@
         echo '<table class="table table-success table-striped m-0 border border-success">';
         foreach ($mission[str_replace(' ', '_', $role->getRole())] as $actor) {
           echo '  <tr>';
-          echo '    <td class="firstname">'.$actor->getFirstname().'</td>';
-          echo '    <td class="lastname">'.$actor->getLastname().'</td>';
-          echo '    <td class="birthdate">'.$actor->getBirthdate().'</td>';
-          echo '    <td class="identificationCode">'.$actor->getIdentificationCode().'</td>';
-          echo '    <td class="country">'.$actor->getCountry()->getName().'</td>';
+          echo '    <td class="firstname">'.$actor['firstname'].'</td>';
+          echo '    <td class="lastname">'.$actor['lastname'].'</td>';
+          echo '    <td class="birthdate">'.$actor['birthdate'].'</td>';
+          echo '    <td class="identificationCode">'.$actor['identificationCode'].'</td>';
+          echo '    <td class="country">'.$actor['country'].'</td>';
           echo '  </tr>';
         }
         echo'</table>';

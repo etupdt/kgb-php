@@ -7,7 +7,7 @@ début, date de fin.</p>
 <p>Les acteurs de cette mission sont :</p>
 <ul>
     <?php 
-        foreach ($row['object']->getActorsRoles() as $actorRoleArray) {
+        foreach ($row['object']->getActors_roles() as $actorRoleArray) {
             echo '<li>';
             $actor = $actorRoleArray['actor'];
             $role = $actorRoleArray['role'];

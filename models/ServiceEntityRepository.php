@@ -201,11 +201,11 @@ class ServiceEntityRepository {
         }
 
         if (gettype($datas['tables'][$datas['master']]['object']) === 'object') {
-            return clone $datas['tables'][$datas['master']]['object'];    
+            return $datas['tables'][$datas['master']]['object']->clone();    
         } else {
             $entries = [];
             foreach($datas['tables'][$datas['master']]['object'] as $key=>$entry) {
-                $entries[$key] = clone $entry;   
+                $entries[$key] = $entry->clone();   
             }
             return $entries;
         } 
@@ -255,7 +255,7 @@ class ServiceEntityRepository {
         (count($datas['where']) === 0 ? "" : " AND ".implode(' AND ', $datas['where']));
 
         if ($this->log) {
-            error_log('===== findAllAssociations2 =======>   '.$id.'   '.$find);
+            error_log('===== findAllAssociations =======>   '.$id.'   '.$find);
         }
 
         $pdoStatement = $pdo->prepare($find);
@@ -291,7 +291,7 @@ class ServiceEntityRepository {
         $pdoStatement = $pdo->prepare($findAll);
 
         if ($this->log) {
-            error_log('===== findAll2 =======>   '.$this->depth.'    '.$findAll);
+            error_log('===== findAll =======>   '.$this->depth.'    '.$findAll);
         }
 
         $objects = [];
@@ -313,15 +313,15 @@ class ServiceEntityRepository {
     
     }  
 
-    public function repositoryInsert($classe, $object) { 
-
-        $fields = array_keys(get_class_vars($classe));
+    public static function insertDatabase($table, $fields) { 
 
         $pdo = new PDO(Database::$host, Database::$username, Database::$password);
     
-        $insert = "INSERT INTO ".strtolower($classe)." (".implode(', ', $fields).") 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        $insert = "INSERT INTO ".$table." (".implode(', ', array_keys($fields)).")".
+        " VALUE (".implode(', ', array_fill(0, count($fields), '?')).");";
         
+        error_log('===== insert =======>    '.$insert);
+
         $pdoStatement = $pdo->prepare($insert);
     
         $pdo_const = [
@@ -329,28 +329,28 @@ class ServiceEntityRepository {
             'int' => PDO::PARAM_INT
         ];
     
-        foreach ($fields as $index => $field) {
-            $value = call_user_func([$object, 'get'.ucfirst($field)]);
-            $pdoStatement->bindValue($index + 1, $value, $pdo_const[gettype($value)]);
+        $index = 1;
+        foreach ($fields as $value) {
+            $pdoStatement->bindValue($index, $value, $pdo_const[gettype($value)]);
+            $index++;
         }
     
         if (!$pdoStatement->execute()) {  
           print_r($pdoStatement->errorInfo());  // sensible à modifier
         }  
-        $object->setId($pdo->lastInsertId());
+        
+        return $pdo->lastInsertId();
     
     }  
 
-    public function repositoryUpdate($classe, $object) { 
-
-        $fields = array_keys(get_class_vars($classe));
+    public static function updateDatabase($table, $id, $fields) { 
 
         $pdo = new PDO(Database::$host, Database::$username, Database::$password);
     
-        $updateFields = implode(' = ?, ', $fields).' = ?';
-
-        $update = "UPDATE ".strtolower($classe)." SET ".$updateFields." WHERE id = ?";
+        $update = "UPDATE ".$table." SET ".implode(' = ?, ', array_keys($fields)).' = ?'." WHERE id = ?";
         
+        error_log('===== update =======>    '.$update);
+
         $pdoStatement = $pdo->prepare($update);
     
         $pdo_const = [
@@ -358,66 +358,46 @@ class ServiceEntityRepository {
             'int' => PDO::PARAM_INT
         ];
     
-        foreach ($fields as $index => $field) {
-            $value = call_user_func([$object, 'get'.ucfirst($field)]);
-            $pdoStatement->bindValue($index + 1, $value, $pdo_const[gettype($value)]);
+        $index = 1;
+        foreach ($fields as $value) {
+            $pdoStatement->bindValue($index, $value, $pdo_const[gettype($value)]);
+            $index++;
         }
+        $pdoStatement->bindValue($index, $id, PDO::PARAM_INT);
     
-        $pdoStatement->bindValue(count($fields) + 1, $object->getId(), PDO::PARAM_INT);
-
         if (!$pdoStatement->execute()) {  
           print_r($pdoStatement->errorInfo());  // sensible à modifier
         }  
+        
+    }  
     
-    }
-    
-    public function repositoryDelete($classe, $object) { 
+    public function deleteDatabase($table, $and) { 
     
         $pdo = new PDO(Database::$host, Database::$username, Database::$password);
+
+        foreach ($and as $left=>$right) {
+            $where[] = $left." = ?";
+        }
     
-        $delete = "DELETE FROM ".strtolower($classe)." WHERE id = ?; ";
+        $delete = "DELETE FROM ".$table." WHERE ".implode(' AND ', $where);
         
         $pdoStatement = $pdo->prepare($delete);
     
-        $pdoStatement->bindValue(1, $object->getId(), PDO::PARAM_INT);
+        $pdo_const = [
+            'string' => PDO::PARAM_STR,
+            'int' => PDO::PARAM_INT
+        ];
+    
+        $index = 1;
+        foreach ($and as $value) {
+            $pdoStatement->bindValue($index, $value, $pdo_const[gettype($value)]);
+            $index++;
+        }
     
         if (!$pdoStatement->execute()) {  
           print_r($pdoStatement->errorInfo());  // sensible à modifier
         }  
     
-    }
-/*
-    private static function getOneToMany ($oneToMany) {
-
-        $fields = array_keys(get_class_vars($oneToMany['className']));
-
-        $pdo = new PDO(Database::$host, Database::$username, Database::$password);
-        
-        $findHideout = "SELECT FROM "." WHERE id_mission = ?";
-        
-        $pdoStatement = $pdo->prepare($findHideout);
-        
-        $pdoStatement->bindValue(1, $id_mission, PDO::PARAM_INT);
-        
-        $hideouts = [];
-        
-        if ($pdoStatement->execute()) {  
-            while($hideout = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
-            $hideouts[] = $hideout['id_hideout'];
-            }
-        } else {
-            print_r($pdoStatement->errorInfo());  // sensible à modifier
-        }  
-        
-        return $hideouts;
-        
-    }  
-*/ 
-
-    private function deepClone ($object) {
-
-        return clone $object;
-
     }
 
 }

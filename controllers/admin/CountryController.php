@@ -4,10 +4,27 @@ require_once 'models/entities/Country.php';
 
 class CountryController {
 
+    private CountryRepository $countryRepository;
+
+    public function __construct() {
+ 
+        error_log('===== Country ====================================================================================================================>   ');
+
+        $depth = 1;
+
+        $this->countryRepository = new CountryRepository(0);
+
+    }
+
     public function index() { 
 
+        $help = false;
+        $script = false;
+
+        $em = new EntityManager();
+
         $nameMenu = "Pays";
-        $nameEntity = BASE_URL.ADMIN_URL."/pays";
+        $nameEntity = "country";
 
         $fields = $this->getFields();
 
@@ -21,20 +38,23 @@ class CountryController {
             } else {
                 switch ($_GET['a']) {
                     case 'd' : {
-                        $row = Country::find($_GET['id']);
-                        $row->delete();
-                        $row->persist();
+                        $row = $this->countryRepository->find($_GET['id']);
+                        $em->remove($row);
+                        $em->flush();
                         $rows = $this->getRows();
                         require_once 'views/admin/entityList.php';
                         break;
                     }
                     case 'u' : {
-                        $row = $this->getRow(Country::find($_GET['id']));
+                        $row = $this->getRow($this->countryRepository->find($_GET['id']));
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
                     case 'i' : {
-                        $row = $this->getRow(new Country("0", "", ""));
+                        $country = new Country();
+                        $country->setName('');
+                        $country->setNationality('');
+                        $row = $this->getRow($country);
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
@@ -45,17 +65,19 @@ class CountryController {
 
             if ($_POST['id'] !== "0") {
 
-                $row = new Country ($_POST['id'], $_POST['name'], $_POST['nationality']);
-                $row->update();
-                $row->persist();
+                $country = $this->countryRepository->find($_POST['id']); 
 
             } else {
 
-                $row = new Country (0, $_POST['name'], $_POST['nationality']);
-                $row->insert();
-                $row->persist();
+                $country = new Country(0);
 
             }    
+
+            $country->setName($_POST['name']);
+            $country->setNationality($_POST['nationality']);
+
+            $em->persist($country);
+            $em->flush();
 
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
@@ -94,7 +116,7 @@ class CountryController {
 
         $countries = [];
 
-        foreach (Country::findAll() as $country) {
+        foreach ($this->countryRepository->findAll() as $country) {
 
             $countries[] = $this->getRow($country);
         } 

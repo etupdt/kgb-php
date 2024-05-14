@@ -23,20 +23,21 @@
       <?php 
         echo 'name="'.$field['name'].'[]"' ;
         $optionEvents = ' ';
+        error_log("                =================================================================>".$field['name']);
         if (isset($field['events'])) {
           foreach($field['events'] as $event=>$eventValue) {
             $littleEvent = substr($event, strpos($event, '.') + 1);
             $selectFunctions = '';
             $optionFunctions = '';
-            $params = "'".$field["id"]."', '".$row['id']."'";
+            $params = ["'".$field["id"]."'", "'".$row['id']."'"];
             foreach ($eventValue as $value) {
               if (isset($value['param'])) {
-                $params = $params.", '".implode("', '", $value['param'])."'";
+                $params[] = $value['param'];
               }
               if (strpos($event, 'select') === 0) {
-                $selectFunctions = $selectFunctions.$value['function']."(".$params.");";
+                $selectFunctions = $selectFunctions.$value['function']."(".implode(", ", $params).");";
               } else {
-                $optionFunctions = $optionFunctions.$value['function']."(this, ".$params.");";
+                $optionFunctions = $optionFunctions.$value['function']."(this, ".implode(", ", $params).");";
               }
             }
             if ($selectFunctions !== '') {
@@ -55,14 +56,10 @@
         foreach ($field['value'] as $index=>$option) {
           $ids = [];
           foreach($row[$field['name']] as $record) {
-            // echo '<pre>';
-            // print_r(array_keys($record));
-            // echo '</pre';
             $key = array_keys($record);
             $ids[] = $record[$key[0]]->getId();
           }
           if (in_array($option['id'], $ids)) {
-//          if (in_array($option['id'], $row[$field['name']])) {
             echo '<option selected value="'.$option['id'].'"'.$optionEvents.'>'.$option['name'].'</option>';
           } else {
             echo '<option index="'.$index.'" value="'.$option['id'].'"'.$optionEvents.'>'.$option['name'].'</option>';

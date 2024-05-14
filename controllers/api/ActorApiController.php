@@ -12,35 +12,46 @@ class ActorApiController {
 
     public function index() { 
 
+      $actorRepository = new ActorRepository(1);
+      $roleRepository = new RoleRepository(1);
+      $missionRepository = new MissionRepository(1);
+
       $missionsData = [];
 
       // on recherche les misisons
-      foreach (Mission::findAll() as $mission) {
+      foreach ($missionRepository->findAll() as $mission) {
 
         $actors = [];
 
         // on recherche les acteurs intervenent dans la mission dans
         // le but de pouvoir vérifier les contraintes 1 et 2
-        foreach ($mission->getActorsRoles() as $actor_role) {
+        foreach ($mission->getActors_roles() as $actor_role) {
 
-          $actor = Actor::find($actor_role['id_actor']);
+          $actor = $actorRepository->find($actor_role['actor']->getId());
           if (!isset( $actors[$actor->getId()])) {
             $actors[$actor->getId()] = [
-              'countries' => [$actor->getId_country()],
+              'country' => [
+                'id' => $actor->getCountry()->getId(),
+                'name' => $actor->getCountry()->getName()
+              ],
               'specialities' => $actor->getSpecialities(),
+              'name' => $actor->getLastname().' '.$actor->getFirstname(),
               'roles' => []  
             ];
           }
 
           // pour les contraintes on a bessoin des roles de l'acteur
-          $actors[$actor->getId()]['roles'][] = Role::find($actor_role['id_role'])->getRole();
+          $actors[$actor->getId()]['roles'][] = $roleRepository->find($actor_role['role']->getId())->getRole();
 
         }
         
-        $missionsData[] = [
+        $missionsData[$mission->getTitle()] = [
           'id_mission' => $mission->getId(),
-          'countries' => [$mission->getId_country()],
-          'specialities' => [$mission->getId_speciality()],
+          'country' => [
+            'id' => $mission->getCountry()->getId(),
+            'name' => $mission->getCountry()->getName()
+          ],
+          'speciality' => $mission->getSpeciality()->getId(),
           'actors' => $actors
         ];
 

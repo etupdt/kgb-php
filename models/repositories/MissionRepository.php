@@ -24,160 +24,98 @@ class MissionRepository extends ServiceEntityRepository {
 
   }  
 
-  public function insertDatabase() { 
+  public function insert(Mission $mission) { 
 
-    $this->repositoryInsert('Mission', $this);
+    $id_mission = $this->insertDatabase('mission', [
+      'title' => $mission->getTitle(),
+      'description' => $mission->getDescription(),
+      'codeName' => $mission->getCodeName(),
+      'begin' => $mission->getBegin(),
+      'end' => $mission->getEnd(),
+      'id_country' => $mission->getCountry()->getId(),
+      'id_statut' => $mission->getStatut()->getId(),
+      'id_typeMission' => $mission->getTypeMission()->getId(),
+      'id_speciality' => $mission->getSpeciality()->getId(),
+    ]);
 
-    $pdo = new PDO(Database::$host, Database::$username, Database::$password);
-
-    $this->insertHideoutsDatabase($pdo, $this);
-    $this->insertActorsRolesDatabase($pdo, $this);
-
-  }  
-
-  public function updateDatabase() { 
-
-    $this->repositoryUpdate('Mission', $this);
-
-    $pdo = new PDO(Database::$host, Database::$username, Database::$password);
-
-    $this->deleteHideoutsDatabase($pdo, $this);
-    $this->insertHideoutsDatabase($pdo, $this);
-    
-    $this->deleteActorsRolesDatabase($pdo, $this);
-    $this->insertActorsRolesDatabase($pdo, $this);
-    
-  }
-
-  public function deleteDatabase() { 
-
-    $pdo = new PDO(Database::$host, Database::$username, Database::$password);
-
-    $this->deleteHideoutsDatabase($pdo, $this);
-    $this->deleteActorsRolesDatabase($pdo, $this);
-
-    $this->repositoryDelete('Mission', $this);
-
-    $this->repositoryDelete('Mission', $this);
-
-  }
-
-  public static function getHideoutsDatabase($id_mission) { 
-  
-    $pdo = new PDO(Database::$host, Database::$username, Database::$password);
-  
-    $findHideout = "SELECT id_hideout FROM mission_hideout WHERE id_mission = ?";
-  
-    $pdoStatement = $pdo->prepare($findHideout);
-  
-    $pdoStatement->bindValue(1, $id_mission, PDO::PARAM_INT);
-  
-    $hideouts = [];
-  
-    if ($pdoStatement->execute()) {  
-      while($hideout = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
-        $hideouts[] = $hideout['id_hideout'];
-      }
-    } else {
-      print_r($pdoStatement->errorInfo());  // sensible à modifier
-    }  
-  
-    return $hideouts;
-  
-  }  
-
-  private function deleteHideoutsDatabase($pdo, $mission) {
-
-    $delete = 'DELETE FROM mission_hideout WHERE id_mission = ? ';
-
-    $pdoStatement = $pdo->prepare($delete);
-
-    $pdoStatement->bindValue(1, $mission->getId(), PDO::PARAM_INT);
-
-    if (!$pdoStatement->execute()) {  
-      print_r($pdoStatement->errorInfo());  // sensible à modifier
-    }  
-
-  }
-
-  private function insertHideoutsDatabase($pdo, $mission) {
+    $this->deleteDatabase('mission_hideout', [
+      'id_mission' => $id_mission
+    ]);
 
     foreach ($mission->getHideouts() as $hideout) {
-
-      $insert = 'INSERT mission_hideout (id_mission, id_hideout) VALUE (?, ?)';
-
-      $pdoStatement = $pdo->prepare($insert);
-
-      $pdoStatement->bindValue(1, $mission->getId(), PDO::PARAM_INT);
-      $pdoStatement->bindValue(2, $hideout, PDO::PARAM_INT);
-
-      if (!$pdoStatement->execute()) {  
-        print_r($pdoStatement->errorInfo());  // sensible à modifier
-      }  
-
+      $this->insertDatabase('mission_hideout', [
+        'id_mission' => $id_mission,
+        'id_hideout' => $hideout['id_hideout']
+      ]);
     }
 
-  }
+    $this->deleteDatabase('mission_actor_role', [
+      'id_mission' => $id_mission
+    ]);
 
-  public static function getActorsRolesDatabase($id_mission) { 
-  
-    $pdo = new PDO(Database::$host, Database::$username, Database::$password);
-  
-    $findActor = "SELECT id_actor, id_role FROM mission_actor_role WHERE id_mission = ?";
-  
-    $pdoStatement = $pdo->prepare($findActor);
-  
-    $pdoStatement->bindValue(1, $id_mission, PDO::PARAM_INT);
-  
-    $actors_roles = [];
-  
-    if ($pdoStatement->execute()) {  
-      while($actor_role = $pdoStatement->fetch(PDO::FETCH_ASSOC)) {
-        $actors_roles[] = [
-          'id_actor' => $actor_role['id_actor'],
-          'id_role' => $actor_role['id_role']
-        ];
-      }
-    } else {
-      print_r($pdoStatement->errorInfo());  // sensible à modifier
-    }  
-  
-    return $actors_roles;
-  
+    foreach ($mission->getActors_roles() as $actorRole) {
+      $this->insertDatabase('mission_actor_role', [
+        'id_mission' => $id_mission,
+        'id_actor' => $actorRole['id_actor'],
+        'id_role' => $actorRole['id_role'],
+      ]);
+    }
+
   }  
 
-  private function deleteActorsRolesDatabase($pdo, $mission) {
+  public function update(Mission $mission) { 
 
-    $delete = 'DELETE FROM mission_actor_role WHERE id_mission = ? ';
+    $this->updateDatabase('mission', $mission->getId(), [
+      'title' => $mission->getTitle(),
+      'description' => $mission->getDescription(),
+      'codeName' => $mission->getCodeName(),
+      'begin' => $mission->getBegin(),
+      'end' => $mission->getEnd(),
+      'id_country' => $mission->getCountry()->getId(),
+      'id_statut' => $mission->getStatut()->getId(),
+      'id_typeMission' => $mission->getTypeMission()->getId(),
+      'id_speciality' => $mission->getSpeciality()->getId(),
+    ]);
 
-    $pdoStatement = $pdo->prepare($delete);
+    $this->deleteDatabase('mission_hideout', [
+      'id_mission' => $mission->getId()
+    ]);
 
-    $pdoStatement->bindValue(1, $mission->getId(), PDO::PARAM_INT);
-
-    if (!$pdoStatement->execute()) {  
-      print_r($pdoStatement->errorInfo());  // sensible à modifier
-    }  
-
-  }
-
-  private function insertActorsRolesDatabase($pdo, $mission) {
-
-    foreach ($mission->getActorsRoles() as $actor_role) {
-
-      $insert = 'INSERT mission_actor_role (id_mission, id_actor, id_role) VALUE (?, ?, ?)';
-
-      $pdoStatement = $pdo->prepare($insert);
-
-      $pdoStatement->bindValue(1, $mission->getId(), PDO::PARAM_INT);
-      $pdoStatement->bindValue(2, $actor_role['id_actor'], PDO::PARAM_INT);
-      $pdoStatement->bindValue(3, $actor_role['id_role'], PDO::PARAM_INT);
-
-      if (!$pdoStatement->execute()) {  
-        print_r($pdoStatement->errorInfo());  // sensible à modifier
-      }  
-
+    foreach ($mission->getHideouts() as $hideout) {
+      $this->insertDatabase('mission_hideout', [
+        'id_mission' => $mission->getId(),
+        'id_hideout' => $hideout['id_hideout']
+      ]);
     }
 
-  }
+    $this->deleteDatabase('mission_actor_role', [
+      'id_mission' => $mission->getId()
+    ]);
+
+    foreach ($mission->getActors_roles() as $actorRole) {
+      $this->insertDatabase('mission_actor_role', [
+        'id_mission' => $mission->getId(),
+        'id_actor' => $actorRole['id_actor'],
+        'id_role' => $actorRole['id_role']
+      ]);
+    }
+
+  }  
+
+  public function delete(Mission $mission) { 
+
+    $this->deleteDatabase('mission_hideout', [
+      'id_mission' => $mission->getId()
+    ]);
+    
+    $this->deleteDatabase('mission_actor_role', [
+      'id_mission' => $mission->getId()
+    ]);
+    
+    $this->deleteDatabase('mission', [
+      'id' => $mission->getId()
+    ]);
+    
+  }  
 
 }

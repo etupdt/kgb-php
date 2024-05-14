@@ -7,7 +7,7 @@
       <div class="form">
         <div class="container p-0 form-div">
           <div class="d-grid gap-2 d-md-flex justify-content-md-end my-4">
-          <form action="<?php echo $nameEntity; ?>">
+          <form action="<?php echo BASE_URL.ADMIN_URL."/".$nameEntity; ?>">
             <?php 
               $button = ['id' => "addButton" , 'value' => 'Ajouter', 'action' => 'i', 'method' => 'GET']; 
               require 'commandButton.php';

@@ -31,25 +31,25 @@ class MissionController {
 
         $depth = 1;
 
-        $this->actorRepository = new ActorRepository($depth);
+        $this->actorRepository = new ActorRepository(0);
 
         foreach ($this->actorRepository->findAll() as $actor) {
             $this->actors[] = [
                 'id' => $actor->getId(),
                 'name' => '<p>'.$actor->getIdentificationCode().' '.
-                    $actor->getFirstname().' '.
-                    $actor->getLastname().' '.
-                    $actor->getBirthdate(),
+                $actor->getFirstname().' '.
+                $actor->getLastname().' '.
+                $actor->getBirthdate(),
             ]; 
         }
-    
+
         $this->missionRepository = new MissionRepository(2);
-        $this->countryRepository = new CountryRepository($depth);
-        $this->hideoutRepository = new HideoutRepository($depth);
-        $this->statutRepository = new StatutRepository($depth);
-        $this->specialityRepository = new SpecialityRepository($depth);
-        $this->typeMissionRepository = new TypeMissionRepository($depth);
-        $this->roleRepository = new RoleRepository($depth);
+        $this->countryRepository = new CountryRepository(0);
+        $this->hideoutRepository = new HideoutRepository(0);
+        $this->statutRepository = new StatutRepository(0);
+        $this->specialityRepository = new SpecialityRepository(0);
+        $this->typeMissionRepository = new TypeMissionRepository(0);
+        $this->roleRepository = new RoleRepository(0);
 
         foreach ($this->roleRepository->findAll() as $role) {
             $this->roles[] = [
@@ -62,10 +62,13 @@ class MissionController {
 
     public function index() { 
 
+        $help = true;
+        $script = true;
+
         $em = new EntityManager();
 
         $nameMenu = "Missions";
-        $nameEntity = BASE_URL.ADMIN_URL."/mission";
+        $nameEntity = "mission";
 
         $fields = $this->getFields();
 
@@ -113,6 +116,16 @@ class MissionController {
 
         } else {
 
+            $hideouts = [];
+            
+            $idsHideouts = $_POST['hideouts'];
+
+            foreach($idsHideouts as $id_hideout) {
+                $hideouts[] = [
+                    'id_hideout' => $id_hideout,
+                ];
+            }
+
             $actorsRoles = [];
             
             foreach ($this->roles as $role) {
@@ -130,11 +143,11 @@ class MissionController {
     
             if ($_POST['id'] !== "0") {
 
-                $row = $this->missionRepository->find($_POST['id']); 
+                $mission = $this->missionRepository->find($_POST['id']); 
 
             } else {
 
-                $row = new Mission ();
+                $mission = new Mission ();
 
             }    
 
@@ -144,13 +157,14 @@ class MissionController {
             $mission->setBegin($_POST['begin']); 
             $mission->setEnd($_POST['end']); 
             $mission->setCountry($this->countryRepository->find($_POST['id_country'])); 
-            $mission->setStatut($statutRepository->find($_POST['id_statut'])); 
-            $mission->setTypeMission($typeMissionRepository->find($_POST['id_typeMission'])); 
-            $mission->setSpeciality($specialityRepository->find($_POST['id_speciality'])); 
+            $mission->setStatut($this->statutRepository->find($_POST['id_statut'])); 
+            $mission->setTypeMission($this->typeMissionRepository->find($_POST['id_typeMission'])); 
+            $mission->setSpeciality($this->specialityRepository->find($_POST['id_speciality'])); 
 
-            $row->setActorsRoles($actorsRoles);
+            $mission->setHideouts($hideouts);
+            $mission->setActors_roles($actorsRoles);
         
-            $em->persist($row);
+            $em->persist($mission);
             $em->flush();
 
             $rows = $this->getRows();
@@ -325,8 +339,21 @@ class MissionController {
                         'function' => 'isRequired'
                     ],
                     [
-                        'function' => 'controlSpecialityMission'
-                    ]
+                        'function' => 'controlOnChangeSpecialityMission'
+                    ],
+                ],
+                'onblur' => [
+                    [
+                        'function' => 'isRequired'
+                    ],
+                    [
+                        'function' => 'controlOnChangeSpecialityMission',
+                        'param' => '["id_speciality", "Agent"]'
+                    ],
+                    [
+                        'function' => 'controlOnBlurSpecialityMission',
+                        'param' => '["id_speciality", "Agent"]'
+                        ]
                 ]
             ]
         ];
@@ -349,42 +376,49 @@ class MissionController {
             'events' => [
                 'select.onchange' => [
                     [
-                        'function' => 'isRequired'
-                    ],
-                    [
-                        'function' => 'controlPaysMission',
-                        'param' => [
-                            'hideouts'
-                        ]
+                        'function' => 'controlOnChangeHideouts',
                     ]
                 ],
-                'option.onmouseover' => [
+                'select.onblur' => [
                     [
-                        'function' => 'displayAttributes',
-                        'param' => [
-                            'countries'
-                        ]
+                        'function' => 'controlOnBlurHideouts',
                     ]
-                ]
+                ],
             ]
         ];
 
         foreach ($this->roles as $role) {
 
-            $onchange = [];
-
-            $onchange[] = [
-                'function' => 'isRequired'
-            ];
+            $events = [];
 
             switch ($role['role']) {
                 case 'Agent' : {
-                    $onchange[] = [
-                        'function' => 'controlPaysCiblesAgents',
+                    $events[] = [
+                        'select.onchange' => [
+                            [
+                                'function' => 'controlOnChangeAgentsCibles',
+                            ],
+                            [
+                                'function' => 'controlOnChangeSpecialityAgent',
+                                'param' => '["id_speciality", "Agent"]'
+                            ],        
+                        ]
                     ];
-                    $onchange[] = [
-                        'function' => 'controlSpecialityMission',
+                    $events[] = [
+                        'select.onblur' => [
+                            [
+                                'function' => 'isRequired'
+                            ],
+                            [
+                                'function' => 'controlOnBlurAgentsCibles',
+                            ],
+                            [
+                                'function' => 'controlOnBlurSpecialityAgent',
+                                'param' => '["id_speciality", "Agent"]'
+                            ]
+                        ]
                     ];
+        
                     break;
                 }
                 case 'Contact' : {
@@ -398,33 +432,23 @@ class MissionController {
                 }
                 case 'Cible' : {
                     $onchange[] = [
-                        'function' => 'controlPaysCiblesAgents',
+                        'function' => 'controlOnChangeAgentsCibles',
+                    ];
+                    $onblur[] = [
+                        'function' => 'controlOnBlurAgentsCibles',
                     ];
                     break;
                 }
             }
-            
+            // echo '<pre>';
+            // print_r($events);
             $fields[] = [
                 'label' => $role['role'].'s',
                 'name' => str_replace(' ', '_', $role['role']),
                 'id' => str_replace(' ', '_', $role['role']),
                 'type' => 'multiSelect',
                 'value' => $this->actors,
-                'events' => [
-                    'onchange' => $onchange
-                ],
-                'events' => [
-                    'select.onchange' => $onchange,
-                    'option.onmouseover' => [
-                        [
-                            'function' => 'displayAttributes',
-                            'param' => [
-                                'countries',
-                                'specialities'
-                            ]
-                        ]
-                    ]
-                ]
+                'events' => $events
             
             ];
 
@@ -473,7 +497,7 @@ class MissionController {
             'hideouts' => $mission->getHideouts(),
         ];
 
-        $actorsRoles = $mission->getActorsRoles();
+        $actorsRoles = $mission->getActors_roles();
 
         foreach ($this->roles as $role) {
 

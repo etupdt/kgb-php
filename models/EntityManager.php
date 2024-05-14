@@ -7,7 +7,7 @@ class EntityManager {
   public function persist(Object $object) {
 
     $this->objects[spl_object_id($object)] = [
-        'type' => gettype($object),
+        'class' => get_class($object),
         'object' => $object,
         'deleted' => false
       ];
@@ -17,7 +17,7 @@ class EntityManager {
   public function remove ($object) {
 
     $this->objects[spl_object_id($object)] = [
-      'type' => gettype($object),
+      'class' => get_class($object),
       'object' => $object,
       'deleted' => true
     ];  
@@ -27,18 +27,22 @@ class EntityManager {
   public function flush () {
 
     foreach ($this->objects as $object) {
+
+      $repositoryName = $object['class'].'Repository';
+
+      $repository = new $repositoryName(1);
       
       if ($object['deleted']) {
 
-        $object['object']->deleteDatabase();
+        $repository->delete($object['object']);
 
       } elseif ($object['object']->getId() === "0") {
 
-        $object['object']->insertDatabase();
+        $repository->insert($object['object']);
       
       } else {
       
-        $object['object']->updateDatabase();
+        $repository->update($object['object']);
       
       }
 

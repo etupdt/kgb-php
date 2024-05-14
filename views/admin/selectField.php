@@ -26,9 +26,12 @@
         if (isset($field['events'])) {
           foreach($field['events'] as $event=>$eventValue) {
             $functions = '';
-            $params = "'".$field["id"]."', '".$row['id']."'";
+            $params = ["'".$field["id"]."'", "'".$row['id']."'"];
+            if (isset($value['param'])) {
+              $params[] = $value['param'];
+            }
             foreach ($eventValue as $value) {
-              $functions = $functions.$value['function']."(".$params.");";
+              $functions = $functions.$value['function']."(".implode(', ', $params).");";
             }
             echo $event.'="'.$functions.'"';
           }

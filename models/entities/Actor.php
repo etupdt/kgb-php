@@ -18,9 +18,9 @@ class Actor extends Person {
   #[ManyToMany(classes: ['Actor', 'Speciality'])]
   protected $specialities;
 
-  public function __construct(int $id = null) {
+  public function __construct() {
 
-    $this->id = $id;
+    $this->id = 0;
 
     $this->country = null;
 

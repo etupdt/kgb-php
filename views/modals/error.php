@@ -1,6 +1,6 @@
 
 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-  <div class="modal" tabindex="-1">
+  <div id="errorpage" class="modal fade" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -8,7 +8,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p>Modal body text goes here.</p>
+          <p id="errorMessage"></p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

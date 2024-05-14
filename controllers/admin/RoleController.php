@@ -4,10 +4,26 @@ require_once 'models/entities/Role.php';
 
 class RoleController {
 
+    private RoleRepository $roleRepository;
+
+    public function __construct() {
+ 
+        error_log('===== Role ====================================================================================================================>   ');
+
+        $depth = 1;
+
+        $this->roleRepository = new RoleRepository(0);
+
+    }
+
     public function index() { 
 
+        $help = false;
+
+        $em = new EntityManager();
+
         $nameMenu = "Roles";
-        $nameEntity = BASE_URL.ADMIN_URL."/role";
+        $nameEntity = "role";
 
         $fields = $this->getFields();
 
@@ -21,20 +37,22 @@ class RoleController {
             } else {
                 switch ($_GET['a']) {
                     case 'd' : {
-                        $row = Role::find($_GET['id']);
-                        $row->delete();
-                        $row->persist();
+                        $row = $this->roleRepository->find($_GET['id']);
+                        $em->remove($row);
+                        $em->flush();
                         $rows = $this->getRows();
                         require_once 'views/admin/entityList.php';
                         break;
                     }
                     case 'u' : {
-                        $row = $this->getRow(Role::find($_GET['id']));
+                        $row = $this->getRow($this->roleRepository->find($_GET['id']));
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
                     case 'i' : {
-                        $row = $this->getRow(new Role("0", "", ""));
+                        $role = new Role();
+                        $role->setRole('');
+                        $row = $this->getRow($role);
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
@@ -45,17 +63,18 @@ class RoleController {
 
             if ($_POST['id'] !== "0") {
 
-                $row = new Role ($_POST['id'], $_POST['role']);
-                $row->update();
-                $row->persist();
+                $role = $this->roleRepository->find($_POST['id']); 
 
             } else {
 
-                $row = new Role (0, $_POST['role']);
-                $row->insert();
-                $row->persist();
+                $role = new Role(0);
 
             }    
+
+            $role->setRole($_POST['role']);
+
+            $em->persist($role);
+            $em->flush();
 
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
@@ -89,7 +108,7 @@ class RoleController {
 
         $roles = [];
 
-        foreach (Role::findAll() as $role) {
+        foreach ($this->roleRepository->findAll() as $role) {
 
             $roles[] = $this->getRow($role);
         } 

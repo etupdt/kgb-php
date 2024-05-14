@@ -1,6 +1,6 @@
 
 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-  <div id="helppage" class="modal fade" tabindex="-1">
+  <div id="helppage" class="modal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
@@ -9,7 +9,7 @@
         </div>
         <div class="modal-body">
           <div>
-            <?php require_once 'views/helps/mission.php'; ?>
+            <?php require_once 'views/helps/'.$nameEntity.'.php'; ?>
           </div>
         </div>
         <div class="modal-footer">

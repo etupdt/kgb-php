@@ -23,24 +23,24 @@ define("BASE_URL", '');
 define("ADMIN_URL", '/admin');
 define("API_URL", '/api');
 
-$router = new Router();
+$router = new Router(); 
 
 $router->addRoute('GET',BASE_URL.'/', 'HomeController', 'index');
 
 $router->addRoute('GET',BASE_URL.'/missions', 'MissionsController', 'index');
 $router->addRoute('GET',BASE_URL.'/mission', 'MissionPageController', 'index');
 
-$router->addRoute('GET',BASE_URL.ADMIN_URL.'/pays', 'CountryController', 'index');
-$router->addRoute('POST',BASE_URL.ADMIN_URL.'/pays', 'CountryController', 'index');
+$router->addRoute('GET',BASE_URL.ADMIN_URL.'/country', 'CountryController', 'index');
+$router->addRoute('POST',BASE_URL.ADMIN_URL.'/country', 'CountryController', 'index');
 
-$router->addRoute('GET',BASE_URL.ADMIN_URL.'/planque', 'HideoutController', 'index');
-$router->addRoute('POST',BASE_URL.ADMIN_URL.'/planque', 'HideoutController', 'index');
+$router->addRoute('GET',BASE_URL.ADMIN_URL.'/hideout', 'HideoutController', 'index');
+$router->addRoute('POST',BASE_URL.ADMIN_URL.'/hideout', 'HideoutController', 'index');
 
-$router->addRoute('GET',BASE_URL.ADMIN_URL.'/acteur', 'ActorController', 'index');
-$router->addRoute('POST',BASE_URL.ADMIN_URL.'/acteur', 'ActorController', 'index');
+$router->addRoute('GET',BASE_URL.ADMIN_URL.'/actor', 'ActorController', 'index');
+$router->addRoute('POST',BASE_URL.ADMIN_URL.'/actor', 'ActorController', 'index');
 
-$router->addRoute('GET',BASE_URL.ADMIN_URL.'/specialite', 'SpecialityController', 'index');
-$router->addRoute('POST',BASE_URL.ADMIN_URL.'/specialite', 'SpecialityController', 'index');
+$router->addRoute('GET',BASE_URL.ADMIN_URL.'/speciality', 'SpecialityController', 'index');
+$router->addRoute('POST',BASE_URL.ADMIN_URL.'/speciality', 'SpecialityController', 'index');
 
 $router->addRoute('GET',BASE_URL.ADMIN_URL.'/typemission', 'TypeMissionController', 'index');
 $router->addRoute('POST',BASE_URL.ADMIN_URL.'/typemission', 'TypeMissionController', 'index');

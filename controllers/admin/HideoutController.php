@@ -4,10 +4,32 @@ require_once 'models/entities/Hideout.php';
 
 class HideoutController {
 
+    private CountryRepository $countryRepository;
+    private MissionRepository $missionRepository;
+    private HideoutRepository $hideoutRepository;
+
+    public function __construct() {
+ 
+        error_log('===== Hideout ====================================================================================================================>   ');
+
+        $depth = 1;
+
+        $this->hideoutRepository = new HideoutRepository(1);
+
+        $this->countryRepository = new CountryRepository(0);
+        $this->missionRepository = new MissionRepository(0);
+
+    }
+
     public function index() { 
 
+        $help = false;
+        $script = true;
+
+        $em = new EntityManager();
+
         $nameMenu = "Planques";
-        $nameEntity = BASE_URL.ADMIN_URL."/planque";
+        $nameEntity = "hideout";
 
         $fields = $this->getFields();
 
@@ -21,20 +43,24 @@ class HideoutController {
             } else {
                 switch ($_GET['a']) {
                     case 'd' : {
-                        $row = Hideout::find($_GET['id']);
-                        $row->delete();
-                        $row->persist();
+                        $row = $this->hideoutRepository->find($_GET['id']);
+                        $em->remove($row);
+                        $em->flush();
                         $rows = $this->getRows();
                         require_once 'views/admin/entityList.php';
                         break;
                     }
                     case 'u' : {
-                        $row = $this->getRow(Hideout::find($_GET['id']));
+                        $row = $this->getRow($this->hideoutRepository->find($_GET['id']));
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
                     case 'i' : {
-                        $row = $this->getRow(new Hideout("0", "", "", "", 1));
+                        $hideout = new Hideout();
+                        $hideout->setCode('');
+                        $hideout->setAddress('');
+                        $hideout->setType('');
+                        $row = $this->getRow($hideout);
                         require_once 'views/admin/entityForm.php';
                         break;
                     }
@@ -43,19 +69,34 @@ class HideoutController {
 
         } else {
 
+            $missions = [];
+            
+            $idsMissions = $_POST['missions'];
+
+            foreach($idsMissions as $id_mission) {
+                $missions[] = [
+                    'id_mission' => $id_mission,
+                ];
+            }
+
             if ($_POST['id'] !== "0") {
 
-                $row = new Hideout ($_POST['id'], $_POST['code'], $_POST['address'], $_POST['type'], $_POST['id_country']);
-                $row->update();
-                $row->persist();
+                $hideout = $this->hideoutRepository->find($_POST['id']); 
 
             } else {
 
-                $row = new Hideout (0, $_POST['code'], $_POST['address'], $_POST['type'], $_POST['id_country']);
-                $row->insert();
-                $row->persist();
+                $hideout = new Hideout();
 
             }    
+
+            $hideout->setCode($_POST['code']); 
+            $hideout->setAddress($_POST['address']); 
+            $hideout->setType($_POST['type']); 
+            $hideout->setCountry($this->countryRepository->find($_POST['id_country'])); 
+            $hideout->setMissions($missions); 
+
+            $em->persist($hideout);
+            $em->flush();
 
             $rows = $this->getRows();
             require_once 'views/admin/entityList.php';
@@ -94,7 +135,7 @@ class HideoutController {
 
         $countries = [];
 
-        foreach (Country::findAll() as $country) {
+        foreach ($this->countryRepository->findAll() as $country) {
             $countries[$country->getId()] = $country->getName();
         }
 
@@ -116,6 +157,33 @@ class HideoutController {
             ]
         ];
 
+        $missions = [];
+
+        foreach ($this->missionRepository->findAll() as $mission) {
+            $missions[] = [
+                'id' => $mission->getId(),
+                'name' => $mission->getTitle()
+            ];
+        }
+
+        $fields[] = [
+            'label' => 'Missions',
+            'name' => 'missions',
+            'id' => 'missions',
+            'type' => 'multiSelect',
+            'value' => $missions,
+            'events' => [
+                'select.onchange' => [
+                    [
+                        'function' => 'isRequired'
+                    ],
+                    [
+                        'function' => 'controlMission'
+                    ]
+                ]
+            ]
+        ];
+
         return $fields;
 
     }
@@ -125,8 +193,7 @@ class HideoutController {
 
         $hideouts = [];
 
-        foreach (Hideout::findAll() as $hideout) {
-
+        foreach ($this->hideoutRepository->findAll() as $hideout) {
             $hideouts[] = $this->getRow($hideout);
         } 
 
@@ -137,12 +204,16 @@ class HideoutController {
     private function getRow (Hideout $hideout): array 
     {
 
+        $country = $hideout->getCountry();
+        $missions = $hideout->getMissions();
+
         return  [
             'id' => $hideout->getId(),
             'code' => $hideout->getCode(),
             'address' => $hideout->getAddress(),
-            'type' => $hideout->getType(),
-            'id_country' => $hideout->getId_country(),
+            'type' => $hideout->gettype(),
+            'id_country' => isset($country) ? $country->getId() : 0,
+            'missions' => isset($missions) ? $missions : [],
         ];
 
     }

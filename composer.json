@@ -1,0 +1,17 @@
+{
+    "name": "denis/kgb-php",
+    "autoload": {
+        "psr-4": {
+            "Denis\\KgbPhp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Denis Tavernier",
+            "email": "denis.tavernier@gamil.com"
+        }
+    ],
+    "require": {
+        "symfony/console": "^7.0"
+    }
+}
