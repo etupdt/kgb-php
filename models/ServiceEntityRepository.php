@@ -221,7 +221,10 @@ class ServiceEntityRepository {
         " WHERE ".$table.".id = ?".
         (count($this->datas['where']) === 0 ? "" : " AND ".implode(' AND ', $this->datas['where']));
 
-        $pdo = new PDO(Database::$host, Database::$username, Database::$password);
+        $pdo = new PDO(Database::$host, Database::$username, Database::$password, array(
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET utf8"
+        ));
 
         $pdoStatement = $pdo->prepare($find);
 
@@ -247,7 +250,10 @@ class ServiceEntityRepository {
 
     public function findAllAssociation(string $id, $datas) { 
 
-        $pdo = new PDO(Database::$host, Database::$username, Database::$password);
+        $pdo = new PDO(Database::$host, Database::$username, Database::$password, array(
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET utf8"
+        ));
 
         $find = "SELECT ".implode(', ', array_column($datas['columns'], 'selectField')).
         " FROM ".strtolower(implode(', ', array_keys($datas['tables']))).
@@ -286,7 +292,10 @@ class ServiceEntityRepository {
         " FROM ".strtolower(implode(', ', array_keys($this->datas['tables']))).
         (count($this->datas['where']) === 0 ? "" : " WHERE ".implode(' AND ', $this->datas['where']));
 
-        $pdo = new PDO(Database::$host, Database::$username, Database::$password);
+        $pdo = new PDO(Database::$host, Database::$username, Database::$password, array(
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET utf8"
+        ));
         
         $pdoStatement = $pdo->prepare($findAll);
 
@@ -315,7 +324,10 @@ class ServiceEntityRepository {
 
     public static function insertDatabase($table, $fields) { 
 
-        $pdo = new PDO(Database::$host, Database::$username, Database::$password);
+        $pdo = new PDO(Database::$host, Database::$username, Database::$password, array(
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET utf8"
+        ));
     
         $insert = "INSERT INTO ".$table." (".implode(', ', array_keys($fields)).")".
         " VALUE (".implode(', ', array_fill(0, count($fields), '?')).");";
@@ -345,7 +357,10 @@ class ServiceEntityRepository {
 
     public static function updateDatabase($table, $id, $fields) { 
 
-        $pdo = new PDO(Database::$host, Database::$username, Database::$password);
+        $pdo = new PDO(Database::$host, Database::$username, Database::$password, array(
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET utf8"
+        ));
     
         $update = "UPDATE ".$table." SET ".implode(' = ?, ', array_keys($fields)).' = ?'." WHERE id = ?";
         
@@ -373,7 +388,10 @@ class ServiceEntityRepository {
     
     public function deleteDatabase($table, $and) { 
     
-        $pdo = new PDO(Database::$host, Database::$username, Database::$password);
+        $pdo = new PDO(Database::$host, Database::$username, Database::$password, array(
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET utf8"
+        ));
 
         foreach ($and as $left=>$right) {
             $where[] = $left." = ?";
