@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/entities/Mission.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/entities/Mission.php';
 
 class MissionPageController {
 
@@ -17,9 +17,9 @@ class MissionPageController {
     $missionRepository = new MissionRepository(2);
 
     $mission = $this->getRow($missionRepository->find($_GET['id']), $roles);
-    require_once 'views/header.php';
-    require_once 'views/missions/missionPage.php';
-    require_once 'views/footer.php';
+    require_once $_SERVER['DOCUMENT_ROOT'].'views/header.php';
+    require_once $_SERVER['DOCUMENT_ROOT'].'views/missions/missionPage.php';
+    require_once $_SERVER['DOCUMENT_ROOT'].'views/footer.php';
 
   }
 

@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/ServiceEntityRepository.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/ServiceEntityRepository.php';
 
 class SpecialityRepository extends ServiceEntityRepository {
 

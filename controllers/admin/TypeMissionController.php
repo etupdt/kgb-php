@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/entities/TypeMission.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/entities/TypeMission.php';
 
 class TypeMissionController {
 
@@ -27,13 +27,13 @@ class TypeMissionController {
 
         $fields = $this->getFields();
 
-        require_once 'views/header.php';
+        require_once $_SERVER['DOCUMENT_ROOT'].'views/header.php';
 
         if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
             if (! isset($_GET['a']) || $_GET['a'] === 'c') {
                 $rows = $this->getRows();
-                require_once 'views/admin/entityList.php';
+                require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityList.php';
             } else {
                 switch ($_GET['a']) {
                     case 'd' : {
@@ -41,19 +41,19 @@ class TypeMissionController {
                         $em->remove($row);
                         $em->flush();
                         $rows = $this->getRows();
-                        require_once 'views/admin/entityList.php';
+                        require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityList.php';
                         break;
                     }
                     case 'u' : {
                         $row = $this->getRow($this->typeMissionRepository->find($_GET['id']));
-                        require_once 'views/admin/entityForm.php';
+                        require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityForm.php';
                         break;
                     }
                     case 'i' : {
                         $typeMission = new TypeMission();
                         $typeMission->setTypeMission('');
                         $row = $this->getRow($typeMission);
-                        require_once 'views/admin/entityForm.php';
+                        require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityForm.php';
                         break;
                     }
                 }
@@ -77,11 +77,11 @@ class TypeMissionController {
             $em->flush();
 
             $rows = $this->getRows();
-            require_once 'views/admin/entityList.php';
+            require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityList.php';
 
         }
 
-        require_once 'views/footer.php';
+        require_once $_SERVER['DOCUMENT_ROOT'].'views/footer.php';
 
     }
 

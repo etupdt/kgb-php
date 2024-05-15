@@ -1,15 +1,15 @@
 <?php
 
-require_once 'models/EntityManager.php';
-require_once 'models/entities/Mission.php';
-require_once 'models/repositories/MissionRepository.php';
-require_once 'models/repositories/CountryRepository.php';
-require_once 'models/repositories/HideoutRepository.php';
-require_once 'models/repositories/StatutRepository.php';
-require_once 'models/repositories/SpecialityRepository.php';
-require_once 'models/repositories/TypeMissionRepository.php';
-require_once 'models/repositories/ActorRepository.php';
-require_once 'models/repositories/RoleRepository.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/EntityManager.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/entities/Mission.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/repositories/MissionRepository.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/repositories/CountryRepository.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/repositories/HideoutRepository.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/repositories/StatutRepository.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/repositories/SpecialityRepository.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/repositories/TypeMissionRepository.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/repositories/ActorRepository.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/repositories/RoleRepository.php';
 
 class MissionController {
 
@@ -72,14 +72,14 @@ class MissionController {
 
         $fields = $this->getFields();
 
-        require_once 'views/header.php';
+        require_once $_SERVER['DOCUMENT_ROOT'].'views/header.php';
 
         if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
             if (! isset($_GET['a']) || $_GET['a'] === 'c') {
                 $rows = $this->getRows();
         
-                require_once 'views/admin/entityList.php';
+                require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityList.php';
             } else {
                 switch ($_GET['a']) {
                     case 'd' : {
@@ -87,12 +87,12 @@ class MissionController {
                         $em->remove($row);
                         $em->flush();
                         $rows = $this->getRows();
-                        require_once 'views/admin/entityList.php';
+                        require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityList.php';
                         break;
                     }
                     case 'u' : {
                         $row = $this->getRow($this->missionRepository->find($_GET['id']));
-                        require_once 'views/admin/entityForm.php';
+                        require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityForm.php';
                         break;
                     }
                     case 'i' : {
@@ -108,7 +108,7 @@ class MissionController {
                         // $mission->setSpeciality(null);
 
                         $row = $this->getRow($mission);
-                        require_once 'views/admin/entityForm.php';
+                        require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityForm.php';
                         break;
                     }
                 }
@@ -168,11 +168,11 @@ class MissionController {
             $em->flush();
 
             $rows = $this->getRows();
-            require_once 'views/admin/entityList.php';
+            require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityList.php';
 
         }
 
-        require_once 'views/footer.php';
+        require_once $_SERVER['DOCUMENT_ROOT'].'views/footer.php';
 
     }
 

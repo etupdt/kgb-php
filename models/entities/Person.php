@@ -1,6 +1,6 @@
 <?php
 
-require_once 'models/Entity.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/Entity.php';
 
 class Person extends Entity {
 

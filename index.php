@@ -1,23 +1,23 @@
 <?php 
 
-require_once 'models/Router.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/Router.php';
 
-require_once 'controllers/home/HomeController.php';
-require_once 'controllers/missions/MissionsController.php';
-require_once 'controllers/missions/MissionPageController.php';
-require_once 'controllers/admin/CountryController.php';
-require_once 'controllers/admin/HideoutController.php';
-require_once 'controllers/admin/ActorController.php';
-require_once 'controllers/admin/SpecialityController.php';
-require_once 'controllers/admin/TypeMissionController.php';
-require_once 'controllers/admin/StatutController.php';
-require_once 'controllers/admin/RoleController.php';
-require_once 'controllers/admin/MissionController.php';
-require_once 'controllers/api/MissionApiController.php';
-require_once 'controllers/api/ActorApiController.php';
-require_once 'controllers/api/HideoutApiController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/home/HomeController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/missions/MissionsController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/missions/MissionPageController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/CountryController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/HideoutController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/ActorController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/SpecialityController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/TypeMissionController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/StatutController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/RoleController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/MissionController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/api/MissionApiController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/api/ActorApiController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'controllers/api/HideoutApiController.php';
 
-require_once 'models/Database.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'models/Database.php';
 
 define("BASE_URL", '');
 define("ADMIN_URL", '/admin');
