@@ -1,8 +1,12 @@
 
-Remove-Item "N:\docker\Applications\ecf-garage-back\in" -recurse -Force
+Remove-Item "C:\Temp\in" -recurse -Force
 
-git clone https://github.com/etupdt/ecf-garage-back.git 'N:\docker\Applications\ecf-garage-back\in'
+git clone https://github.com/etupdt/kgb-php.git 'C:\Temp\in'
 
-Remove-Item "N:\docker\Applications\ecf-garage-back\in\.git" -Recurse -Force
+Remove-Item "C:\Temp\in\.git" -Recurse -Force
+Remove-Item "C:\Temp\in\.gitignore" -Recurse -Force
+Remove-Item "C:\Temp\in\.vscode" -Recurse -Force
 
-ssh admin@nasts2311 -f '/share/CACHEDEV1_DATA/.qpkg/container-station/bin/docker compose -f /share/Web/docker/Applications/ecf-garage-back/ecf-garage-back.yml up --force-recreate --build -d 2> /tmp/log.log'
+Compress-Archive -Path C:\Temp\in\* -DestinationPath C:\Temp\in\in.zip
+
+scp admin@nasts2311 'C:\Temp\in\in.zip' '/share/Web/docker/Applications/kgb/'
