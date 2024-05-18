@@ -1,5 +1,11 @@
 <?php 
 
+if (file_exists(".env.local")) {
+    $env = parse_ini_file('.env.local');
+} else {
+    $env = parse_ini_file('.env');
+}
+
 require_once $_SERVER['DOCUMENT_ROOT'].'models/Router.php';
 
 require_once $_SERVER['DOCUMENT_ROOT'].'controllers/home/HomeController.php';
