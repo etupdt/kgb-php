@@ -1,12 +1,8 @@
 
-Remove-Item "C:\Temp\in" -recurse -Force
+$content = 'GIT_REPO=https://github.com/etupdt/kgb-php.git --branch feature/security' + "`n`r"
+$content += 'ENV=development'
+# $content += 'ENV=production'
 
-git clone https://github.com/etupdt/kgb-php.git 'C:\Temp\in'
+Set-Content C:\Temp\deploy $content
 
-Remove-Item "C:\Temp\in\.git" -Recurse -Force
-Remove-Item "C:\Temp\in\.gitignore" -Recurse -Force
-Remove-Item "C:\Temp\in\.vscode" -Recurse -Force
-
-Compress-Archive -Path C:\Temp\in\* -DestinationPath C:\Temp\in\in.zip
-
-scp admin@nasts2311 'C:\Temp\in\in.zip' '/share/Web/docker/Applications/kgb/'
+scp 'C:\Temp\deploy' 'admin@nasts2311:/share/Web/docker/Applications/kgb/'
