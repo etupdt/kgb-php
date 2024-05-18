@@ -11,9 +11,9 @@
               <?php 
                 if ($help) {
                   echo '<button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#helppage">Aide</button>';
-                  require_once $_SERVER['DOCUMENT_ROOT'].'views/modals/help.php';
+                  require_once $_SERVER['DOCUMENT_ROOT'].'/views/modals/help.php';
                 }
-                require_once $_SERVER['DOCUMENT_ROOT'].'views/modals/error.php';
+                require_once $_SERVER['DOCUMENT_ROOT'].'/views/modals/error.php';
               ?>
             </div>
             <a href="<?php echo BASE_URL.ADMIN_URL."/".$nameEntity; ?>"><?php $button = ['id' => "cancelButton" , 'type' => 'button', 'action' => 'c', 'value' => 'Abandonner']; require 'commandButton.php';?></a>

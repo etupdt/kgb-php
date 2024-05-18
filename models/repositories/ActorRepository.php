@@ -1,6 +1,6 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'models/ServiceEntityRepository.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/models/ServiceEntityRepository.php';
 
 class ActorRepository extends ServiceEntityRepository {
 

@@ -1,6 +1,6 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'models/entities/Actor.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/models/entities/Actor.php';
 
 class ActorController {
 
@@ -33,13 +33,13 @@ class ActorController {
 
         $fields = $this->getFields();
 
-        require_once $_SERVER['DOCUMENT_ROOT'].'views/header.php';
+        require_once $_SERVER['DOCUMENT_ROOT'].'/views/header.php';
 
         if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
             if (! isset($_GET['a']) || $_GET['a'] === 'c') {
                 $rows = $this->getRows();
-                require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityList.php';
+                require_once $_SERVER['DOCUMENT_ROOT'].'/views/admin/entityList.php';
             } else {
                 switch ($_GET['a']) {
                     case 'd' : {
@@ -47,12 +47,12 @@ class ActorController {
                         $em->remove($row);
                         $em->flush();
                         $rows = $this->getRows();
-                        require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityList.php';
+                        require_once $_SERVER['DOCUMENT_ROOT'].'/views/admin/entityList.php';
                         break;
                     }
                     case 'u' : {
                         $row = $this->getRow($this->actorRepository->find($_GET['id']));
-                        require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityForm.php';
+                        require_once $_SERVER['DOCUMENT_ROOT'].'/views/admin/entityForm.php';
                         break;
                     }
                     case 'i' : {
@@ -62,7 +62,7 @@ class ActorController {
                         $actor->setBirthdate('');
                         $actor->setIdentificationCode('');
                         $row = $this->getRow($actor);
-                        require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityForm.php';
+                        require_once $_SERVER['DOCUMENT_ROOT'].'/views/admin/entityForm.php';
                         break;
                     }
                 }
@@ -101,11 +101,11 @@ class ActorController {
             $em->flush();
 
             $rows = $this->getRows();
-            require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityList.php';
+            require_once $_SERVER['DOCUMENT_ROOT'].'/views/admin/entityList.php';
 
         }
 
-        require_once $_SERVER['DOCUMENT_ROOT'].'views/footer.php';
+        require_once $_SERVER['DOCUMENT_ROOT'].'/views/footer.php';
 
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'models/entities/Person.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/models/entities/Person.php';
 
 #[Herit(class: 'Person')]
 class Actor extends Person {

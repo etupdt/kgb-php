@@ -1,6 +1,6 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'models/entities/Mission.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/models/entities/Mission.php';
 
 class MissionsController {
 
@@ -12,9 +12,9 @@ class MissionsController {
     $missionRepository = new MissionRepository(2);
 
     $missions = $missionRepository->findAll();
-    require_once $_SERVER['DOCUMENT_ROOT'].'views/header.php';
-    require_once $_SERVER['DOCUMENT_ROOT'].'views/missions/missionsPage.php';
-    require_once $_SERVER['DOCUMENT_ROOT'].'views/footer.php';
+    require_once $_SERVER['DOCUMENT_ROOT'].'/views/header.php';
+    require_once $_SERVER['DOCUMENT_ROOT'].'/views/missions/missionsPage.php';
+    require_once $_SERVER['DOCUMENT_ROOT'].'/views/footer.php';
 
   }
 

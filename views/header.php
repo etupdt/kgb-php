@@ -61,7 +61,7 @@
             </svg>
             denis-tavernier@wanadoo.fr
           </button>
-          <?php require_once $_SERVER['DOCUMENT_ROOT'].'views/modals/login.php'; ?>
+          <?php require_once $_SERVER['DOCUMENT_ROOT'].'/views/modals/login.php'; ?>
         </div>
       </div>
     </div>

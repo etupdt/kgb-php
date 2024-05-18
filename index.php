@@ -6,24 +6,28 @@ if (file_exists(".env.local")) {
     $env = parse_ini_file('.env');
 }
 
-require_once $_SERVER['DOCUMENT_ROOT'].'models/Router.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/models/Router.php';
 
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/home/HomeController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/missions/MissionsController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/missions/MissionPageController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/CountryController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/HideoutController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/ActorController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/SpecialityController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/TypeMissionController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/StatutController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/RoleController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/admin/MissionController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/api/MissionApiController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/api/ActorApiController.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'controllers/api/HideoutApiController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/home/HomeController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/missions/MissionsController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/missions/MissionPageController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/admin/CountryController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/admin/HideoutController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/admin/ActorController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/admin/SpecialityController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/admin/TypeMissionController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/admin/StatutController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/admin/RoleController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/admin/MissionController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/api/MissionApiController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/api/ActorApiController.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/controllers/api/HideoutApiController.php';
 
-require_once $_SERVER['DOCUMENT_ROOT'].'models/Database.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/models/Database.php';
+
+Database::$host = $env['DATABASE_HOST'];
+Database::$username = $env['DATABASE_USER'];
+Database::$password = $env['DATABASE_PASSWORD'];
 
 define("BASE_URL", '');
 define("ADMIN_URL", '/admin');

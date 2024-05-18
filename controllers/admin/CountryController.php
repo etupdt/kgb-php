@@ -1,6 +1,6 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'models/entities/Country.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/models/entities/Country.php';
 
 class CountryController {
 
@@ -28,13 +28,13 @@ class CountryController {
 
         $fields = $this->getFields();
 
-        require_once $_SERVER['DOCUMENT_ROOT'].'views/header.php';
+        require_once $_SERVER['DOCUMENT_ROOT'].'/views/header.php';
 
         if ($_SERVER['REQUEST_METHOD'] === "GET") {
 
             if (! isset($_GET['a']) || $_GET['a'] === 'c') {
                 $rows = $this->getRows();
-                require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityList.php';
+                require_once $_SERVER['DOCUMENT_ROOT'].'/views/admin/entityList.php';
             } else {
                 switch ($_GET['a']) {
                     case 'd' : {
@@ -42,12 +42,12 @@ class CountryController {
                         $em->remove($row);
                         $em->flush();
                         $rows = $this->getRows();
-                        require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityList.php';
+                        require_once $_SERVER['DOCUMENT_ROOT'].'/views/admin/entityList.php';
                         break;
                     }
                     case 'u' : {
                         $row = $this->getRow($this->countryRepository->find($_GET['id']));
-                        require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityForm.php';
+                        require_once $_SERVER['DOCUMENT_ROOT'].'/views/admin/entityForm.php';
                         break;
                     }
                     case 'i' : {
@@ -55,7 +55,7 @@ class CountryController {
                         $country->setName('');
                         $country->setNationality('');
                         $row = $this->getRow($country);
-                        require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityForm.php';
+                        require_once $_SERVER['DOCUMENT_ROOT'].'/views/admin/entityForm.php';
                         break;
                     }
                 }
@@ -80,11 +80,11 @@ class CountryController {
             $em->flush();
 
             $rows = $this->getRows();
-            require_once $_SERVER['DOCUMENT_ROOT'].'views/admin/entityList.php';
+            require_once $_SERVER['DOCUMENT_ROOT'].'/views/admin/entityList.php';
 
         }
 
-        require_once $_SERVER['DOCUMENT_ROOT'].'views/footer.php';
+        require_once $_SERVER['DOCUMENT_ROOT'].'/views/footer.php';
 
     }
 

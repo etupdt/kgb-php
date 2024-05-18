@@ -9,7 +9,7 @@
         </div>
         <div class="modal-body">
           <div>
-            <?php require_once $_SERVER['DOCUMENT_ROOT'].'views/helps/'.$nameEntity.'.php'; ?>
+            <?php require_once $_SERVER['DOCUMENT_ROOT'].'/views/helps/'.$nameEntity.'.php'; ?>
           </div>
         </div>
         <div class="modal-footer">
