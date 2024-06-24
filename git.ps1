@@ -1,8 +1,8 @@
 
 $content = 'GIT_REPO=https://github.com/etupdt/kgb-php.git --branch feature/security' + "`n`r"
 $content += 'BUILD_OPTIONS=--no-cache' + "`n`r"
-$content += 'ENV=development'
-# $content += 'ENV=production'
+# $content += 'ENV=development'
+$content += 'ENV=production'
 
 Set-Content C:\Temp\deploy $content
 
